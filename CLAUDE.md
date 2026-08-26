@@ -33,8 +33,12 @@ Reglas de producto que no se negocian (fuente: `02-DOCS/wiki/comercial/`):
 | `02-DOCS/` | Wiki LLM: fuentes inmutables en `raw/`, artículos compilados en `wiki/`, más `wiki/index.md` y `wiki/log.md`. Se abre como vault de Obsidian. |
 | `02-DOCS/inbox/` | Zona de descarga. Cualquier fichero en cualquier formato; el sweep lo convierte en conocimiento. |
 
-Este workspace **no es un repositorio git** (decisión D-0008, marca `.rsc/.no-git`). No asumas que
-`git status` funciona aquí ni que hay historial al que volver.
+Este workspace **sí es un repositorio git** desde `D-0014`: `Executive-Lab/nexus-presupuestos`,
+privado, rama `main`. Revoca D-0008 y D-0012, y con ellas el principio 18 de la constitución (que
+sigue escrito sin actualizar: pendiente de enmienda). Los `.env` reales
+(`01-TOOLS/RESEND/.env`, `03-APP/.env.local`) están fuera del repositorio por el `.gitignore` de la
+raíz y deben seguir estándolo. La autoría de los commits es humana: sin `Co-Authored-By` de una IA
+ni pie de "generado con" (principio 20).
 
 ## Reglas de trabajo
 

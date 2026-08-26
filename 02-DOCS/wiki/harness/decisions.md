@@ -193,3 +193,33 @@ score: 6.0
 - dónde vive: `01-TOOLS/RESEND/.env` (operación manual) y `03-APP/.env.local` (la app). Ambos con
   permisos 600 y fuera de cualquier publicación.
 - supersedes: none (completa S-0012)
+
+---
+## D-0014 — El workspace pasa a git: repositorio privado en la org Executive-Lab
+- date: 2026-08-26
+- fase: operación (petición directa del usuario)
+- context: `D-0008` decidió no usar git en la carpeta y `D-0012` extendió esa regla al código de la
+  landing. El usuario pide ahora subir el proyecto entero a la organización de GitHub
+  `Executive-Lab`, con la condición explícita de que ningún `.env` salga y de que exista un
+  `.gitignore` global en la raíz.
+- options considered:
+  1. Repositorio **privado** con todo el workspace (recomendada y elegida).
+  2. Repositorio público — descartada: los multiplicadores, la tabla de puntuación y el umbral de
+     cualificación son internos por regla de producto; en abierto quedan a la vista de cualquiera.
+  3. Solo `03-APP/` en git, dejando la wiki y el arnés fuera — no se planteó al usuario porque pidió
+     "este proyecto", no una parte.
+- decision: `Executive-Lab/nexus-presupuestos`, **privado**, rama `main`. Se sube el workspace
+  completo, incluidos `.rsc/` con sus `backups/`, `.claude/` y `.codex/` (elección explícita del
+  usuario: "absolutamente todo"). Marca `.rsc/.no-git` eliminada.
+- why: petición directa. La visibilidad privada la eligió el usuario sobre la recomendación, que
+  coincidía.
+- qué queda fuera del repositorio: `01-TOOLS/RESEND/.env` y `03-APP/.env.local` (las dos únicas
+  ubicaciones con credenciales reales), más dependencias y salidas de compilación. Solo viajan las
+  plantillas `.env.example` y las `CREDENTIALS.md` de plantilla, sin valores. Verificado en el
+  remoto tras el push.
+- consecuencia asumida: **el principio 18 de la constitución queda contradicho** y las fases
+  `worktrees` y `ship`, que `D-0012` había sacado del chain, vuelven a tener sobre qué operar. La
+  enmienda formal de la constitución está pendiente. El principio 19 (copia previa) deja de ser el
+  único sustituto del historial, pero sigue vigente mientras no se enmiende. El principio 20 pasa de
+  inaplicable a **activo**: autoría humana de los commits, sin `Co-Authored-By` de una IA.
+- supersedes: `D-0008` y `D-0012`.
