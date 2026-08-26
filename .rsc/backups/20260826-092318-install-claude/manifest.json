@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "id": "20260826-092318-install-claude",
+  "createdAt": "2026-08-26T09:23:18.231Z",
+  "operation": "install",
+  "target": "claude",
+  "cwd": "/Volumes/EXTERN/DEV/nexus_presupuestos",
+  "cliVersion": "1.1.1",
+  "entries": [
+    {
+      "path": ".claude/skills/.rsc-state.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.claude/skills/.rsc-state.json"
+    },
+    {
+      "path": ".rsc/.version",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/.version"
+    },
+    {
+      "path": ".rsc/.base-versions.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/.base-versions.json"
+    },
+    {
+      "path": ".claude/agents/developer.md",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.claude/agents/developer.md"
+    },
+    {
+      "path": ".claude/agents/refuter-correctness.md",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.claude/agents/refuter-correctness.md"
+    },
+    {
+      "path": ".claude/agents/refuter-security.md",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.claude/agents/refuter-security.md"
+    },
+    {
+      "path": ".claude/agents/refuter-tests.md",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.claude/agents/refuter-tests.md"
+    },
+    {
+      "path": ".rsc/developer.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/developer.json"
+    },
+    {
+      "path": ".claude/skills/orient",
+      "existed": true,
+      "kind": "symlink",
+      "linkTarget": "../../.rsc/skills/orient"
+    },
+    {
+      "path": ".rsc/skills/orient",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/orient"
+    },
+    {
+      "path": ".claude/skills/suggest",
+      "existed": true,
+      "kind": "symlink",
+      "linkTarget": "../../.rsc/skills/suggest"
+    },
+    {
+      "path": ".rsc/skills/suggest",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/suggest"
+    },
+    {
+      "path": ".claude/skills/bro",
+      "existed": true,
+      "kind": "symlink",
+      "linkTarget": "../../.rsc/skills/bro"
+    },
+    {
+      "path": ".rsc/skills/bro",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/bro"
+    },
+    {
+      "path": ".claude/skills/design",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/design",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/design"
+    },
+    {
+      "path": ".claude/skills/email-connector",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/email-connector",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/email-connector"
+    },
+    {
+      "path": ".claude/skills/landing-copy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/landing-copy",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/landing-copy"
+    },
+    {
+      "path": ".claude/skills/deployment",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/deployment",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/deployment"
+    },
+    {
+      "path": ".claude/skills/gdpr-privacy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/gdpr-privacy",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/gdpr-privacy"
+    },
+    {
+      "path": ".claude/settings.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.claude/settings.json"
+    },
+    {
+      "path": ".rsc/session-start.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/session-start.mjs"
+    },
+    {
+      "path": ".rsc/worklog-checkpoint.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/worklog-checkpoint.mjs"
+    },
+    {
+      "path": ".rsc/ship-guard.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/ship-guard.mjs"
+    },
+    {
+      "path": ".rsc/danger-guard.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/danger-guard.mjs"
+    },
+    {
+      "path": ".rsc/gitmoji-guard.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/gitmoji-guard.mjs"
+    },
+    {
+      "path": ".rsc/userprompt-gate.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/userprompt-gate.mjs"
+    },
+    {
+      "path": ".rsc/hook-once.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/hook-once.mjs"
+    },
+    {
+      "path": ".rsc/sello.mjs",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/sello.mjs"
+    }
+  ]
+}

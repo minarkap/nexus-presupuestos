@@ -1,0 +1,7 @@
+# Estado por máquina de Obsidian (el resto de .obsidian/ — temas, bases, config — sí se trackea)
+.obsidian/workspace*.json
+.obsidian/cache
+# superficies regeneradas / por ejecución
+wiki/dashboard.html
+audits/*.html
+inbox/_processed/

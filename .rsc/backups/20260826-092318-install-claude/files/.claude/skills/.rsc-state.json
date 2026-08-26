@@ -1,0 +1,185 @@
+{
+  "skills": {
+    "orient": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/orient"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/orient"
+    },
+    "suggest": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/suggest"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/suggest"
+    },
+    "bro": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/bro"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/bro"
+    },
+    "analyze": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/analyze"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/analyze"
+    },
+    "automation-strategy": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/automation-strategy"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/automation-strategy"
+    },
+    "clarify": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/clarify"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/clarify"
+    },
+    "constitution": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/constitution"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/constitution"
+    },
+    "debug": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/debug"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/debug"
+    },
+    "decision-challenge": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/decision-challenge"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/decision-challenge"
+    },
+    "deprecation": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/deprecation"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/deprecation"
+    },
+    "design-eng": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/design-eng"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/design-eng"
+    },
+    "fable-operator": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/fable-operator"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/fable-operator"
+    },
+    "harness": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/harness"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/harness"
+    },
+    "idea-refinement": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/idea-refinement"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/idea-refinement"
+    },
+    "implement": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/implement"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/implement"
+    },
+    "init": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/init"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/init"
+    },
+    "parallel": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/parallel"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/parallel"
+    },
+    "plan": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/plan"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/plan"
+    },
+    "review": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/review"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/review"
+    },
+    "sdd": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/sdd"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/sdd"
+    },
+    "sdd-init": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/sdd-init"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/sdd-init"
+    },
+    "ship": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/ship"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/ship"
+    },
+    "simplify-code": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/simplify-code"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/simplify-code"
+    },
+    "source-grounded-development": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/source-grounded-development"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/source-grounded-development"
+    },
+    "specify": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/specify"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/specify"
+    },
+    "tasks": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/tasks"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/tasks"
+    },
+    "verify": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/verify"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/verify"
+    },
+    "worktrees": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/worktrees"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/worktrees"
+    },
+    "nextjs": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/nextjs"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/nextjs"
+    }
+  },
+  "agents": [
+    "developer",
+    "refuter-correctness",
+    "refuter-security",
+    "refuter-tests"
+  ],
+  "version": "1.1.1"
+}

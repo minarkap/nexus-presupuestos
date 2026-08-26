@@ -1,0 +1,73 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/session-start.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/suggest/SKILL.md\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/worklog-checkpoint.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/worklog-checkpoint.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/ship-guard.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/danger-guard.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/gitmoji-guard.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/userprompt-gate.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+          }
+        ]
+      }
+    ]
+  }
+}

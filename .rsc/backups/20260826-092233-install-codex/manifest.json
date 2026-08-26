@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "id": "20260826-092233-install-codex",
+  "createdAt": "2026-08-26T09:22:33.086Z",
+  "operation": "install",
+  "target": "codex",
+  "cwd": "/Volumes/EXTERN/DEV/nexus_presupuestos",
+  "cliVersion": "1.1.1",
+  "entries": [
+    {
+      "path": ".codex/rsc/.rsc-state.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.codex/rsc/.rsc-state.json"
+    },
+    {
+      "path": ".rsc/.version",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/.version"
+    },
+    {
+      "path": ".rsc/.base-versions.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/.base-versions.json"
+    },
+    {
+      "path": ".codex/agents/developer.toml",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.codex/agents/developer.toml"
+    },
+    {
+      "path": ".codex/agents/refuter-correctness.toml",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.codex/agents/refuter-correctness.toml"
+    },
+    {
+      "path": ".codex/agents/refuter-security.toml",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.codex/agents/refuter-security.toml"
+    },
+    {
+      "path": ".codex/agents/refuter-tests.toml",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.codex/agents/refuter-tests.toml"
+    },
+    {
+      "path": ".rsc/developer.json",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/.rsc/developer.json"
+    },
+    {
+      "path": ".codex/rsc/orient",
+      "existed": true,
+      "kind": "symlink",
+      "linkTarget": "../../.rsc/skills/orient"
+    },
+    {
+      "path": ".rsc/skills/orient",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/orient"
+    },
+    {
+      "path": ".codex/rsc/suggest",
+      "existed": true,
+      "kind": "symlink",
+      "linkTarget": "../../.rsc/skills/suggest"
+    },
+    {
+      "path": ".rsc/skills/suggest",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/suggest"
+    },
+    {
+      "path": ".codex/rsc/bro",
+      "existed": true,
+      "kind": "symlink",
+      "linkTarget": "../../.rsc/skills/bro"
+    },
+    {
+      "path": ".rsc/skills/bro",
+      "existed": true,
+      "kind": "dir",
+      "contentPath": "files/.rsc/skills/bro"
+    },
+    {
+      "path": ".codex/rsc/nextjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/nextjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".codex/rsc/design",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/design",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".codex/rsc/email-connector",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/email-connector",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".codex/rsc/landing-copy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/landing-copy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".codex/rsc/deployment",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/deployment",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".codex/rsc/gdpr-privacy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/gdpr-privacy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": "AGENTS.md",
+      "existed": true,
+      "kind": "file",
+      "contentPath": "files/AGENTS.md"
+    }
+  ]
+}

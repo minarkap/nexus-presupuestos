@@ -1,0 +1,31 @@
+# Configuración de ejecución del chain SDD — generada en T002, 2026-08-26
+# Detectado del subproyecto real, no asumido.
+project:
+  root: 03-APP
+  stack: nextjs
+  language: typescript
+  package_manager: npm
+  node: ">=24"        # LTS activa; el runtime local es 25.9.0 y la satisface
+  framework_version: "16.3.3"
+
+testing:
+  strict_tdd: true
+  runner: vitest
+  commands:
+    apply: "npm test"
+    verify: "bash scripts/verify.sh"
+    lint: "npm run lint"
+    typecheck: "npm run typecheck"
+    coverage: "npm run test:coverage"
+  coverage:
+    scope: "src/core/**"
+    lines: 95
+
+sdd:
+  registry_path: ".rsc/skill-registry.json"   # AUSENTE en este workspace: selección de skills a mano
+  review_budget:
+    line_budget: 400
+  delivery_strategy: exception   # constitution 18: sin git, no hay PR que trocear
+
+models:
+  enabled: false   # sin routing: se honra el modelo de sesión en silencio

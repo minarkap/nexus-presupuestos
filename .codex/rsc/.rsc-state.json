@@ -1,0 +1,215 @@
+{
+  "skills": {
+    "orient": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/orient"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/orient"
+    },
+    "suggest": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/suggest"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/suggest"
+    },
+    "bro": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/bro"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/bro"
+    },
+    "analyze": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/analyze"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/analyze"
+    },
+    "automation-strategy": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/automation-strategy"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/automation-strategy"
+    },
+    "clarify": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/clarify"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/clarify"
+    },
+    "constitution": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/constitution"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/constitution"
+    },
+    "debug": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/debug"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/debug"
+    },
+    "decision-challenge": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/decision-challenge"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/decision-challenge"
+    },
+    "deprecation": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/deprecation"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/deprecation"
+    },
+    "design-eng": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/design-eng"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/design-eng"
+    },
+    "fable-operator": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/fable-operator"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/fable-operator"
+    },
+    "harness": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/harness"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/harness"
+    },
+    "idea-refinement": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/idea-refinement"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/idea-refinement"
+    },
+    "implement": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/implement"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/implement"
+    },
+    "init": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/init"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/init"
+    },
+    "parallel": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/parallel"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/parallel"
+    },
+    "plan": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/plan"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/plan"
+    },
+    "review": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/review"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/review"
+    },
+    "sdd": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/sdd"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/sdd"
+    },
+    "sdd-init": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/sdd-init"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/sdd-init"
+    },
+    "ship": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/ship"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/ship"
+    },
+    "simplify-code": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/simplify-code"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/simplify-code"
+    },
+    "source-grounded-development": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/source-grounded-development"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/source-grounded-development"
+    },
+    "specify": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/specify"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/specify"
+    },
+    "tasks": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/tasks"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/tasks"
+    },
+    "verify": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/verify"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/verify"
+    },
+    "worktrees": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/worktrees"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/worktrees"
+    },
+    "nextjs": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/nextjs"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/nextjs"
+    },
+    "design": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/design"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/design"
+    },
+    "email-connector": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/email-connector"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/email-connector"
+    },
+    "landing-copy": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/landing-copy"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/landing-copy"
+    },
+    "deployment": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/deployment"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/deployment"
+    },
+    "gdpr-privacy": {
+      "files": [
+        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/gdpr-privacy"
+      ],
+      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/gdpr-privacy"
+    }
+  },
+  "agents": [
+    "developer",
+    "refuter-correctness",
+    "refuter-security",
+    "refuter-tests"
+  ],
+  "version": "1.1.1"
+}

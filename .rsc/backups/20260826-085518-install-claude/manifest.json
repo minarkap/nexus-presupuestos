@@ -1,0 +1,376 @@
+{
+  "schemaVersion": 1,
+  "id": "20260826-085518-install-claude",
+  "createdAt": "2026-08-26T08:55:18.408Z",
+  "operation": "install",
+  "target": "claude",
+  "cwd": "/Volumes/EXTERN/DEV/nexus_presupuestos",
+  "cliVersion": "1.1.1",
+  "entries": [
+    {
+      "path": ".claude/skills/.rsc-state.json",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/.version",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/.base-versions.json",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/agents/developer.md",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/agents/refuter-correctness.md",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/agents/refuter-security.md",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/agents/refuter-tests.md",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/developer.json",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/orient",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/orient",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/suggest",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/suggest",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/bro",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/bro",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/analyze",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/analyze",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/automation-strategy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/automation-strategy",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/clarify",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/clarify",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/constitution",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/constitution",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/debug",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/debug",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/decision-challenge",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/decision-challenge",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/deprecation",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/deprecation",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/design-eng",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/design-eng",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/fable-operator",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/fable-operator",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/harness",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/harness",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/idea-refinement",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/idea-refinement",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/implement",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/implement",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/init",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/init",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/parallel",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/parallel",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/plan",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/plan",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/review",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/review",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/sdd",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/sdd",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/sdd-init",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/sdd-init",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/ship",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/ship",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/simplify-code",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/simplify-code",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/source-grounded-development",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/source-grounded-development",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/specify",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/specify",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/tasks",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/tasks",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/verify",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/verify",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/skills/worktrees",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/skills/worktrees",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".claude/settings.json",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/session-start.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/worklog-checkpoint.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/ship-guard.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/danger-guard.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/gitmoji-guard.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/userprompt-gate.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/hook-once.mjs",
+      "existed": false,
+      "kind": "missing"
+    },
+    {
+      "path": ".rsc/sello.mjs",
+      "existed": false,
+      "kind": "missing"
+    }
+  ]
+}

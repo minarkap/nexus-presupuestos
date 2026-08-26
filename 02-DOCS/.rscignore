@@ -1,0 +1,20 @@
+# 02-DOCS/.rscignore — rutas que el Auto-Ingest Sweep NUNCA debe escanear como fuente de conocimiento.
+# Trackeado (el equipo comparte el mismo límite de escaneo). Añade tus patrones debajo.
+node_modules/
+.git/
+.next/
+dist/
+build/
+.venv/
+__pycache__/
+.dart_tool/
+.pytest_cache/
+.ruff_cache/
+01-TOOLS/
+02-DOCS/inbox/_processed/
+02-DOCS/raw/
+02-DOCS/wiki/
+.DS_Store
+# Solo los ficheros tipo documento son candidatos de todos modos — pdf, docx, doc, md, txt, csv,
+# tsv, json, html, rtf, e imágenes documentales (png/jpg de escaneos). Todo lo demás
+# (código, archivos comprimidos, binarios, lockfiles) se ignora incluso fuera de estas rutas.

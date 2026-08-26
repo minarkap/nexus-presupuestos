@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .gitignore global del workspace nexus_presupuestos.
+# Los .gitignore por carpeta (01-TOOLS/*, 02-DOCS, 03-APP) siguen existiendo como
+# segunda red: si un fichero se mueve, la regla viaja con él.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Secretos: nunca, en ninguna carpeta, a ninguna profundidad ───────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*-service-account*.json
+*credentials*.json
+CREDENTIALS.md
+# Excepción: las plantillas sin valores (placeholders <TOOL>_API_KEY) sí se versionan.
+!01-TOOLS/_TEMPLATE/CREDENTIALS.md
+!**/assets/_TEMPLATE/CREDENTIALS.md
+
+# ── Dependencias y salidas de compilación ────────────────────────────────────
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+.turbo/
+.vercel/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# ── Caches y logs ────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-error.log*
+.eslintcache
+.cache/
+
+# ── Sistema operativo y editores ─────────────────────────────────────────────
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+.idea/
+*.swp
+*.swo
+
+# ── Local del agente (la configuración compartida sí se versiona) ────────────
+.claude/settings.local.json
+.claude/*.local.json

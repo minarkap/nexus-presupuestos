@@ -1,0 +1,9 @@
+# Este workspace no usa git (D-0008 / D-0012). Este fichero existe como seguro:
+# si algún día se crea un repositorio aquí, las credenciales no entran en él.
+.env
+.env.local
+.env*.local
+node_modules/
+.next/
+coverage/
+tsconfig.tsbuildinfo
