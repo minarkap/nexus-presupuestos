@@ -8,7 +8,7 @@ import type { RegistryPort } from '@/ports/registry'
 import type { Answers, LeadRecord, RedactedOutcome } from './types'
 
 export type ValidationField =
-  | 'name' | 'email' | 'company'
+  | 'name' | 'email' | 'company' | 'consent'
   | 'challenge' | 'need' | 'size' | 'maturity' | 'timing' | 'sponsor' | 'budget'
 
 export interface ValidationError {
@@ -40,7 +40,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
  *
  * Esto NO es paranoia sobre el formulario: una acción de servidor es un endpoint HTTP público y
  * el formulario no es su única vía de entrada. Sin esta comprobación, un valor inventado en el
- * tramo de tamaño produce `NaN` al multiplicar, y de ahí sale un «NaN – NaN €» en pantalla y en
+ * tramo de tamaño produce `NaN` al aplicar el factor, y de ahí sale un «NaN – NaN €» en pantalla y en
  * un correo con el membrete de Nexus. El catálogo existe justamente para que no salga de la firma
  * una cifra improvisada (constitution 4, 5 · CA-02).
  */
@@ -84,6 +84,13 @@ export function validateContact(answers: Answers): ValidationError | null {
   }
   if (!company.trim()) {
     return { kind: 'validation_error', field: 'company', message: 'Necesitamos el nombre de tu organización.' }
+  }
+  if (answers.contact.consent !== true) {
+    return {
+      kind: 'validation_error',
+      field: 'consent',
+      message: 'Necesitamos tu consentimiento para enviarte la estimación.',
+    }
   }
   return null
 }
@@ -166,7 +173,7 @@ export async function submitLead(
     clientEmail: await attempt(() =>
       deps.emailPort.send({
         to: answers.contact.email,
-        subject: 'Tu estimación orientativa — Nexus Strategy & Technology',
+        subject: 'Tu estimación orientativa — Nexus Consulting',
         body: proposal,
       }),
     ),
@@ -191,6 +198,7 @@ export function buildInternalNotice(lead: LeadRecord): string {
   return [
     `Contacto: ${lead.contact.name} <${lead.contact.email}> — ${lead.contact.company}`,
     `Recibido: ${lead.submittedAt}`,
+    `Consentimiento: sí (${lead.submittedAt})`,
     '',
     `Servicio aplicable: ${lead.serviceLabel ?? 'Sin catalogar — llamada de alcance'}`,
     `Rango estimado: ${lead.rangeText ?? 'Sin cifra'}`,

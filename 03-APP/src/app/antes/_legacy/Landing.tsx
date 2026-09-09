@@ -1,3 +1,6 @@
+/* SNAPSHOT — el landing original de Eric (2026-08-26), recuperado de `main`.
+   Único cambio: los tipos vienen de `./types` (congelados) en vez del dominio vivo.
+   No lo edites para "mejorarlo": es el antes de la comparación. */
 export interface LandingProps {
   onStart: () => void
 }

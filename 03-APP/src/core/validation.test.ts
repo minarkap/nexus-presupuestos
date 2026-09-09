@@ -7,7 +7,7 @@ import type { Answers } from './types'
 const válidas: Answers = {
   challenge: 'ia', need: 'diagnostico', size: '250-999', maturity: 'inicial',
   timing: '3-6m', sponsor: 'si', budget: 'asignado',
-  contact: { name: 'Marta', email: 'marta@acme.ad', company: 'Acme' },
+  contact: { name: 'Marta', email: 'marta@acme.ad', company: 'Acme', consent: true },
 }
 
 function conBasura(campo: string, valor: unknown): Answers {

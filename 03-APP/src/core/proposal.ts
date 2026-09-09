@@ -42,7 +42,7 @@ export function composeProposal(
         'somos la firma adecuada para esto.',
       '',
       'Un saludo,',
-      'Nexus Strategy & Technology',
+      'Nexus Consulting',
     ].join('\n')
   }
 
@@ -71,6 +71,6 @@ export function composeProposal(
     cierre,
     '',
     'Un saludo,',
-    'Nexus Strategy & Technology',
+    'Nexus Consulting',
   ].join('\n')
 }
