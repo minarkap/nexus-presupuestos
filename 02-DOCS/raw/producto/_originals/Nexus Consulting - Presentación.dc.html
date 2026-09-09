@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/styles.css">
+  <script src="_ds/nexus-consulting-design-system-c7745a9b-941f-4628-8bef-87adcb214af3/_ds_bundle.js"></script>
+  <style>
+    :root{
+      --t-eyebrow:24px; --t-small:26px; --t-body:31px; --t-sub:38px;
+      --t-card:30px; --t-title:62px; --t-hero:82px; --t-num:44px;
+    }
+    *{ text-wrap:pretty; }
+  </style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <!-- ════════ SLIDE 1 — PORTADA ════════ -->
+  <section data-label="Portada" data-screen-label="Portada" data-speaker-notes="Apertura. Presenta la empresa en una frase: somos el punto donde la tecnología conecta con el negocio. Deja respirar el claim antes de avanzar." style="display:flex; align-items:center; box-sizing:border-box; padding:0 120px; font-family:var(--font-body); color:var(--text-body); background:radial-gradient(1150px 720px at 82% 18%, rgba(20,92,255,0.22), transparent 60%), radial-gradient(820px 620px at 6% 96%, rgba(33,212,253,0.10), transparent 55%), var(--surface-base); overflow:hidden;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:40px; max-width:1080px;">
+      <img src="assets/nexus-logo-horizontal-t.png" alt="Nexus Consulting" style="height:118px; width:auto; align-self:flex-start; filter:drop-shadow(0 8px 40px rgba(33,212,253,0.18));">
+      <h1 style="margin:0; font-family:var(--font-display); font-weight:700; font-size:var(--t-hero); line-height:1.06; letter-spacing:-0.02em; color:var(--text-strong);">
+        <span style="display:block;">Tecnología que conecta.</span>
+        <span style="display:block; background:var(--accent-gradient); -webkit-background-clip:text; background-clip:text; color:transparent;">Soluciones que avanzan.</span>
+      </h1>
+      <p style="margin:0; font-size:var(--t-sub); line-height:1.45; color:var(--text-muted); max-width:880px;">Software, IA y automatización para empresas que quieren operar mejor.</p>
+    </div>
+    <div style="flex:0 0 auto; display:flex; align-items:center; justify-content:center; padding-left:60px;">
+      <img src="assets/nexus-isotype-t.png" alt="" style="width:420px; height:420px; object-fit:contain; filter:drop-shadow(0 0 60px rgba(33,212,253,0.35));">
+    </div>
+  </section>
+
+  <!-- ════════ SLIDE 2 — QUIÉNES SOMOS ════════ -->
+  <section data-label="Quiénes somos" data-screen-label="Quiénes somos" data-speaker-notes="Posicionamiento: somos la consultora que une negocio y tecnología. El objetivo del cliente es claro — más control, más velocidad, menos procesos manuales." style="display:flex; flex-direction:column; box-sizing:border-box; padding:84px 100px; font-family:var(--font-body); color:var(--text-body); background:radial-gradient(rgba(148,163,184,0.06) 1.2px, transparent 1.3px) 0 0 / 30px 30px, radial-gradient(900px 560px at 88% 6%, rgba(20,92,255,0.14), transparent 60%), var(--surface-base); overflow:hidden;">
+    <div style="font-family:var(--font-mono); font-size:var(--t-eyebrow); letter-spacing:0.28em; text-transform:uppercase; color:var(--nx-cyan-400);">Quiénes somos</div>
+    <div style="flex:1; display:flex; align-items:center; gap:96px; margin-top:48px;">
+      <h2 style="flex:1; margin:0; font-family:var(--font-display); font-weight:700; font-size:var(--t-title); line-height:1.1; letter-spacing:-0.02em; color:var(--text-strong);">Somos el punto donde negocio y tecnología <span style="background:var(--accent-gradient); -webkit-background-clip:text; background-clip:text; color:transparent;">conectan</span>.</h2>
+      <div style="flex:1; display:flex; flex-direction:column; gap:48px;">
+        <p style="margin:0; font-size:var(--t-body); line-height:1.6; color:var(--text-body);">Nexus Consulting es una consultora tecnológica premium que ayuda a empresas a reducir fricción operativa, conectar sistemas y construir soluciones digitales a medida.</p>
+        <div style="height:1px; background:var(--border-subtle);"></div>
+        <div style="display:flex; gap:40px;">
+          <div style="flex:1;">
+            <div style="font-family:var(--font-display); font-weight:700; font-size:42px; color:var(--nx-cyan-400); line-height:1;">Más control</div>
+            <div style="margin-top:10px; font-size:var(--t-small); color:var(--text-muted);">sobre tu operación</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:var(--font-display); font-weight:700; font-size:42px; color:var(--nx-cyan-400); line-height:1;">Más velocidad</div>
+            <div style="margin-top:10px; font-size:var(--t-small); color:var(--text-muted);">en cada proceso</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:var(--font-display); font-weight:700; font-size:42px; color:var(--nx-cyan-400); line-height:1;">Menos manual</div>
+            <div style="margin-top:10px; font-size:var(--t-small); color:var(--text-muted);">menos dependencia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; opacity:0.7;">
+      <img src="assets/nexus-isotype-t.png" alt="" style="height:34px; width:34px; object-fit:contain;">
+      <span style="font-family:var(--font-mono); font-size:var(--t-eyebrow); letter-spacing:0.16em; color:var(--text-faint); text-transform:uppercase;">Nexus Consulting</span>
+    </div>
+  </section>
+
+  <!-- ════════ SLIDE 3 — QUÉ HACEMOS ════════ -->
+  <section data-label="Qué hacemos" data-screen-label="Qué hacemos" data-speaker-notes="Cinco servicios, un mismo enfoque. No vendemos producto cerrado: construimos lo que cada empresa necesita. Enfatiza el mensaje destacado del pie." style="display:flex; flex-direction:column; box-sizing:border-box; padding:84px 100px; font-family:var(--font-body); color:var(--text-body); background:radial-gradient(rgba(148,163,184,0.06) 1.2px, transparent 1.3px) 0 0 / 30px 30px, radial-gradient(960px 540px at 14% 4%, rgba(33,212,253,0.08), transparent 58%), var(--surface-base); overflow:hidden;">
+    <div style="font-family:var(--font-mono); font-size:var(--t-eyebrow); letter-spacing:0.28em; text-transform:uppercase; color:var(--nx-cyan-400);">Servicios</div>
+    <h2 style="margin:28px 0 0; font-family:var(--font-display); font-weight:700; font-size:var(--t-title); line-height:1.08; letter-spacing:-0.02em; color:var(--text-strong); max-width:1300px;">Diseñamos sistemas digitales para operar mejor.</h2>
+    <div style="flex:1; display:flex; align-items:center;">
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:24px; width:100%;">
+        <div style="display:flex; flex-direction:column; gap:22px; background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:34px 30px; box-shadow:var(--shadow-md);">
+          <div style="width:60px; height:60px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; background:var(--accent-gradient-soft); border:1px solid var(--border-accent); color:var(--nx-cyan-400);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:var(--t-card); line-height:1.15; color:var(--text-strong);">Software a medida</div>
+          <div style="font-size:var(--t-small); line-height:1.45; color:var(--text-muted);">Construido para tu operación, no al revés.</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:22px; background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:34px 30px; box-shadow:var(--shadow-md);">
+          <div style="width:60px; height:60px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; background:var(--accent-gradient-soft); border:1px solid var(--border-accent); color:var(--nx-cyan-400);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5A2 2 0 0 0 15.5 9.94l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0Z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path></svg>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:var(--t-card); line-height:1.15; color:var(--text-strong);">IA aplicada</div>
+          <div style="font-size:var(--t-small); line-height:1.45; color:var(--text-muted);">Decisiones con datos, no intuición.</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:22px; background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:34px 30px; box-shadow:var(--shadow-md);">
+          <div style="width:60px; height:60px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; background:var(--accent-gradient-soft); border:1px solid var(--border-accent); color:var(--nx-cyan-400);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="3" y="3" rx="2"></rect><path d="M7 11v4a2 2 0 0 0 2 2h4"></path><rect width="8" height="8" x="13" y="13" rx="2"></rect></svg>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:var(--t-card); line-height:1.15; color:var(--text-strong);">Automatización de procesos</div>
+          <div style="font-size:var(--t-small); line-height:1.45; color:var(--text-muted);">Menos trabajo manual, más foco.</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:22px; background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:34px 30px; box-shadow:var(--shadow-md);">
+          <div style="width:60px; height:60px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; background:var(--accent-gradient-soft); border:1px solid var(--border-accent); color:var(--nx-cyan-400);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:var(--t-card); line-height:1.15; color:var(--text-strong);">Integración de sistemas</div>
+          <div style="font-size:var(--t-small); line-height:1.45; color:var(--text-muted);">Tus herramientas, por fin conectadas.</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:22px; background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:34px 30px; box-shadow:var(--shadow-md);">
+          <div style="width:60px; height:60px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; background:var(--accent-gradient-soft); border:1px solid var(--border-accent); color:var(--nx-cyan-400);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:var(--t-card); line-height:1.15; color:var(--text-strong);">Consultoría tecnológica</div>
+          <div style="font-size:var(--t-small); line-height:1.45; color:var(--text-muted);">Estrategia técnica con criterio.</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin:0; font-size:var(--t-sub); line-height:1.4; color:var(--text-body); max-width:1500px;">No vendemos herramientas genéricas. <span style="color:var(--text-strong); font-weight:600;">Construimos soluciones adaptadas a la realidad de cada empresa.</span></p>
+  </section>
+
+  <!-- ════════ SLIDE 4 — CÓMO AYUDAMOS ════════ -->
+  <section data-label="Cómo ayudamos" data-screen-label="Cómo ayudamos" data-speaker-notes="El método en cuatro pasos. Recorre el flujo de izquierda a derecha: diagnóstico, diseño, desarrollo e integración, y mejora continua. El acompañamiento no termina en la entrega." style="display:flex; flex-direction:column; box-sizing:border-box; padding:84px 100px; font-family:var(--font-body); color:var(--text-body); background:radial-gradient(960px 560px at 92% 96%, rgba(20,92,255,0.14), transparent 60%), var(--surface-base); overflow:hidden;">
+    <div style="font-family:var(--font-mono); font-size:var(--t-eyebrow); letter-spacing:0.28em; text-transform:uppercase; color:var(--nx-cyan-400);">Cómo trabajamos</div>
+    <h2 style="margin:28px 0 0; font-family:var(--font-display); font-weight:700; font-size:var(--t-title); line-height:1.08; letter-spacing:-0.02em; color:var(--text-strong);">De la complejidad <span style="background:var(--accent-gradient); -webkit-background-clip:text; background-clip:text; color:transparent;">al sistema</span>.</h2>
+    <div style="flex:1; display:flex; align-items:center;">
+      <div style="position:relative; width:100%;">
+        <div style="position:absolute; top:34px; left:8%; right:8%; height:2px; background:linear-gradient(90deg, var(--nx-blue-500), var(--nx-cyan-500)); opacity:0.55;"></div>
+        <div style="position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:48px;">
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap:24px;">
+            <div style="width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:600; font-size:var(--t-num); color:var(--nx-night); background:var(--accent-gradient); box-shadow:var(--glow-cyan-sm);">1</div>
+            <div style="font-family:var(--font-display); font-weight:600; font-size:34px; color:var(--text-strong);">Diagnóstico</div>
+            <div style="font-size:var(--t-small); line-height:1.5; color:var(--text-muted);">Analizamos procesos, herramientas, datos y objetivos.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap:24px;">
+            <div style="width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:600; font-size:var(--t-num); color:var(--nx-night); background:var(--accent-gradient); box-shadow:var(--glow-cyan-sm);">2</div>
+            <div style="font-family:var(--font-display); font-weight:600; font-size:34px; color:var(--text-strong);">Diseño de solución</div>
+            <div style="font-size:var(--t-small); line-height:1.5; color:var(--text-muted);">Definimos qué sistema necesita realmente la empresa.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap:24px;">
+            <div style="width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:600; font-size:var(--t-num); color:var(--nx-night); background:var(--accent-gradient); box-shadow:var(--glow-cyan-sm);">3</div>
+            <div style="font-family:var(--font-display); font-weight:600; font-size:34px; color:var(--text-strong);">Desarrollo e integración</div>
+            <div style="font-size:var(--t-small); line-height:1.5; color:var(--text-muted);">Construimos, conectamos e implementamos.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap:24px;">
+            <div style="width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:600; font-size:var(--t-num); color:var(--nx-night); background:var(--accent-gradient); box-shadow:var(--glow-cyan-sm);">4</div>
+            <div style="font-family:var(--font-display); font-weight:600; font-size:34px; color:var(--text-strong);">Mejora continua</div>
+            <div style="font-size:var(--t-small); line-height:1.5; color:var(--text-muted);">Medimos, optimizamos y acompañamos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; opacity:0.7;">
+      <img src="assets/nexus-isotype-t.png" alt="" style="height:34px; width:34px; object-fit:contain;">
+      <span style="font-family:var(--font-mono); font-size:var(--t-eyebrow); letter-spacing:0.16em; color:var(--text-faint); text-transform:uppercase;">Nexus Consulting</span>
+    </div>
+  </section>
+
+  <!-- ════════ SLIDE 5 — VALORES Y CTA ════════ -->
+  <section data-label="Valores y CTA" data-screen-label="Valores y CTA" data-speaker-notes="Cierre. Repasa los valores y haz la propuesta concreta: un diagnóstico tecnológico inicial sin compromiso. Termina con la llamada a la acción y los datos de contacto." style="display:flex; flex-direction:column; box-sizing:border-box; padding:84px 100px; font-family:var(--font-body); color:var(--text-body); background:radial-gradient(1150px 720px at 80% 14%, rgba(20,92,255,0.20), transparent 60%), radial-gradient(820px 600px at 4% 100%, rgba(33,212,253,0.10), transparent 55%), var(--surface-base); overflow:hidden;">
+    <div style="font-family:var(--font-mono); font-size:var(--t-eyebrow); letter-spacing:0.28em; text-transform:uppercase; color:var(--nx-cyan-400);">Valores</div>
+    <h2 style="margin:24px 0 0; font-family:var(--font-display); font-weight:700; font-size:var(--t-title); line-height:1.08; letter-spacing:-0.02em; color:var(--text-strong);">Rápidos. Seguros. <span style="background:var(--accent-gradient); -webkit-background-clip:text; background-clip:text; color:transparent;">Precisos. Personalizados.</span></h2>
+    <div style="display:flex; flex-wrap:wrap; gap:16px; margin-top:40px;">
+      <div style="display:flex; align-items:center; gap:14px; padding:16px 26px; border-radius:var(--radius-pill); background:var(--surface-card); border:1px solid var(--border-subtle);">
+        <span style="color:var(--nx-cyan-400); display:flex;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+        <span style="font-size:var(--t-small); color:var(--text-strong); font-weight:500;">Claridad</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; padding:16px 26px; border-radius:var(--radius-pill); background:var(--surface-card); border:1px solid var(--border-subtle);">
+        <span style="color:var(--nx-cyan-400); display:flex;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg></span>
+        <span style="font-size:var(--t-small); color:var(--text-strong); font-weight:500;">Velocidad</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; padding:16px 26px; border-radius:var(--radius-pill); background:var(--surface-card); border:1px solid var(--border-subtle);">
+        <span style="color:var(--nx-cyan-400); display:flex;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg></span>
+        <span style="font-size:var(--t-small); color:var(--text-strong); font-weight:500;">Seguridad</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; padding:16px 26px; border-radius:var(--radius-pill); background:var(--surface-card); border:1px solid var(--border-subtle);">
+        <span style="color:var(--nx-cyan-400); display:flex;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg></span>
+        <span style="font-size:var(--t-small); color:var(--text-strong); font-weight:500;">Personalización</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; padding:16px 26px; border-radius:var(--radius-pill); background:var(--surface-card); border:1px solid var(--border-subtle);">
+        <span style="color:var(--nx-cyan-400); display:flex;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg></span>
+        <span style="font-size:var(--t-small); color:var(--text-strong); font-weight:500;">Innovación útil</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; padding:16px 26px; border-radius:var(--radius-pill); background:var(--surface-card); border:1px solid var(--border-subtle);">
+        <span style="color:var(--nx-cyan-400); display:flex;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M11 3 8 9l4 13 4-13-3-6"></path><path d="M2 9h20"></path></svg></span>
+        <span style="font-size:var(--t-small); color:var(--text-strong); font-weight:500;">Excelencia</span>
+      </div>
+    </div>
+    <div style="flex:1; display:flex; align-items:flex-end;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:60px; width:100%; padding-top:40px; border-top:1px solid var(--border-subtle);">
+        <div style="max-width:1080px;">
+          <div style="font-family:var(--font-display); font-weight:700; font-size:46px; line-height:1.12; color:var(--text-strong);">Agenda un diagnóstico tecnológico inicial.</div>
+          <p style="margin:18px 0 0; font-size:var(--t-body); line-height:1.5; color:var(--text-muted);">Detectemos dónde tu empresa puede automatizar, integrar o mejorar con software e IA.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:22px; flex:0 0 auto;">
+          <a href="#" style="display:inline-flex; align-items:center; gap:14px; padding:22px 38px; border-radius:var(--radius-md); background:var(--accent-gradient); color:var(--nx-white); font-family:var(--font-display); font-weight:600; font-size:30px; text-decoration:none; box-shadow:var(--glow-blue-lg); white-space:nowrap;">
+            Agenda una llamada
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </a>
+          <div style="display:flex; align-items:center; gap:18px; font-family:var(--font-mono); font-size:var(--t-small); color:var(--text-muted); white-space:nowrap;">
+            <a href="mailto:hola@nexus.ad" style="color:var(--text-muted); text-decoration:none;">hola<span>&#64;</span>nexus.ad</a>
+            <span style="color:var(--text-faint);">·</span>
+            <a href="tel:+376123456" style="color:var(--text-muted); text-decoration:none;">+376 123 456</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</x-import>
+</x-dc>
+</body>
+</html>

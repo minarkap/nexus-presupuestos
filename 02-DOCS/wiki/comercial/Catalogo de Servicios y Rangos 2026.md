@@ -8,7 +8,7 @@ aliases: [catalogo-de-servicios-y-rangos-2026]
 topic: comercial
 status: stable
 sources: ["[Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)"]
-score: 12.0
+score: 18.0
 ---
 
 # Catálogo de Servicios y Rangos 2026

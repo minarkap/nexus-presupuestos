@@ -8,7 +8,7 @@ aliases: [metodo-de-estimacion-economica]
 topic: comercial
 status: stable
 sources: ["[Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)"]
-score: 12.0
+score: 18.0
 ---
 
 # Método de Estimación Económica

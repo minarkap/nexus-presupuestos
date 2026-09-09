@@ -8,7 +8,7 @@ aliases: [user-profile]
 topic: harness
 status: stable
 sources: ["Primer contacto de `init`, 2026-08-26"]
-score: 4.0
+score: 3.0
 ---
 
 # User Profile
@@ -19,7 +19,7 @@ score: 4.0
 - technical_level: non-technical            <!-- non-technical | mixed | technical -->
 - accompaniment_level: L3                    <!-- L0 | L1 | L2 | L3 -->
 - language: es                               <!-- the user's working language -->
-- last_updated: 2026-08-26
+- last_updated: 2026-09-02
 
 ## Who they are
 - eric.risco@andorratelecom.ad — pidió arrancar el arnés en este workspace.
@@ -45,7 +45,8 @@ score: 4.0
 - Sin manifiestos de proyecto (package.json, pyproject.toml, go.mod, pubspec.yaml, Cargo.toml).
 - Sin repositorio git (`.git/` ausente) — a decidir en Fase 4 GROUND.
 - Destino de los leads: un email al equipo (sin base de datos, sin CRM conectado).
-- Diseño: desde cero, propuesta libre (no hay marca que respetar).
+- Diseño: **marca definida** desde 2026-09-02 — Nexus Consulting, con design system instalado como
+  skill del proyecto (`nexus-consulting-design`). Ya no es propuesta libre.
 - Context7 (docs de librerías en vivo): ya conectado como MCP en la sesión.
 - Proveedor de email (Resend/SendGrid/Postmark): por decidir con `email-connector`.
 - Sub-agente `developer` en tier `balanced` (Sonnet) — `.rsc/developer.json`.
@@ -69,5 +70,9 @@ score: 4.0
 - Proveedor de email transaccional y dominio de envío (decisión de `email-connector`).
 - ¿Dónde se publica y con qué dominio? (decisión de `deployment`)
 - Volumen esperado de visitas y de envíos.
-- ¿La landing hereda la identidad visual de los documentos de la firma (serif, azul marino, acento
-  cobre) o se diseña de cero como dijo el usuario antes de que aparecieran los PDF?
+- ~~¿La landing hereda la identidad visual de los documentos de la firma?~~ **RESUELTO 2026-09-02**:
+  ni una cosa ni la otra. Apareció una marca real —**Nexus Consulting**— con masterprompt y design
+  system propios, y la landing la adopta por completo (dark navy, Sora/Inter/IBM Plex Mono, motivo de
+  nodos). Ver [D-0015](./decisions.md), [S-0014](../sdd/decisions.md) y
+  [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md). La estética serif clara con acento
+  cobre queda descartada.

@@ -8,7 +8,7 @@ aliases: [arsenal-operativo]
 topic: operations
 status: stable
 sources: ["01-TOOLS/README.md, 2026-08-26"]
-score: 4.0
+score: 3.0
 ---
 
 # Arsenal Operativo

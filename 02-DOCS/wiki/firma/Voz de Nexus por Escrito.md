@@ -8,10 +8,20 @@ aliases: [voz-de-nexus-por-escrito]
 topic: firma
 status: stable
 sources: ["[Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)", "[Masterprompt CEO](../../raw/firma/2026-08-26-masterprompt-ceo-nexus.md)"]
-score: 11.0
+score: 19.0
 ---
 
 # Voz de Nexus por Escrito
+
+> ⚠ **Superado en parte por [D-0015](../harness/decisions.md) (2026-09-02).** La marca canónica del
+> proyecto es ahora **Nexus Consulting** — ver [Marca Nexus Consulting](./Marca%20Nexus%20Consulting.md).
+> Este artículo describe *Nexus Strategy & Technology*, la identidad anterior: **nombre,
+> posicionamiento, geografía y catálogo de servicios ya no aplican al sitio público.** Se conserva sin
+> reescribir porque sigue siendo la fuente del catálogo de precios y del método de estimación, que no
+> se han migrado. Matiz para este artículo en concreto: las **prohibiciones** de tono (sin promesas de resultado, sin
+urgencia fabricada, sin descuentos, sin plazos) **siguen vigentes** — las respalda el principio 27
+de la constitución. Lo que cambia es la identidad de quien habla, no el listón de honestidad.
+
 
 > Sources: Criterios de estimación económica, edición 2026; Masterprompt CEO de Nexus
 > Raw: [Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md); [Masterprompt CEO](../../raw/firma/2026-08-26-masterprompt-ceo-nexus.md)
