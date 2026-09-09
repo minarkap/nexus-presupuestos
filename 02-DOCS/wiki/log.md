@@ -23,3 +23,9 @@
 - Creados inbox/ (+README, _processed/), raw/ (+worklog/), wiki/ (index, log, gaps, scores, .ingested), reports/, attachments/, audits/.
 - Vault de Obsidian: Articles.base, Worklog.base, Decisions.base, .obsidian/app.json (enlaces markdown relativos, sin wikilinks).
 - Límite de escaneo: .rscignore. Sin base vectorial, sin embeddings, sin RAG — navegación por estructura.
+
+## [2026-09-09] update | conexión a Vercel
+- Creada la tool `01-TOOLS/VERCEL/` (README, `.env.example`, `CREDENTIALS.md`, `test_connection.sh`). Sin `.env` real: el token lo pega el usuario.
+- Updated: 01-TOOLS/README.md (catálogo con RESEND, GOOGLE y VERCEL; flujos comunes), CLAUDE.md raíz (tabla de tooling).
+- Updated: harness/decisions.md (`D-0018` — publicación en Vercel desde el repositorio, Root Directory `03-APP`), harness/user-profile.md (pregunta abierta "¿dónde se publica?" resuelta; dominio sigue abierto).
+- Updated: [Arsenal Operativo](operations/Arsenal%20Operativo.md) — decía "vacío a propósito" y ya había tres tools.

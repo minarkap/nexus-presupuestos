@@ -45,17 +45,20 @@ para operar un servicio externo vive bajo `01-TOOLS/<SERVICIO>/`.
 | Tool | Categoría | Estado |
 |------|-----------|--------|
 | `_TEMPLATE` | boilerplate | Plantilla genérica. No es una tool: se copia para crear una. |
+| `RESEND` | correo transaccional | Activa. Credencial real y dominio verificado (`D-0013`). |
+| `GOOGLE` | hoja de registro + citas | Activa. Registro de respaldo de cada lead. |
+| `VERCEL` | publicación | Activa. Token de operación y prueba de humo del proyecto (`D-0018`). |
 
-Ninguna tool real todavía. La regla es **no tools especulativas**: un proveedor entra aquí cuando
-está integrado en el runtime o cuando hay una operación manual recurrente que duele. El proveedor de
-email transaccional (Resend / SendGrid / Postmark) será casi con seguridad la primera, en cuanto la
-skill `email-connector` lo elija.
+La regla es **no tools especulativas**: un proveedor entra aquí cuando está integrado en el runtime
+o cuando hay una operación manual recurrente que duele.
 
 ## Flujos comunes
 
 ```bash
-# Prueba de humo de cada tool (cuando exista alguna)
-# 01-TOOLS/<TOOL>/test_connection.sh
+# Prueba de humo de cada tool
+bash 01-TOOLS/RESEND/test_connection.sh
+bash 01-TOOLS/GOOGLE/test_connection.sh
+bash 01-TOOLS/VERCEL/test_connection.sh
 ```
 
 ## Añadir una tool nueva

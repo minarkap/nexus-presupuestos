@@ -223,3 +223,35 @@ score: 6.0
   único sustituto del historial, pero sigue vigente mientras no se enmiende. El principio 20 pasa de
   inaplicable a **activo**: autoría humana de los commits, sin `Co-Authored-By` de una IA.
 - supersedes: `D-0008` y `D-0012`.
+
+---
+## D-0018 — La landing se publica en Vercel, con el repositorio como origen
+- date: 2026-09-09
+- fase: operación (petición directa del usuario)
+- context: el perfil de usuario tenía abierta la pregunta "¿dónde se publica y con qué dominio?".
+  Con el workspace ya en git (`D-0014`) existe un origen del que una plataforma puede tirar. El
+  usuario pide subir `03-APP/` a Vercel y crear la conexión.
+- options considered:
+  1. **Vercel conectado al repositorio** (elegida): cada commit en `main` publica solo.
+  2. Vercel por CLI desde el portátil — descartada: publicar dependería de una máquina concreta y
+     de que alguien se acuerde de lanzar el comando.
+  3. Un servidor propio (Hetzner + Coolify u otro) — descartada por ahora: exige operar máquina,
+     certificados y actualizaciones para una landing de tráfico bajo.
+- decision: proyecto en Vercel apuntando a `Executive-Lab/nexus-presupuestos`, con **Root Directory
+  = `03-APP`** (la app no está en la raíz del repositorio), preset Next.js, Node 24.x y rama de
+  producción `main`. La conexión operativa vive en `01-TOOLS/VERCEL/` (token + prueba de humo).
+- why: Vercel es el hogar natural de Next.js — compila el App Router sin configuración y publica
+  desde git sin que nadie tenga que intervenir. El plan gratuito cubre el volumen previsto.
+- consecuencia asumida: las variables de entorno de producción pasan a vivir **también** en el panel
+  de Vercel, un segundo sitio donde una credencial puede filtrarse; el `.env.local` deja de ser la
+  única copia. Y todo lo que entre en `main` se publica: la rama pasa a ser producción.
+- qué NO decide esto: el dominio. Mientras no se elija, la landing vive en una URL `*.vercel.app`.
+- dónde vive: `01-TOOLS/VERCEL/` (README, `.env.example`, `CREDENTIALS.md`, `test_connection.sh`).
+  El `.env` con el token real queda fuera del repositorio.
+- pendiente: crear el proyecto en el panel de Vercel, pegar el token en `01-TOOLS/VERCEL/.env` y
+  cargar las variables de entorno del proyecto.
+- nota de numeración: esta decisión se redactó como `D-0015` y se renumeró a `D-0018` el 2026-09-09,
+  antes de publicarse. En paralelo, la rama `feat/sitio-nexus-consulting` ya había registrado
+  `D-0015`, `D-0016` y `D-0017` en el remoto. El hueco `D-0015`–`D-0017` que se ve en este fichero
+  desaparece al fusionar esa rama; no falta nada.
+- supersedes: none

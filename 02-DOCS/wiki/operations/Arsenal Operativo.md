@@ -1,19 +1,19 @@
 ---
 type: article
 title: Arsenal Operativo
-description: La capa 01-TOOLS del workspace: qué es, sus convenciones y por qué está vacía a propósito.
+description: La capa 01-TOOLS del workspace: qué es, sus convenciones y las tools activas.
 tags: [operations, tooling, 01-tools]
 timestamp: 2026-08-26T10:41:41Z
 aliases: [arsenal-operativo]
 topic: operations
 status: stable
-sources: ["01-TOOLS/README.md, 2026-08-26"]
+sources: ["01-TOOLS/README.md, 2026-09-09"]
 score: 4.0
 ---
 
 # Arsenal Operativo
 
-> Sources: 01-TOOLS/README.md, 2026-08-26
+> Sources: 01-TOOLS/README.md, 2026-09-09
 > Raw: (el propio README de `01-TOOLS/` — no se duplica en `raw/`)
 
 ## Overview
@@ -22,16 +22,17 @@ score: 4.0
 co-localizadas junto a los scripts que las consumen. **Operaciones, no runtime**: aquí vive lo que un
 operador lanza desde el terminal, no el SDK que la app usa en producción.
 
-## Estado actual: vacío a propósito
+## Estado actual: tres tools activas
 
-Sólo existe `_TEMPLATE/`, que no es una tool sino la plantilla que se copia para crear una. Ningún
-proveedor tiene carpeta porque la regla del arnés es **no tools especulativas**: un proveedor entra
-cuando está integrado en el runtime o cuando hay una operación manual recurrente que duele. Sin
-código, no hay evidencia.
+Además de `_TEMPLATE/` — que no es una tool sino la plantilla que se copia para crear una — hay tres
+proveedores con carpeta propia. Cada uno entró cumpliendo la regla de **no tools especulativas**: un
+proveedor entra cuando está integrado en el runtime o cuando hay una operación manual recurrente.
 
-La primera tool real será casi con seguridad el **proveedor de email transaccional**, en cuanto
-`email-connector` elija entre Resend, SendGrid o Postmark. Es la pieza crítica del embudo: sin base de
-datos, un email que no llega es un lead perdido.
+| Tool | Para qué | Origen |
+|------|----------|--------|
+| `RESEND` | Correo transaccional de la landing. Es la pieza crítica del embudo: sin base de datos, un email que no llega es un lead perdido. | `S-0012`, credencial y dominio en `D-0013`. |
+| `GOOGLE` | Hoja de cálculo del registro de respaldo y página de citas compartida. | Registro de cada lead al margen del correo. |
+| `VERCEL` | Publicación de `03-APP/`. El token opera el proyecto; la prueba de humo confirma que la carpeta raíz sigue siendo `03-APP`. | `D-0018`. |
 
 ## Convenciones que hereda cada tool
 
@@ -45,4 +46,4 @@ datos, un email que no llega es un lead perdido.
 ## Related
 
 - [Instrucciones Raíz del Workspace](../meta/Instrucciones%20Raiz%20del%20Workspace.md) — el gobierno general.
-- [Landing de Captación de Leads](../producto/Landing%20de%20Captacion%20de%20Leads.md) — de dónde vendrá la necesidad de la primera tool.
+- [Landing de Captación de Leads](../producto/Landing%20de%20Captacion%20de%20Leads.md) — el producto al que sirven estas tools.

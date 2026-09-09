@@ -80,6 +80,7 @@ Las operaciones manuales contra servicios externos viven en `01-TOOLS/`. Cada ca
 |------|----------|
 | `RESEND` | Correo transaccional de la landing (decisión S-0012). `test_connection.sh` valida la clave sin enviar nada. |
 | `GOOGLE` | Hoja de cálculo del registro de respaldo y página de citas compartida. `test_connection.sh` firma el token y lee la hoja. |
+| `VERCEL` | Publicación de `03-APP/` (decisión D-0018). `test_connection.sh` valida el token y que la carpeta raíz del proyecto sea `03-APP`. |
 
 Para añadir una tool: `cp -r 01-TOOLS/_TEMPLATE 01-TOOLS/<NOMBRE>` y sigue el README de `01-TOOLS/`.
 

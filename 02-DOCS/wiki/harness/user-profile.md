@@ -19,7 +19,7 @@ score: 4.0
 - technical_level: non-technical            <!-- non-technical | mixed | technical -->
 - accompaniment_level: L3                    <!-- L0 | L1 | L2 | L3 -->
 - language: es                               <!-- the user's working language -->
-- last_updated: 2026-08-26
+- last_updated: 2026-09-09
 
 ## Who they are
 - eric.risco@andorratelecom.ad — pidió arrancar el arnés en este workspace.
@@ -67,7 +67,9 @@ score: 4.0
 - **Con qué se agenda la llamada del lead cualificado.** Integración externa sin elegir; es la única
   pieza funcional del flujo que no tiene fuente.
 - Proveedor de email transaccional y dominio de envío (decisión de `email-connector`).
-- ¿Dónde se publica y con qué dominio? (decisión de `deployment`)
+- ~~¿Dónde se publica?~~ **RESUELTO 2026-09-09** (`D-0018`): Vercel, conectado al repositorio,
+  con la carpeta `03-APP` como raíz. **Sigue abierto el dominio**: sin uno propio, la landing
+  queda en una URL `*.vercel.app`.
 - Volumen esperado de visitas y de envíos.
 - ¿La landing hereda la identidad visual de los documentos de la firma (serif, azul marino, acento
   cobre) o se diseña de cero como dijo el usuario antes de que aparecieran los PDF?
