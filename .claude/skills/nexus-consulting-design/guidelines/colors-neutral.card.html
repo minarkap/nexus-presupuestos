@@ -1,0 +1,26 @@
+<!-- @dsCard group="Colors" viewport="700x140" name="Neutral / Slate" subtitle="Text & border neutral ramp" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:var(--surface-base); padding:22px 24px; }
+  .ramp { display:flex; gap:10px; }
+  .step { flex:1; }
+  .chip { height:64px; border-radius:var(--radius-md); box-shadow:var(--inset-hairline); }
+  .lab { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); margin-top:7px; }
+</style>
+</head>
+<body>
+  <div class="ramp">
+    <div class="step"><div class="chip" style="background:#F5F8FF"></div><div class="lab">50</div></div>
+    <div class="step"><div class="chip" style="background:#E2E9F5"></div><div class="lab">100</div></div>
+    <div class="step"><div class="chip" style="background:#C4D0E3"></div><div class="lab">200</div></div>
+    <div class="step"><div class="chip" style="background:#94A3B8"></div><div class="lab">300</div></div>
+    <div class="step"><div class="chip" style="background:#64748B"></div><div class="lab">400</div></div>
+    <div class="step"><div class="chip" style="background:#475569"></div><div class="lab">500</div></div>
+    <div class="step"><div class="chip" style="background:#334155"></div><div class="lab">600</div></div>
+  </div>
+</body>
+</html>

@@ -4,7 +4,7 @@ import { priceService } from './pricing'
 import { SERVICES } from './catalog'
 import type { Contact } from './types'
 
-const contacto: Contact = { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme' }
+const contacto: Contact = { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme', consent: true }
 const precio = priceService(SERVICES.ai_opportunity_assessment, '250-999', 'inicial', '3-6m')
 
 const ROTULOS = ['Tesis', 'Problema', 'Enfoque', 'Diferenciación', 'Resultado esperado', 'Siguiente paso']
@@ -67,7 +67,7 @@ describe('ProposalComposer — casos que la redacción tiene que resolver', () =
 
   it('un nombre de una sola palabra no rompe el saludo', () => {
     const t = composeProposal(
-      { name: 'Marta', email: 'marta@acme.ad', company: 'Acme' },
+      { name: 'Marta', email: 'marta@acme.ad', company: 'Acme', consent: true },
       SERVICES.ai_opportunity_assessment, precio, 'qualified',
     )
     expect(t.startsWith('Marta,')).toBe(true)

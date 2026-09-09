@@ -8,7 +8,7 @@ aliases: [cualificacion-de-oportunidades]
 topic: comercial
 status: stable
 sources: ["[Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)"]
-score: 14.0
+score: 16.0
 ---
 
 # Cualificación de Oportunidades

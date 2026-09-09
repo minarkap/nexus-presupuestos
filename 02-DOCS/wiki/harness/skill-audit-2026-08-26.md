@@ -8,7 +8,7 @@ aliases: [skill-audit-2026-08-26]
 topic: harness
 status: stable
 sources: ["`npx @ericrisco/rsc audit`, 2026-08-26"]
-score: 4.0
+score: 3.0
 ---
 
 # Skill audit — 2026-08-26

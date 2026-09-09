@@ -8,7 +8,7 @@ aliases: [instrucciones-raiz-del-workspace]
 topic: meta
 status: stable
 sources: ["CLAUDE.md; AGENTS.md, 2026-08-26"]
-score: 6.0
+score: 5.0
 ---
 
 # Instrucciones Raíz del Workspace

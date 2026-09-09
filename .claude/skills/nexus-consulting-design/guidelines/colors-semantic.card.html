@@ -1,0 +1,24 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Semantic Feedback" subtitle="Status colors on dark surfaces" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:var(--surface-base); padding:22px 24px; }
+  .row { display:flex; gap:14px; }
+  .sw { flex:1; }
+  .chip { height:56px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:600; font-size:13px; }
+  .name { font-size:12px; color:var(--text-body); margin-top:9px; }
+  .hex { font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:#2DD4A7; color:#06231B">Success</div><div class="name">Success</div><div class="hex">#2DD4A7</div></div>
+    <div class="sw"><div class="chip" style="background:#FBBF54; color:#3A2A06">Warning</div><div class="name">Warning</div><div class="hex">#FBBF54</div></div>
+    <div class="sw"><div class="chip" style="background:#FB6A6A; color:#360B0B">Danger</div><div class="name">Danger</div><div class="hex">#FB6A6A</div></div>
+    <div class="sw"><div class="chip" style="background:#21D4FD; color:#06222B">Info</div><div class="name">Info</div><div class="hex">#21D4FD</div></div>
+  </div>
+</body>
+</html>

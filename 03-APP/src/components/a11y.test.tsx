@@ -85,6 +85,7 @@ describe('Accesibilidad — estado y errores', () => {
     const user = userEvent.setup()
     render(<FormWizard submissionId="s1" onSubmit={onSubmit} onDone={vi.fn()} />)
     await irAlContacto(user)
+    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: 'Ver mi estimación' }))
 
     const campo = screen.getByLabelText('Correo de trabajo')

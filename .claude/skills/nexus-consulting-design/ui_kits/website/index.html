@@ -1,0 +1,52 @@
+<!-- @dsCard group="Website" viewport="1280x760" name="Marketing site — Home" subtitle="Hero, services, contact" -->
+<!-- @startingPoint section="Website" subtitle="Nexus marketing homepage — hero, services, CTA" viewport="1280x900" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nexus Consulting — El punto donde todo conecta</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { margin:0; background:var(--surface-base); }
+  * { box-sizing:border-box; }
+  ::selection { background:rgba(33,212,253,0.3); }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../../_ds_bundle.js"></script>
+  <script type="text/babel">
+    const { Button, Card, Badge, Input } = window.NexusConsultingDesignSystem_c7745a;
+    Object.assign(window, { Button, Card, Badge, Input });
+  </script>
+  <script type="text/babel" src="helpers.jsx"></script>
+  <script type="text/babel" src="NavBar.jsx"></script>
+  <script type="text/babel" src="Hero.jsx"></script>
+  <script type="text/babel" src="Services.jsx"></script>
+  <script type="text/babel" src="CTA.jsx"></script>
+  <script type="text/babel" src="Footer.jsx"></script>
+  <script type="text/babel">
+    function App() {
+      const scrollToContact = () => {
+        const el = document.getElementById('contacto');
+        if (el) window.scrollTo({ top: el.offsetTop - 70, behavior: 'smooth' });
+      };
+      return (
+        <div>
+          <NavBar onCta={scrollToContact} />
+          <Hero onPrimary={scrollToContact} onSecondary={scrollToContact} />
+          <Services />
+          <CTA />
+          <Footer />
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

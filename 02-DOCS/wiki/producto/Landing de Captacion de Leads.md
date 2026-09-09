@@ -8,7 +8,7 @@ aliases: [landing-de-captacion-de-leads]
 topic: producto
 status: draft
 sources: ["[Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)"]
-score: 14.0
+score: 20.0
 ---
 
 # Landing de Captación de Leads

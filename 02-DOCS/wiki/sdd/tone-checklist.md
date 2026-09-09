@@ -1,69 +1,75 @@
 ---
 type: checklist
 title: Lista de comprobación de tono — bloqueo de publicación
-description: La revisión humana que exige CA-19 y el principio 28. Sin acta firmada, el criterio no está verificado.
+description: La revisión humana que exige el principio 28 (ampliada a doce superficies por el 36). Sin acta firmada, el criterio no está verificado y el sitio no se publica.
 tags: [sdd, tono, verify, bloqueo-publicacion]
-timestamp: 2026-08-26T17:30:00Z
+timestamp: 2026-09-02T17:20:00Z
 topic: sdd
 status: stable
 ---
 
 # Lista de comprobación de tono
 
-> **Esto no lo puede firmar un agente.** El principio 28 exige revisión humana con acta: quién la
-> pasó y cuándo. Hasta que exista esa firma, **CA-19 no está verificado** y la landing no se publica.
-> Las pruebas automáticas ya cazan los anti-patrones literales (`landing.test.tsx`,
-> `proposal.test.ts`, `outcome.test.ts`); lo que ninguna prueba puede juzgar es si el texto *suena*
-> a Nexus.
+> **Esto no lo puede firmar un agente.** El principio 28 exige revisión humana con acta: quién la pasó y
+> cuándo. Las pruebas automáticas cazan el léxico prohibido y la advertencia de «orientativo» junto a
+> cada cifra (`src/content/tone.test.ts`, `src/design/brand.test.ts`); lo que ninguna prueba puede
+> juzgar es si el texto **suena a Nexus Consulting**.
 
-Fuente del criterio: [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Escrito.md).
+Fuente del criterio: [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md) (voz, léxico) y las
+prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Escrito.md).
 
-## Superficies a revisar
+## Las doce superficies (spec `sitio-nexus-consulting`, principio 36)
 
 | # | Superficie | Dónde vive |
 |---|---|---|
-| S1 | Titular y entradilla de la landing | `03-APP/src/components/Landing.tsx` |
-| S2 | Las cuatro líneas de servicio | `03-APP/src/components/Landing.tsx` |
-| S3 | Los enunciados de las 8 preguntas | `03-APP/src/components/FormWizard.tsx` |
-| S4 | Las etiquetas de las opciones | `03-APP/src/core/options.ts` |
-| S5 | Las tres pantallas de resultado | `03-APP/src/core/outcome.ts` |
-| S6 | El correo de propuesta al cliente | `03-APP/src/core/proposal.ts` |
-| S7 | El aviso interno al equipo | `03-APP/src/core/submit.ts` |
+| S1 | Inicio: hero, tesis, líneas, método, «Antes de la llamada», cierre | `03-APP/src/content/home.ts` |
+| S2 | Servicios: intro, bloques por servicio, línea sin rango, aviso | `src/content/servicios.ts`, `src/content/services.public.ts` |
+| S3 | Cómo trabajamos: método, llamada de alcance, preguntas frecuentes | `src/content/como-trabajamos.ts` |
+| S4 | ~~Artículo «SEO frente a GEO»~~ — **retirado** (`S-0020`); el ID se conserva | — |
+| S5 | Aviso de privacidad (**borrador para revisión legal**) | `src/content/privacidad.ts` |
+| S6 | Página de no encontrado | `src/content/not-found.ts` |
+| S7 | Enunciados de las ocho pantallas del estimador, incluida la casilla de consentimiento | `src/components/FormWizard.tsx`, `src/app/presupuesto/page.tsx` |
+| S8 | Etiquetas de las opciones | `src/core/options.ts` |
+| S9 | Las tres pantallas de resultado | `src/core/outcome.ts`, `src/components/ResultScreen.tsx` |
+| S10 | Correo de propuesta al cliente | `src/core/proposal.ts` |
+| S11 | Aviso interno al equipo | `src/core/submit.ts` |
+| S12 | Metadatos: títulos, descripciones, textos de tarjeta, `alt`, `llms.txt` | `src/seo/metadata.ts`, `src/app/llms.txt/route.ts`, `src/app/opengraph-image.tsx` |
 
 ## Qué se comprueba en cada una
 
 | Comprobación | Por qué |
 |---|---|
-| **No promete resultado.** Ni ROI, ni multiplicadores, ni «garantizamos» | El gancho declarado es demostrar que se entiende el problema, no prometer un final |
-| **No fabrica urgencia.** Ni plazas limitadas, ni cuentas atrás | Anti-patrón explícito de la firma |
-| **No hay descuentos ni precios cerrados** | Regla innegociable del método de estimación (constitution 6) |
-| **No promete plazos de entrega** | Íbid. Ni «en 6 semanas» ni equivalentes |
-| **La advertencia de orientativo acompaña a toda cifra** | constitution 5, CA-05 |
-| **El correo al cliente se lee como un texto, no como una plantilla** | CA-20: la estructura de la casa está, los rótulos no |
-| **No insulta la inteligencia del lector** | El visitante objetivo es un directivo |
-| **Suena a la firma, no a una web genérica de consultoría** | Lo único de esta lista que un humano tiene que juzgar de verdad |
+| **No promete resultado** (ni ROI, ni multiplicadores, ni «garantizamos») | El gancho es demostrar que se entiende el problema |
+| **No fabrica urgencia** | Anti-patrón de la marca |
+| **Sin descuentos ni precios cerrados**; **sin plazos prometidos** | Constitución 6 |
+| **«Orientativo» acompaña a toda cifra** | Constitución 5 |
+| **Tú / nosotros, verbos delante, sentence case, sin emoji** | Marca Nexus Consulting §Cómo suena |
+| **Sin léxico prohibido** (disruptivo, revolucion-, 360, siguiente nivel, sin límites, mágico…) | Masterprompt §13 |
+| **Ninguna métrica de negocio inventada** | Masterprompt §23; principio 27 |
+| **Suena a Nexus Consulting**, no a una web genérica de consultoría | Lo único que solo una persona puede juzgar |
 
 ## Acta
-
-Rellenar antes de publicar. Una superficie sin marcar es un bloqueo, no un descuido.
 
 | Superficie | ¿Pasa? | Revisor | Fecha | Notas |
 |---|---|---|---|---|
 | S1 | ☐ | | | |
 | S2 | ☐ | | | |
 | S3 | ☐ | | | |
-| S4 | ☐ | | | |
-| S5 | ☐ | | | |
+| S4 | — | | | Retirado |
+| S5 | ☐ | | | Requiere además revisión legal |
 | S6 | ☐ | | | |
 | S7 | ☐ | | | |
+| S8 | ☐ | | | |
+| S9 | ☐ | | | |
+| S10 | ☐ | | | |
+| S11 | ☐ | | | |
+| S12 | ☐ | | | |
 
 **Firma de la revisión:** ______________________  **Fecha:** ____________
 
----
-
 ## Deuda de demostración a retirar antes de publicar
 
-- [ ] Borrar `03-APP/src/app/agenda-demo/` (sustituto local de la página de citas, 2026-08-26).
-- [ ] Poner la URL real del calendario compartido del equipo en `NEXT_PUBLIC_CALENDAR_URL`.
-- [ ] Comprobar que esa página real **acepta ser incrustada** (riesgo R-3). Si no, queda el enlace
-      en pestaña nueva, que ya está implementado.
+- [x] `03-APP/src/app/agenda-demo/` borrado (2026-09-02).
+- [ ] Poner la URL real del calendario compartido en `NEXT_PUBLIC_CALENDAR_URL` y comprobar que acepta incrustarse.
+- [ ] Fijar `NEXT_PUBLIC_SITE_URL` al dominio real del despliegue (por defecto `https://nexus.ad`).
+- [ ] Revisión legal de `/privacidad` (plazo de conservación propuesto: 12 meses).

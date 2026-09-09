@@ -1,4 +1,35 @@
 {
-  "Masterprompt.pdf": { "hash": "sha256:2933756fd4a80f086ccc7023e9a77855f3d70de0de653dc8d35183d1aafe566b", "ingested": "2026-08-26", "topic": "firma", "raw": "02-DOCS/raw/firma/_originals/Masterprompt.pdf" },
-  "Estimacion Economica.pdf": { "hash": "sha256:d59c6f9dffb3d14edde9da93adc0d63133a3d18957c75499adf55df7053cf008", "ingested": "2026-08-26", "topic": "comercial", "raw": "02-DOCS/raw/comercial/_originals/Estimacion-Economica.pdf" }
+  "Masterprompt.pdf": {
+    "hash": "sha256:2933756fd4a80f086ccc7023e9a77855f3d70de0de653dc8d35183d1aafe566b",
+    "ingested": "2026-08-26",
+    "topic": "firma",
+    "raw": "02-DOCS/raw/firma/_originals/Masterprompt.pdf"
+  },
+  "Estimacion Economica.pdf": {
+    "hash": "sha256:d59c6f9dffb3d14edde9da93adc0d63133a3d18957c75499adf55df7053cf008",
+    "ingested": "2026-08-26",
+    "topic": "comercial",
+    "raw": "02-DOCS/raw/comercial/_originals/Estimacion-Economica.pdf"
+  },
+  "../referencias/nexus_consulting_masterprompt_identidad_marca.md": {
+    "topic": "firma",
+    "raw": "02-DOCS/raw/firma/_originals/nexus_consulting_masterprompt_identidad_marca.md",
+    "disposition": "copied (carpeta mantenida por el usuario en la raiz del workspace de clase); consolidacion de la raiz pendiente de consentimiento",
+    "hash": "sha256:f1ef2682536da53e8fd88700173432ddf01c0da3082af12b364b9fa78bc69fca",
+    "ingested": "2026-09-02"
+  },
+  "../referencias/Nexus Consulting Landing.html": {
+    "topic": "producto",
+    "raw": "02-DOCS/raw/producto/_originals/Nexus Consulting Landing.html",
+    "disposition": "copied (referencia visual, no compilada a articulo)",
+    "hash": "sha256:9a821f4da4d31cac7a6c62ecf529cbf03d6f8c791857b6a7c6b277c950f56da0",
+    "ingested": "2026-09-02"
+  },
+  "../referencias/Nexus Consulting - Presentación.dc.html": {
+    "topic": "producto",
+    "raw": "02-DOCS/raw/producto/_originals/Nexus Consulting - Presentación.dc.html",
+    "disposition": "copied (referencia visual, no compilada a articulo)",
+    "hash": "sha256:d8062e6e7217bd98f5104b563508ee2d1d97b08a48ddd9518311b3d5f1fbb1a0",
+    "ingested": "2026-09-02"
+  }
 }

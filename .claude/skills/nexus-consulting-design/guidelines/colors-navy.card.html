@@ -1,0 +1,26 @@
+<!-- @dsCard group="Colors" viewport="700x140" name="Navy Surfaces" subtitle="Background & card elevation ramp" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:#020812; padding:22px 24px; }
+  .ramp { display:flex; gap:10px; }
+  .step { flex:1; }
+  .chip { height:64px; border-radius:var(--radius-md); box-shadow:var(--inset-hairline); }
+  .lab { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); margin-top:7px; }
+  .nm { font-size:10px; color:var(--text-faint); margin-top:2px; }
+</style>
+</head>
+<body>
+  <div class="ramp">
+    <div class="step"><div class="chip" style="background:#050C16"></div><div class="lab">950</div><div class="nm">sunken</div></div>
+    <div class="step"><div class="chip" style="background:#07111F"></div><div class="lab">900</div><div class="nm">base</div></div>
+    <div class="step"><div class="chip" style="background:#0A192C"></div><div class="lab">850</div><div class="nm">card</div></div>
+    <div class="step"><div class="chip" style="background:#0E2238"></div><div class="lab">800</div><div class="nm">raised</div></div>
+    <div class="step"><div class="chip" style="background:#142B45"></div><div class="lab">700</div><div class="nm">hover</div></div>
+    <div class="step"><div class="chip" style="background:#1E293B"></div><div class="lab">600</div><div class="nm">graphite</div></div>
+  </div>
+</body>
+</html>

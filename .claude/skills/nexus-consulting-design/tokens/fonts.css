@@ -1,0 +1,6 @@
+/* Nexus Consulting — Webfonts
+   Primary: Sora (geometric, modern, technological)
+   Secondary: Inter (neutral, highly legible for UI & long text)
+   Both are Google Fonts — loaded here so consumers get them automatically. */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');

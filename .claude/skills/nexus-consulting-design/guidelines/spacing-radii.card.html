@@ -1,0 +1,26 @@
+<!-- @dsCard group="Spacing" viewport="700x160" name="Corner Radii" subtitle="From precise xs to pill" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:var(--surface-base); padding:24px 28px; }
+  .row { display:flex; gap:16px; align-items:flex-end; }
+  .item { text-align:center; }
+  .box { width:70px; height:70px; background:var(--surface-card); border:1px solid var(--border-default); border-top-left-radius:0; }
+  .lab { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); margin-top:8px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box" style="border-radius:4px; border-top-left-radius:4px"></div><div class="lab">xs·4</div></div>
+    <div class="item"><div class="box" style="border-radius:6px"></div><div class="lab">sm·6</div></div>
+    <div class="item"><div class="box" style="border-radius:10px"></div><div class="lab">md·10</div></div>
+    <div class="item"><div class="box" style="border-radius:14px"></div><div class="lab">lg·14</div></div>
+    <div class="item"><div class="box" style="border-radius:20px"></div><div class="lab">xl·20</div></div>
+    <div class="item"><div class="box" style="border-radius:28px"></div><div class="lab">2xl·28</div></div>
+    <div class="item"><div class="box" style="border-radius:999px"></div><div class="lab">pill</div></div>
+  </div>
+</body>
+</html>

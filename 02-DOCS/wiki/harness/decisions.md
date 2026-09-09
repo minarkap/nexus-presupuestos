@@ -8,7 +8,7 @@ aliases: [decisions]
 topic: harness
 status: stable
 sources: ["Sesion de arranque del arnes, 2026-08-26"]
-score: 6.0
+score: 21.0
 ---
 
 # Decisions Log (append-only)
@@ -225,6 +225,97 @@ score: 6.0
 - supersedes: `D-0008` y `D-0012`.
 
 ---
+## D-0015 — Marca canónica: Nexus Consulting
+
+- fecha: 2026-09-02
+- context: el proyecto contenía **dos marcas incompatibles**. El cerebro y el copy de la app hablaban
+  de *Nexus Strategy & Technology* (boutique iberoamericana de estrategia, transformación, IA, ESG,
+  ciberseguridad y operaciones; tres sedes; estética serif clara sobre papel crema). El material que
+  el usuario aportó en `referencias/` y el design system descargado hablan de *Nexus Consulting*
+  (consultora tecnológica premium en Andorra la Vella; software a medida, IA aplicada, automatización,
+  integración y consultoría tecnológica; dark navy con azul eléctrico y cian; motivo de nodos).
+  Nombre, posicionamiento, catálogo, geografía, audiencia y estética diferían en todo.
+- options considered:
+  1. **Nexus Consulting es la marca canónica** (recomendada y elegida).
+  2. Mantener *Strategy & Technology* y tomar del design system solo la capa visual — descartada por
+     el usuario. Habría dejado el system descabezado: los logos y el motivo de nodos son de Nexus
+     Consulting y no se podrían usar.
+  3. Coexistencia en dos capas (Consulting pública, Strategy & Technology interna) — descartada:
+     obliga a mantener dos identidades sincronizadas y a documentar una frontera que ningún agente
+     futuro respetaría en un email a un lead.
+- decision: **Nexus Consulting**. Esencia *"El punto donde todo conecta"*, claim *"Tecnología que
+  conecta. Soluciones que avanzan."*, sede Andorra la Vella, audiencia de CEOs/COOs/fundadores de
+  empresas B2B en crecimiento. Fuente de verdad:
+  [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md), destilada del masterprompt
+  aportado por el usuario.
+- why: el masterprompt y el design system son material de marca **real, completo y coherente entre
+  sí** (misma paleta, misma tipografía, mismo motivo). *Strategy & Technology* era la ficción
+  didáctica de una clase anterior, sin activos visuales de ningún tipo.
+- consecuencia asumida — **lo que queda desalineado y no se ha tocado**: el catálogo de precios
+  (`03-APP/src/core/catalog.ts` y
+  [Catálogo 2026](../comercial/Catalogo%20de%20Servicios%20y%20Rangos%202026.md)) describe seis
+  servicios de *Strategy & Technology* —AI Opportunity Assessment, AI Transformation Program, AI
+  Executive Advisory, Cyber Resilience Assessment, ESG Strategy & Compliance, Custom AI Solutions—
+  que **Nexus Consulting no vende**: su oferta son cinco áreas distintas y no incluye ESG ni
+  ciberseguridad. Los importes (hasta 350.000 €, programas CSRD, NIS2/DORA) son de consultoría
+  enterprise, no de las pymes y scaleups a las que habla Nexus Consulting. Está registrado como hueco
+  abierto en [gaps.md](../gaps.md); resolverlo toca reglas de producto protegidas por los principios
+  4–11 y 16 de la constitución, incluida la prueba de regresión anclada a 28.000 – 35.000 €.
+  **Decisión pendiente del usuario, no de un agente.**
+- supersedes: la identidad descrita en los tres artículos de `firma/`, que quedan anotados como
+  superados en parte. No se han reescrito: el usuario pidió ordenar, no ejecutar.
+
+---
+
+## D-0016 — El design system vive como skill del proyecto
+
+- fecha: 2026-09-02
+- context: el *Nexus Consulting Design System* estaba en `~/Downloads` (12 MB). Trae `SKILL.md` con
+  `name: nexus-consulting-design` y `user-invocable: true`, es decir, viene empaquetado como Agent
+  Skill, no como una carpeta de assets.
+- options considered:
+  1. **Instalarlo en `.claude/skills/nexus-consulting-design/`** del subproyecto (elegida).
+  2. Dejarlo en `03-APP/` como carpeta de assets — descartada: se pierde la activación automática y
+     el agente no sabría que existe hasta que alguien se acordara de mencionarlo.
+  3. Volcarlo en el cerebro (`02-DOCS/raw/`) — descartada: `raw/` es material inmutable de consulta;
+     un design system es una herramienta que se ejecuta, no una fuente que se lee.
+- decision: instalado en `.claude/skills/nexus-consulting-design/`, junto a las otras 34 skills del
+  proyecto. Así se activa solo cuando se trabaje en interfaz, sin depender de que nadie lo recuerde.
+- why: su propio `SKILL.md` declara la intención del autor. Respetarla es gratis y da activación
+  automática.
+- limpieza aplicada: **12 MB → 6,6 MB sin perder información.** Se eliminaron de la copia instalada
+  los tres PNG de `uploads/` que eran **duplicados byte a byte** (SHA-256 verificado) de sus
+  equivalentes en `assets/`, más dos `.thumbnail` de la herramienta de diseño. Se conservó
+  `uploads/nexus_palette_reference.pdf`, que no tiene equivalente. La tabla de procedencia del
+  `readme.md` lleva nota de la deduplicación. El original íntegro sigue en `~/Downloads`.
+- pendiente: el espejo de Codex (`.codex/rsc/`) lo gestiona `npx @ericrisco/rsc` y **no** se ha
+  tocado a mano. Si se quiere el design system también en Codex, hay que hacerlo por la herramienta.
+
+---
+
+## D-0017 — El material de `referencias/` se consolida en el cerebro del subproyecto
+
+- fecha: 2026-09-02
+- context: la raíz del workspace de clase (`ClaseSEOGEO/referencias/`) contenía tres piezas de marca
+  de Nexus Consulting: el masterprompt de identidad (22 KB de markdown), una landing HTML de 1 MB y
+  una presentación `.dc.html`. Son material del subproyecto, no del workspace de formación.
+- options considered:
+  1. **Copiar al cerebro del subproyecto** y proponer la limpieza de la raíz (elegida).
+  2. Mover directamente, dejando la raíz limpia de una vez — bloqueado por el guard de permisos, y
+     además el protocolo reserva el movimiento para ficheros sueltos en la raíz, no para carpetas que
+     el usuario ha organizado.
+  3. Ingerirlo en el cerebro del workspace raíz — descartada: es marca de Nexus Consulting, y el
+     workspace raíz es de formación sobre arneses.
+- decision: copiado a `02-DOCS/raw/firma/_originals/` (el masterprompt) y
+  `02-DOCS/raw/producto/_originals/` (landing y presentación), con hash verificado. Compilado a
+  [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md).
+- why: el masterprompt es ahora la fuente de verdad de la identidad (D-0015); tiene que vivir donde
+  el proyecto lo lea.
+- pendiente de consentimiento: `ClaseSEOGEO/referencias/` sigue existiendo con los tres ficheros
+  originales. Está duplicado, no perdido. Borrarlo requiere permiso explícito y citado del usuario.
+
+---
+
 ## D-0018 — La landing se publica en Vercel, con el repositorio como origen
 - date: 2026-09-09
 - fase: operación (petición directa del usuario)
@@ -252,6 +343,6 @@ score: 6.0
   cargar las variables de entorno del proyecto.
 - nota de numeración: esta decisión se redactó como `D-0015` y se renumeró a `D-0018` el 2026-09-09,
   antes de publicarse. En paralelo, la rama `feat/sitio-nexus-consulting` ya había registrado
-  `D-0015`, `D-0016` y `D-0017` en el remoto. El hueco `D-0015`–`D-0017` que se ve en este fichero
-  desaparece al fusionar esa rama; no falta nada.
+  `D-0015`, `D-0016` y `D-0017` en el remoto. Esa rama ya está fusionada, así que la numeración de
+  este fichero es continua: no falta nada.
 - supersedes: none
