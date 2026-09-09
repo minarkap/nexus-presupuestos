@@ -1,0 +1,90 @@
+/* Nexus Consulting — Color tokens
+   "The point where everything connects." Dark navy base, electric blue + cyan accents. */
+
+:root {
+  /* ---- Brand core (from palette reference) ---- */
+  --nx-night:      #07111F; /* Azul noche — base background */
+  --nx-blue:       #145CFF; /* Azul Nexus — primary */
+  --nx-cyan:       #21D4FD; /* Cian eléctrico — accent */
+  --nx-white:      #F5F8FF; /* Blanco frío */
+  --nx-graphite:   #1E293B; /* Gris grafito — surfaces */
+  --nx-technical:  #94A3B8; /* Gris técnico — muted */
+
+  /* ---- Navy ramp (derived, cool-shifted) ---- */
+  --nx-navy-950:   #050C16;
+  --nx-navy-900:   #07111F;
+  --nx-navy-850:   #0A192C;
+  --nx-navy-800:   #0E2238;
+  --nx-navy-700:   #142B45;
+  --nx-navy-600:   #1E293B;
+  --nx-navy-500:   #2B3A52;
+
+  /* ---- Blue ramp ---- */
+  --nx-blue-700:   #0B3FCC;
+  --nx-blue-600:   #0F4CE6;
+  --nx-blue-500:   #145CFF;
+  --nx-blue-400:   #4A82FF;
+  --nx-blue-300:   #84A9FF;
+
+  /* ---- Cyan ramp ---- */
+  --nx-cyan-600:   #0FB3DB;
+  --nx-cyan-500:   #21D4FD;
+  --nx-cyan-400:   #5FE2FE;
+  --nx-cyan-300:   #9CEEFF;
+
+  /* ---- Neutral / slate ramp ---- */
+  --nx-slate-50:   #F5F8FF;
+  --nx-slate-100:  #E2E9F5;
+  --nx-slate-200:  #C4D0E3;
+  --nx-slate-300:  #94A3B8;
+  --nx-slate-400:  #64748B;
+  --nx-slate-500:  #475569;
+  --nx-slate-600:  #334155;
+
+  /* ---- Semantic feedback ---- */
+  --nx-success:    #2DD4A7;
+  --nx-warning:    #FBBF54;
+  --nx-danger:     #FB6A6A;
+  --nx-info:       var(--nx-cyan-500);
+
+  /* ===================================================
+     SEMANTIC ALIASES — prefer these in product code
+     =================================================== */
+
+  /* Surfaces (dark theme is the brand default) */
+  --surface-base:      var(--nx-navy-900);
+  --surface-sunken:    var(--nx-navy-950);
+  --surface-card:      var(--nx-navy-850);
+  --surface-raised:    var(--nx-navy-800);
+  --surface-overlay:   rgba(10, 25, 44, 0.82);
+  --surface-inverse:   var(--nx-slate-50);
+
+  /* Text */
+  --text-strong:       var(--nx-white);
+  --text-body:         #C8D4E6;
+  --text-muted:        var(--nx-slate-300);
+  --text-faint:        var(--nx-slate-400);
+  --text-on-accent:    var(--nx-white);
+  --text-on-light:     var(--nx-navy-900);
+  --text-link:         var(--nx-cyan-400);
+
+  /* Brand accents */
+  --accent-primary:    var(--nx-blue-500);
+  --accent-secondary:  var(--nx-cyan-500);
+  --accent-gradient:   linear-gradient(120deg, var(--nx-blue-500) 0%, var(--nx-cyan-500) 100%);
+  --accent-gradient-soft: linear-gradient(120deg, rgba(20,92,255,0.18) 0%, rgba(33,212,253,0.14) 100%); /* @kind other */
+
+  /* Borders & lines */
+  --border-subtle:     rgba(148, 163, 184, 0.14);
+  --border-default:    rgba(148, 163, 184, 0.22);
+  --border-strong:     rgba(148, 163, 184, 0.38);
+  --border-accent:     rgba(33, 212, 253, 0.45);
+
+  /* Focus ring */
+  --ring-accent:       rgba(33, 212, 253, 0.55);
+  --ring-primary:      rgba(20, 92, 255, 0.5);
+
+  /* Glow (signature node/connection feel) */
+  --glow-blue:         rgba(20, 92, 255, 0.45);
+  --glow-cyan:         rgba(33, 212, 253, 0.40);
+}

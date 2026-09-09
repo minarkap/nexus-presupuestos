@@ -1,0 +1,27 @@
+<!-- @dsCard group="Brand" viewport="700x180" name="Gradient & Motifs" subtitle="Blue→cyan flow + connection patterns" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:var(--surface-base); padding:24px 28px; }
+  .row { display:flex; gap:18px; }
+  .tile { flex:1; height:96px; border-radius:var(--radius-lg); position:relative; overflow:hidden; box-shadow:var(--inset-hairline); }
+  .grad { background:var(--accent-gradient); }
+  .soft { background:var(--accent-gradient-soft); border:1px solid var(--border-default); }
+  .nodes { background:var(--surface-card);
+    background-image: radial-gradient(circle, rgba(33,212,253,0.9) 1.4px, transparent 1.6px);
+    background-size:22px 22px; background-position:center; }
+  .lab { position:absolute; bottom:8px; left:10px; font-family:var(--font-mono); font-size:10px; color:rgba(255,255,255,0.85); }
+  .soft .lab { color:var(--text-muted); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile grad"><span class="lab">accent-gradient</span></div>
+    <div class="tile soft"><span class="lab">gradient-soft</span></div>
+    <div class="tile nodes"><span class="lab">node pattern</span></div>
+  </div>
+</body>
+</html>

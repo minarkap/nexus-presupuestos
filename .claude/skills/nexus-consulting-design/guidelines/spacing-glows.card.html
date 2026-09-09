@@ -1,0 +1,24 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Signature Glows" subtitle="Connection energy — blue & cyan" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:var(--surface-sunken); padding:30px 28px; }
+  .row { display:flex; gap:34px; align-items:center; }
+  .item { text-align:center; }
+  .box { width:84px; height:64px; background:var(--surface-card); border-radius:var(--radius-md); }
+  .dot { width:18px; height:18px; border-radius:999px; margin:23px auto; }
+  .lab { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); margin-top:14px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box" style="box-shadow:var(--glow-blue-sm)"></div><div class="lab">blue-sm</div></div>
+    <div class="item"><div class="box" style="box-shadow:var(--glow-blue-lg)"></div><div class="lab">blue-lg</div></div>
+    <div class="item"><div class="box"><div class="dot" style="background:var(--nx-cyan-500); box-shadow:var(--glow-cyan-sm)"></div></div><div class="lab">cyan-sm</div></div>
+    <div class="item"><div class="box"><div class="dot" style="background:var(--nx-cyan-500); box-shadow:var(--glow-cyan-lg)"></div></div><div class="lab">cyan-lg</div></div>
+  </div>
+</body>
+</html>
