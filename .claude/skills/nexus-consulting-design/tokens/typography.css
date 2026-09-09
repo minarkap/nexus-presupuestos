@@ -1,0 +1,49 @@
+/* Nexus Consulting — Typography tokens */
+
+:root {
+  /* Families */
+  --font-display: 'Sora', 'Segoe UI', system-ui, sans-serif;   /* headings, brand voice */
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif; /* UI & long-form */
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace; /* data, code, metrics */
+
+  /* Type scale (1.250 major-third-ish, tuned) */
+  --text-2xs:  11px;
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-md:   18px;
+  --text-lg:   20px;
+  --text-xl:   24px;
+  --text-2xl:  30px;
+  --text-3xl:  38px;
+  --text-4xl:  48px;
+  --text-5xl:  62px;
+  --text-6xl:  80px;
+
+  /* Weights */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-extra:    800;
+
+  /* Line heights */
+  --leading-tight:   1.08;
+  --leading-snug:    1.22;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  /* Letter spacing — Sora caps & eyebrows use wide tracking (brand signature) */
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.04em;
+  --tracking-wider:   0.12em;
+  --tracking-widest:  0.28em;  /* "NEXUS" / "CONSULTING" lockup feel */
+
+  /* Semantic roles */
+  --display-font:   var(--font-display);
+  --heading-font:   var(--font-display);
+  --body-font:      var(--font-body);
+  --eyebrow-tracking: var(--tracking-widest);
+}

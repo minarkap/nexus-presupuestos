@@ -3,15 +3,15 @@ type: constitution
 title: Nexus Presupuestos — Constitution
 description: Los principios no negociables que toda fase del chain SDD obedece. Numerados, comprobables y con su ejecutor enlazado.
 tags: [sdd, constitution, no-negociable]
-timestamp: 2026-08-26T15:40:00Z
+timestamp: 2026-09-02T15:10:00Z
 topic: sdd
-version: v1.0.0
+version: v1.1.0
 status: stable
 ---
 
 # Nexus Presupuestos — Constitution
 
-> Version: v1.0.0 · Ratificada: 2026-08-26 · Última enmienda: 2026-08-26
+> Version: v1.1.0 · Ratificada: 2026-08-26 · Última enmienda: 2026-09-02 (v1.1.0, MINOR — ratificada por Carlos del Corral, «ok a todo», punto 8)
 > Los principios que toda fase del chain SDD obedece. Este fichero **ratifica y hace comprobable**;
 > el detalle mecánico vive en las skills y en `02-DOCS/wiki/`. Si un principio no se puede señalar en
 > una revisión, no es un principio: es una preferencia, y no está aquí.
@@ -70,16 +70,25 @@ status: stable
 17. **El resto de la aplicación** —formulario, tres salidas, correos— lleva pruebas del recorrido
     crítico, sin suelo de cobertura declarado.
 
-## 4. Sin control de versiones
+## 4. Control de versiones *(enmendado en v1.1.0)*
 
-18. **Este proyecto no usa git**, ni la wiki ni el código (`D-0008`, reafirmado el 2026-08-26 al
-    ratificar esta constitución). **Consecuencias aceptadas y escritas:** no hay historial, no hay
-    deshacer, no hay ramas, y las fases **`worktrees` y `ship` quedan fuera del chain** — no tienen
-    sobre qué operar. `implement` trabaja sin red.
-19. **Compensación obligatoria:** antes de cualquier cambio estructural, borrado o reescritura amplia,
-    se hace copia previa del alcance afectado. Es lo único que sustituye a un historial.
-20. **Si algún día aparece git**, la autoría de los commits es del humano: sin `Co-Authored-By` de una
-    IA y sin pie de "generado con". Principio fijo del ecosistema rsc, hoy inaplicable por el 18.
+> **Superados en v1.1.0** (por `D-0014`, que puso el workspace en git el 2026-08-26): los textos
+> originales de 18 y 19 se conservan tachados como historia; el 20 pasa de inaplicable a activo.
+
+18. ~~**Este proyecto no usa git**, ni la wiki ni el código (`D-0008`, reafirmado el 2026-08-26). No hay
+    historial, no hay deshacer, no hay ramas, y las fases `worktrees` y `ship` quedan fuera del chain.~~
+    **18 (v1.1.0). El workspace completo vive en git**: `Executive-Lab/nexus-presupuestos`, privado,
+    rama `main` (`D-0014`). `worktrees` y `ship` vuelven al chain. **`implement` nunca trabaja sobre
+    `main`**: toda feature se aísla en rama o worktree y llega a `main` por `ship`. Comprobable:
+    `git branch --show-current` durante `implement` ≠ `main`.
+19. ~~**Compensación obligatoria:** copia previa del alcance afectado antes de cualquier cambio
+    estructural. Es lo único que sustituye a un historial.~~ **19 (v1.1.0). El historial de git es la
+    red.** `scripts/snapshot.sh` queda disponible como opción para cambios masivos, no como
+    obligación. Los secretos siguen fuera del repositorio por el `.gitignore` raíz. Comprobable:
+    `git ls-files | grep -E '(^|/)\.env(\.|$)|CREDENTIALS\.md$'` devuelve solo plantillas.
+20. **20 (activo desde v1.1.0).** La autoría de los commits es del humano: sin `Co-Authored-By` de una
+    IA y sin pie de "generado con". Los agentes preparan el árbol, el diff y el mensaje; **la persona
+    confirma y firma**. Principio fijo del ecosistema rsc. Ejecutor: fase `ship`.
 
 ## 5. Suelo de seguridad y privacidad
 
@@ -110,13 +119,50 @@ status: stable
 
 ## 8. Voz, conocimiento y decisiones
 
-27. **Ningún texto de la landing, del formulario ni de los dos correos contiene** promesas de
-    resultado, urgencia fabricada, descuentos, precios cerrados ni plazos concretos. Ejecutor:
-    [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Escrito.md).
+27. **Ningún texto del sitio, del formulario ni de los dos correos contiene** promesas de
+    resultado, urgencia fabricada, descuentos, precios cerrados ni plazos concretos. Ejecutor desde
+    v1.1.0: [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md) (voz, léxico permitido
+    y prohibido); las prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Escrito.md)
+    siguen vigentes. *(Alcance ampliado en v1.1.0: «la landing» → «el sitio».)*
 28. **El cumplimiento del principio 27 se verifica con una lista escrita, revisada por una persona
     antes de publicar, y queda acta** de quién la pasó y cuándo (CA-19). Sin acta, no está verificado.
 29. **Toda decisión significativa se anexa** a [sdd/decisions.md](./decisions.md) con fecha, opciones
     consideradas y el porqué. Esta constitución es el registro de decisión de mayor rango.
+
+## 9. Marca y visibilidad *(nuevo en v1.1.0)*
+
+30. **La marca canónica es Nexus Consulting** (`D-0015`). Fuente de verdad:
+    [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md). Ningún texto público, correo,
+    metadato ni dato estructurado menciona la marca anterior. Comprobable:
+    `grep -ri "Strategy & Technology" 03-APP/src` vacío.
+31. **El design system es la única fuente de estilo** (`S-0014`, `D-0016`): colores, tipografías,
+    radios, sombras y curvas de movimiento salen de sus tokens
+    (`.claude/skills/nexus-consulting-design/tokens/`), importados una vez. **Ningún color
+    hexadecimal ni valor de radio/sombra escrito a mano** fuera del fichero que declara los tokens.
+    Tema oscuro. Comprobable: grep de `#[0-9a-fA-F]{3,8}` en `03-APP/src/**/*.{css,tsx,ts}` fuera del
+    fichero de tokens devuelve nada.
+32. **Todo contenido público viaja en el HTML inicial.** Cada página pública se sirve renderizada con
+    su texto completo (encabezados, párrafos, rangos, preguntas); la interactividad es una capa
+    encima, nunca la condición para leer. Es un principio de **indexabilidad**, no de rendimiento: el
+    26 sigue vigente. Comprobable: la respuesta a `curl` de cada página contiene su H1 y todos sus H2.
+33. **Cada página pública declara su identidad para máquinas**: título y descripción únicos,
+    canónica absoluta, Open Graph y Twitter con imagen, y JSON-LD **coherente con lo visible** (ningún
+    dato estructurado describe algo ausente de la página). `robots.txt` permite explícitamente a
+    Googlebot, Bingbot, GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot y anthropic-ai y enlaza
+    `sitemap.xml`, que lista exactamente las páginas públicas — ninguna de demostración ni interna.
+    Skill: `seo-geo`.
+34. **El suelo AA se extiende a todo texto y control del sitio** (contraste 4,5:1 / 3:1, foco
+    visible, teclado), no solo al formulario. Tightening del 25: «lo razonable» pasa a ser AA para
+    texto y controles; el resto (imágenes decorativas, motivo de nodos) sigue sin suelo declarado.
+    Comprobable: `a11y.test.tsx` más los pares de color medidos en `verify`.
+35. **El movimiento tiene propósito y es reducible**: toda animación respeta
+    `prefers-reduced-motion`, anima solo propiedades de compositor (`transform`, `opacity`,
+    `filter`) y nunca usa `transition: all`. Comprobable: grep de `transition: all` /
+    `transition-all` vacío; toda `@keyframes` o animación bajo `prefers-reduced-motion: no-preference`
+    o con su equivalente en tiempo de ejecución.
+36. **La lista de tono cubre toda superficie con texto**, no solo las siete originales: se amplía a
+    las nuevas páginas, metadatos, textos alternativos y correos (S1–S12), y el acta humana del 28
+    la cubre entera antes de publicar. Comprobable: acta con todas las superficies marcadas.
 
 ---
 
@@ -132,11 +178,18 @@ Una tarea está terminada sólo si **todo** esto se cumple:
 - [ ] Ningún multiplicador, tabla de puntos ni umbral aparece en lo que recibe el navegador (principio 8).
 - [ ] Si la tarea toca el formulario: teclado, foco y contraste comprobados (principio 24).
 - [ ] Si la tarea toca texto visible: pasada por la lista de tono, con acta (principios 27-28).
-- [ ] Copia previa hecha si el cambio era estructural (principio 19).
+- [ ] El trabajo se hizo en rama o worktree, no en `main`; ningún secreto en `git ls-files` (principios 18–19).
+- [ ] Ningún texto, correo ni metadato menciona la marca anterior (principio 30).
+- [ ] Ningún hex ni valor de estilo a mano fuera de los tokens; tema oscuro (principio 31).
+- [ ] Cada página pública sirve su H1 y sus H2 en el HTML inicial (principio 32).
+- [ ] Título, descripción, canónica, OG/Twitter y JSON-LD coherentes por página; `robots.txt` y `sitemap.xml` correctos (principio 33).
+- [ ] Pares de color AA en todo el sitio; sin `transition: all`; movimiento reducible (principios 34–35).
+- [ ] Acta de tono con las doce superficies (principio 36).
 - [ ] Decisiones significativas anexadas al log (principio 29).
 
-**No forma parte del listón**, deliberadamente: presupuesto de rendimiento (26), accesibilidad fuera
-del formulario (25), residencia de datos (22), rama y PR (18).
+**No forma parte del listón**, deliberadamente: presupuesto de rendimiento (26), accesibilidad de
+elementos decorativos (25/34), residencia de datos (22). *(v1.1.0: «rama y PR» deja de estar excluido —
+ahora es el principio 18.)*
 
 ---
 
@@ -145,3 +198,4 @@ del formulario (25), residencia de datos (22), rama y PR (18).
 | Versión | Fecha | Cambio |
 |---------|-------|--------|
 | v1.0.0 | 2026-08-26 | Constitución inicial, 29 principios. Ratificada tras la fase `clarify` del spec `landing-presupuestos-nexus`, no antes — de ahí que herede decisiones ya tomadas (`D-0004`, `D-0008`, `D-0010`, `S-0004`, `S-0008`) en vez de originarlas. |
+| v1.1.0 | 2026-09-02 | **MINOR.** Sección 4 reescrita para el estado real (`D-0014`): 18 y 19 superados y sustituidos (workspace en git; `implement` nunca en `main`; el historial es la red), 20 pasa a activo. Sección 8: el ejecutor de voz pasa a [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md) y el alcance de 27 se amplía a todo el sitio. **Nueva sección 9 (principios 30–36)**: marca canónica, design system como única fuente de estilo, contenido en el HTML inicial, identidad para máquinas (metadatos, JSON-LD, robots, sitemap), AA en todo el sitio, movimiento reducible, lista de tono ampliada. DoD ampliado en consecuencia. Motivo: spec `sitio-nexus-consulting` (`S-0016`) y huecos «Enmienda pendiente del principio 18» y «Contraste y foco sobre fondo oscuro» de `gaps.md`. Ratificada por Carlos del Corral («ok a todo», punto 8) en la sesión de ejecución. |

@@ -26,6 +26,7 @@ describe('Validación de contacto — avisa sin perder lo ya respondido', () => 
     await user.type(screen.getByLabelText('Tu nombre'), 'Marta')
     await user.type(screen.getByLabelText('Correo de trabajo'), 'roto')
     await user.type(screen.getByLabelText('Organización'), 'Acme')
+    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: 'Ver mi estimación' }))
 
     expect(screen.getByRole('alert')).toHaveTextContent('Revisa el correo.')
@@ -42,6 +43,7 @@ describe('Validación de contacto — avisa sin perder lo ya respondido', () => 
     await user.type(screen.getByLabelText('Tu nombre'), 'Marta')
     await user.type(screen.getByLabelText('Correo de trabajo'), 'roto')
     await user.type(screen.getByLabelText('Organización'), 'Acme')
+    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: 'Ver mi estimación' }))
 
     expect(screen.getByLabelText('Tu nombre')).toHaveValue('Marta')

@@ -4,13 +4,13 @@
 
 - [User profile](02-DOCS/wiki/harness/user-profile.md) — nivel técnico, dial de acompañamiento, objetivos, contexto y restricciones. **Toda skill lee esto primero y adapta su verbosidad y sus preguntas.**
 - [Decisions log](02-DOCS/wiki/harness/decisions.md) — registro append-only de cada decisión significativa y su por qué.
-- [Project constitution](02-DOCS/wiki/sdd/constitution.md) — los 29 principios no negociables del chain SDD y el Definition of Done que `verify` ejecuta. **Toda fase SDD lee esto antes de trabajar.**
+- [Project constitution](02-DOCS/wiki/sdd/constitution.md) — **v1.1.0**, 36 principios no negociables del chain SDD y el Definition of Done que `verify` ejecuta. **Toda fase SDD lee esto antes de trabajar.**
 - Índice completo → `02-DOCS/wiki/index.md` (lo crea la skill `harness`).
 
 <!-- added by harness 2026-08-26 -->
 ## Qué es este proyecto
 
-Landing pública de **Nexus Strategy & Technology** para captación de leads: un posible cliente
+Sitio público de **Nexus Consulting** (marca canónica desde `D-0015`; antes *Nexus Strategy & Technology*) para captación de leads: un posible cliente
 rellena un formulario, obtiene un **rango orientativo** de inversión para el servicio que encaja con
 su reto, y el equipo comercial recibe la primera información cualificada. Nunca un precio cerrado.
 
@@ -25,6 +25,15 @@ Reglas de producto que no se negocian (fuente: `02-DOCS/wiki/comercial/`):
   cálculo se ejecuta en servidor. Nada de eso puede llegar al navegador del visitante.
 - El umbral de cualificación vive en **un único punto de configuración**, no repartido por el código.
 
+## Brand & voice
+
+La marca canónica es **Nexus Consulting** (`D-0015`). Estudio de marca completo — esencia, claim,
+audiencia, oferta, voz, léxico permitido y prohibido, paleta, tipografía, motivo visual —:
+[Marca Nexus Consulting](02-DOCS/wiki/firma/Marca%20Nexus%20Consulting.md). Sistema visual ejecutable
+(tokens, componentes, assets): skill del proyecto `.claude/skills/nexus-consulting-design/` (`D-0016`).
+Toda superficie visual o de copy lee esto primero; la constitución lo hace exigible en los principios
+27 y 30–36.
+
 ## Mapa del workspace
 
 | Ruta | Rol |
@@ -34,8 +43,8 @@ Reglas de producto que no se negocian (fuente: `02-DOCS/wiki/comercial/`):
 | `02-DOCS/inbox/` | Zona de descarga. Cualquier fichero en cualquier formato; el sweep lo convierte en conocimiento. |
 
 Este workspace **sí es un repositorio git** desde `D-0014`: `Executive-Lab/nexus-presupuestos`,
-privado, rama `main`. Revoca D-0008 y D-0012, y con ellas el principio 18 de la constitución (que
-sigue escrito sin actualizar: pendiente de enmienda). Los `.env` reales
+privado, rama `main`. Revoca D-0008 y D-0012; la constitución lo recoge desde la **v1.1.0**
+(principios 18–20 enmendados el 2026-09-02). Los `.env` reales
 (`01-TOOLS/RESEND/.env`, `03-APP/.env.local`) están fuera del repositorio por el `.gitignore` de la
 raíz y deben seguir estándolo. La autoría de los commits es humana: sin `Co-Authored-By` de una IA
 ni pie de "generado con" (principio 20).

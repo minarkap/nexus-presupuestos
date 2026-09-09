@@ -1,0 +1,225 @@
+/* Nexus Consulting — design tokens. Copiados VERBATIM del design system (.claude/skills/nexus-consulting-design/tokens). */
+/* Única fuente de estilo del proyecto (constitution 31). No añadir valores a mano: cambia el DS y vuelve a copiar. */
+
+/* ===== tokens/colors.css ===== */
+/* Nexus Consulting — Color tokens
+   "The point where everything connects." Dark navy base, electric blue + cyan accents. */
+
+:root {
+  /* ---- Brand core (from palette reference) ---- */
+  --nx-night:      #07111F; /* Azul noche — base background */
+  --nx-blue:       #145CFF; /* Azul Nexus — primary */
+  --nx-cyan:       #21D4FD; /* Cian eléctrico — accent */
+  --nx-white:      #F5F8FF; /* Blanco frío */
+  --nx-graphite:   #1E293B; /* Gris grafito — surfaces */
+  --nx-technical:  #94A3B8; /* Gris técnico — muted */
+
+  /* ---- Navy ramp (derived, cool-shifted) ---- */
+  --nx-navy-950:   #050C16;
+  --nx-navy-900:   #07111F;
+  --nx-navy-850:   #0A192C;
+  --nx-navy-800:   #0E2238;
+  --nx-navy-700:   #142B45;
+  --nx-navy-600:   #1E293B;
+  --nx-navy-500:   #2B3A52;
+
+  /* ---- Blue ramp ---- */
+  --nx-blue-700:   #0B3FCC;
+  --nx-blue-600:   #0F4CE6;
+  --nx-blue-500:   #145CFF;
+  --nx-blue-400:   #4A82FF;
+  --nx-blue-300:   #84A9FF;
+
+  /* ---- Cyan ramp ---- */
+  --nx-cyan-600:   #0FB3DB;
+  --nx-cyan-500:   #21D4FD;
+  --nx-cyan-400:   #5FE2FE;
+  --nx-cyan-300:   #9CEEFF;
+
+  /* ---- Neutral / slate ramp ---- */
+  --nx-slate-50:   #F5F8FF;
+  --nx-slate-100:  #E2E9F5;
+  --nx-slate-200:  #C4D0E3;
+  --nx-slate-300:  #94A3B8;
+  --nx-slate-400:  #64748B;
+  --nx-slate-500:  #475569;
+  --nx-slate-600:  #334155;
+
+  /* ---- Semantic feedback ---- */
+  --nx-success:    #2DD4A7;
+  --nx-warning:    #FBBF54;
+  --nx-danger:     #FB6A6A;
+  --nx-info:       var(--nx-cyan-500);
+
+  /* ===================================================
+     SEMANTIC ALIASES — prefer these in product code
+     =================================================== */
+
+  /* Surfaces (dark theme is the brand default) */
+  --surface-base:      var(--nx-navy-900);
+  --surface-sunken:    var(--nx-navy-950);
+  --surface-card:      var(--nx-navy-850);
+  --surface-raised:    var(--nx-navy-800);
+  --surface-overlay:   rgba(10, 25, 44, 0.82);
+  --surface-inverse:   var(--nx-slate-50);
+
+  /* Text */
+  --text-strong:       var(--nx-white);
+  --text-body:         #C8D4E6;
+  --text-muted:        var(--nx-slate-300);
+  --text-faint:        var(--nx-slate-400);
+  --text-on-accent:    var(--nx-white);
+  --text-on-light:     var(--nx-navy-900);
+  --text-link:         var(--nx-cyan-400);
+
+  /* Brand accents */
+  --accent-primary:    var(--nx-blue-500);
+  --accent-secondary:  var(--nx-cyan-500);
+  --accent-gradient:   linear-gradient(120deg, var(--nx-blue-500) 0%, var(--nx-cyan-500) 100%);
+  --accent-gradient-soft: linear-gradient(120deg, rgba(20,92,255,0.18) 0%, rgba(33,212,253,0.14) 100%); /* @kind other */
+
+  /* Borders & lines */
+  --border-subtle:     rgba(148, 163, 184, 0.14);
+  --border-default:    rgba(148, 163, 184, 0.22);
+  --border-strong:     rgba(148, 163, 184, 0.38);
+  --border-accent:     rgba(33, 212, 253, 0.45);
+
+  /* Focus ring */
+  --ring-accent:       rgba(33, 212, 253, 0.55);
+  --ring-primary:      rgba(20, 92, 255, 0.5);
+
+  /* Glow (signature node/connection feel) */
+  --glow-blue:         rgba(20, 92, 255, 0.45);
+  --glow-cyan:         rgba(33, 212, 253, 0.40);
+}
+
+/* ===== tokens/typography.css ===== */
+/* Nexus Consulting — Typography tokens */
+
+:root {
+  /* Families */
+  --font-display: 'Sora', 'Segoe UI', system-ui, sans-serif;   /* headings, brand voice */
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif; /* UI & long-form */
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace; /* data, code, metrics */
+
+  /* Type scale (1.250 major-third-ish, tuned) */
+  --text-2xs:  11px;
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-md:   18px;
+  --text-lg:   20px;
+  --text-xl:   24px;
+  --text-2xl:  30px;
+  --text-3xl:  38px;
+  --text-4xl:  48px;
+  --text-5xl:  62px;
+  --text-6xl:  80px;
+
+  /* Weights */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-extra:    800;
+
+  /* Line heights */
+  --leading-tight:   1.08;
+  --leading-snug:    1.22;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  /* Letter spacing — Sora caps & eyebrows use wide tracking (brand signature) */
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.04em;
+  --tracking-wider:   0.12em;
+  --tracking-widest:  0.28em;  /* "NEXUS" / "CONSULTING" lockup feel */
+
+  /* Semantic roles */
+  --display-font:   var(--font-display);
+  --heading-font:   var(--font-display);
+  --body-font:      var(--font-body);
+  --eyebrow-tracking: var(--tracking-widest);
+}
+
+/* ===== tokens/spacing.css ===== */
+/* Nexus Consulting — Spacing, radius & layout tokens
+   Base unit: 4px. Modular, dashboard-friendly rhythm. */
+
+:root {
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+  --space-32:  128px;
+
+  /* Radii — precise, modular. Cards are gently rounded, never pill-soft. */
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-2xl:  28px;
+  --radius-pill: 999px;
+
+  /* Containers */
+  --container-sm:  640px;
+  --container-md:  860px;
+  --container-lg:  1120px;
+  --container-xl:  1320px;
+
+  /* Z-index ladder */
+  --z-base:    0;    /* @kind other */
+  --z-raised:  10;   /* @kind other */
+  --z-sticky:  100;  /* @kind other */
+  --z-overlay: 1000; /* @kind other */
+  --z-modal:   1100; /* @kind other */
+  --z-toast:   1200; /* @kind other */
+}
+
+/* ===== tokens/effects.css ===== */
+/* Nexus Consulting — Elevation, shadows, glows & motion */
+
+:root {
+  /* Shadows — deep, cool-tinted (navy ambient, not neutral black) */
+  --shadow-xs:  0 1px 2px rgba(3, 8, 18, 0.40);
+  --shadow-sm:  0 2px 8px rgba(3, 8, 18, 0.45);
+  --shadow-md:  0 8px 24px rgba(3, 8, 18, 0.50);
+  --shadow-lg:  0 18px 48px rgba(3, 8, 18, 0.58);
+  --shadow-xl:  0 32px 80px rgba(3, 8, 18, 0.65);
+
+  /* Signature glows — the "connection" energy */
+  --glow-blue-sm:  0 0 0 1px rgba(20,92,255,0.30), 0 6px 20px rgba(20,92,255,0.28);
+  --glow-blue-lg:  0 0 0 1px rgba(20,92,255,0.40), 0 10px 40px rgba(20,92,255,0.45);
+  --glow-cyan-sm:  0 0 16px rgba(33,212,253,0.35);
+  --glow-cyan-lg:  0 0 32px rgba(33,212,253,0.55);
+
+  /* Hairline inner stroke used on glassy cards */
+  --inset-hairline: inset 0 0 0 1px rgba(148,163,184,0.10);
+  --inset-topglow:  inset 0 1px 0 rgba(255,255,255,0.06);
+
+  /* Blur for glass surfaces */
+  --blur-sm:  8px;   /* @kind other */
+  --blur-md:  16px;  /* @kind other */
+  --blur-lg:  28px;  /* @kind other */
+
+  /* Motion — confident, precise. No bounce; smooth tech easing. */
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);    /* @kind other */
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);    /* @kind other */
+  --ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);    /* @kind other */
+  --dur-fast:   120ms;   /* @kind other */
+  --dur-base:   200ms;   /* @kind other */
+  --dur-slow:   360ms;   /* @kind other */
+  --dur-slower: 600ms;   /* @kind other */
+}

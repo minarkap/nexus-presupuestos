@@ -24,9 +24,10 @@ Quién es Nexus, cómo decide y cómo suena. El marco del que cuelga todo lo com
 
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
-| [Identidad y Posicionamiento de Nexus](firma/Identidad%20y%20Posicionamiento%20de%20Nexus.md) | Consultora boutique de alto impacto: posicionamiento, cuatro líneas de servicio y tres sedes. | 2026-08-26 | 9.0 |
+| [**Marca Nexus Consulting**](firma/Marca%20Nexus%20Consulting.md) | **Marca canónica**: esencia, claim, audiencia, oferta, voz y sistema visual. **Lectura obligada para copy y UI.** | 2026-09-02 | — |
+| [Identidad y Posicionamiento de Nexus](firma/Identidad%20y%20Posicionamiento%20de%20Nexus.md) | [Superado por D-0015] Consultora boutique de alto impacto: posicionamiento, cuatro líneas de servicio y tres sedes. | 2026-08-26 | 9.0 |
 | [Criterio de Decisión de la Firma](firma/Criterio%20de%20Decision%20de%20la%20Firma.md) | Ocho criterios, siete tesis, el estándar Nexus y los riesgos estructurales. | 2026-08-26 | 8.0 |
-| [Voz de Nexus por Escrito](firma/Voz%20de%20Nexus%20por%20Escrito.md) | Los seis rasgos del tono, la estructura de propuesta y los anti-patrones prohibidos. | 2026-08-26 | 11.0 |
+| [Voz de Nexus por Escrito](firma/Voz%20de%20Nexus%20por%20Escrito.md) | [Superado por D-0015] Los seis rasgos del tono, la estructura de propuesta y los anti-patrones prohibidos. | 2026-08-26 | 11.0 |
 
 ## producto
 
@@ -35,6 +36,14 @@ La landing que este workspace construye.
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
 | [Landing de Captación de Leads](producto/Landing%20de%20Captacion%20de%20Leads.md) | Requisitos derivados de las fuentes, restricciones de arquitectura y lo que sigue sin decidir. | 2026-08-26 | 14.0 |
+
+## seo-geo
+
+Visibilidad en buscadores tradicionales y en motores generativos. La base técnica antes de escribir una línea.
+
+| Article | Summary | Updated | Score |
+|---------|---------|---------|-------|
+| [SEO frente a GEO](seo-geo/SEO%20frente%20a%20GEO.md) | La diferencia real entre posicionar en una lista y ser citado en una respuesta, con los 9 métodos medidos por Princeton. | 2026-09-02 | — |
 
 ## harness
 
@@ -62,6 +71,15 @@ La capa de tooling operativo.
 |---------|---------|---------|-------|
 | [Arsenal Operativo](operations/Arsenal%20Operativo.md) | Qué es `01-TOOLS/`, sus convenciones y por qué está vacía a propósito. | 2026-08-26 | 4.0 |
 
+## stack
+
+Convenciones técnicas y de diseño de `03-APP`. Se leen antes de tocar una superficie.
+
+| Article | Summary | Updated | Score |
+|---------|---------|---------|-------|
+| [Decisiones de diseño del sitio](stack/design.md) | Tokens verbatim del DS, botón primario sólido por AA (blanco sobre cian 1,66:1), raíl conectado como firma, movimiento reducible. | 2026-09-02 | — |
+| [Convenciones Next.js del sitio](stack/nextjs.md) | Server Components por defecto, un island, contenido tipado, capa SEO derivada, `server-only` sobre el catálogo, puerta `seo-gate`. | 2026-09-02 | — |
+
 ## sdd
 
 Gobierno del chain SDD: los principios que toda fase obedece y el registro de sus decisiones.
@@ -78,6 +96,7 @@ Especificaciones del chain SDD: qué se construye y por qué, antes de decidir c
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
 | [Spec — Landing y estimador de presupuesto de Nexus](sdd/specs/landing-presupuestos-nexus.md) | Landing + formulario de 7 preguntas, rango orientativo del catálogo 2026, tres salidas según cualificación y dos emails. | 2026-08-26 | — |
+| [Spec — Sitio web de Nexus Consulting](sdd/specs/sitio-nexus-consulting.md) | Marca del design system, cinco páginas con URL propia (seis aprobadas; el artículo retirado en S-0020), copy con la voz de Nexus Consulting y capa SEO/GEO indexable y citable; el motor de cálculo no cambia. Aprobada en autopilot. | 2026-09-02 | — |
 
 ## sdd/plans
 
@@ -86,6 +105,7 @@ Planes técnicos: cómo se construye lo que el spec describe. Estructura y contr
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
 | [Plan — Landing y estimador de presupuesto de Nexus](sdd/plans/landing-presupuestos-nexus.md) | 12 componentes tras una frontera de confianza, vista redactada al navegador, 16 pasos secuenciados y 6 riesgos. | 2026-08-26 | — |
+| [Plan — Sitio web de Nexus Consulting](sdd/plans/sitio-nexus-consulting.md) | Server Components + contenido tipado + capa SEO derivada del mismo contenido; UI kit portado del DS con botón primario sólido por AA; estimador en una sola URL; puerta `seo-gate` contra el build real. 10 pasos, 10 riesgos. | 2026-09-02 | — |
 
 ## sdd/analysis
 
@@ -94,6 +114,7 @@ Informes de la puerta de consistencia previa a implementar. Punto en el tiempo: 
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
 | [Analysis — Landing y estimador de presupuesto de Nexus](sdd/analysis/landing-presupuestos-nexus.md) | 3 HIGH en la primera pasada (repliegue silencioso a adaptador falso, credenciales fuera de convención, advertencia sin comprobar en pantalla); PASS tras corregir. | 2026-08-26 | — |
+| [Analysis — Sitio web de Nexus Consulting](sdd/analysis/sitio-nexus-consulting.md) | BLOCKED en primera pasada (1 CRITICAL: CA-21 vs consentimiento; 1 HIGH: seo-gate incompleto); 12 hallazgos resueltos en artefactos el mismo día → PASS. | 2026-09-02 | — |
 
 ## sdd/verifications
 
@@ -102,6 +123,7 @@ Actas de la puerta de evidencia. Una por ejecución, fechadas y append-only.
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
 | [Verification — 2026-08-26](sdd/verifications/landing-presupuestos-nexus-2026-08-26.md) | Puerta verde en 4 capas, 36/36 done-checks, 23/24 criterios. FAIL por CA-19: el acta de tono exige firma humana. | 2026-08-26 | — |
+| [Verification — Sitio web — 2026-09-02](sdd/verifications/sitio-nexus-consulting-2026-09-02.md) | VERDE en cinco capas: lint, tipos, 202 pruebas (99 % core), build, puerta SEO/GEO. Pendiente la puerta humana: acta de tono, 360 px, commits. | 2026-09-02 | — |
 
 ## sdd/checklists
 
@@ -109,7 +131,7 @@ Listas que bloquean la publicación y que ninguna prueba automática puede cerra
 
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
-| [Lista de comprobación de tono](sdd/tone-checklist.md) | 7 superficies, 8 comprobaciones, acta sin firmar. Bloquea publicar (CA-19). | 2026-08-26 | — |
+| [Lista de comprobación de tono](sdd/tone-checklist.md) | 12 superficies (S1–S12), 8 comprobaciones, acta sin firmar. Bloquea publicar (CA-04). | 2026-09-02 | — |
 | [Recorrido manual de los tres perfiles](sdd/manual-walkthrough.md) | Perfiles A/B/C con su resultado esperado, incluida la inspección de la pestaña de red. | 2026-08-26 | — |
 
 > **Score**: puntuación compuesta de calidad (enlaces entrantes, número de fuentes, citas, frescura;

@@ -67,6 +67,7 @@ describe('FormWizard — retroceder no pierde lo respondido', () => {
     await user.type(screen.getByLabelText('Tu nombre'), 'Marta')
     await user.type(screen.getByLabelText('Correo de trabajo'), 'marta@acme.ad')
     await user.type(screen.getByLabelText('Organización'), 'Acme')
+    await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: 'Ver mi estimación' }))
 
     const enviado = onSubmit.mock.calls[0]?.[0] as Answers

@@ -234,3 +234,265 @@ status: stable
   entrada inventada produce `NaN` en la respuesta. Total 156 pruebas, cobertura de `src/core/` sigue
   al 100 %.
 - supersedes: none
+
+---
+
+## S-0014 — La landing adopta el design system de Nexus Consulting
+
+- fecha: 2026-09-02
+- context: `S-0003` decidió que la landing **no** heredaba la identidad visual de los documentos de
+  la firma, y se construyó una estética propia: papel crema `#faf9f7`, azul marino `#1c3f5e`, acento
+  cobre `#b4622a`, tipografía serif del sistema, radio 4 px, 105 líneas de CSS a mano en
+  `globals.css`. Esa decisión se tomó cuando no existía marca que respetar — así lo dice el perfil
+  de usuario: *"Diseño: desde cero, propuesta libre (no hay marca que respetar)"*. Ahora sí existe:
+  `D-0015` fija Nexus Consulting como marca canónica y trae un design system completo.
+- options considered:
+  1. **Adoptar el design system por completo** (elegida por el usuario: *"hacer de nexus presupuestos
+     mejor gráfico"*).
+  2. Mantener la estética serif actual y solo pulirla — descartada: no cumple el objetivo del usuario
+     y desperdicia un system ya construido y alineado con la marca.
+  3. Híbrido serif + tokens del system — descartada sin plantearla: las dos estéticas son opuestas
+     (claro editorial contra dark navy técnico) y mezclarlas produce exactamente el resultado que el
+     masterprompt prohíbe, *"una marca visualmente recargada"*.
+- decision: la interfaz pasa a **dark navy de Nexus Consulting**. Fuente única de estilo:
+  `.claude/skills/nexus-consulting-design/` (`styles.css` + `tokens/`). Regla del propio system:
+  **nunca hex a mano, siempre las custom properties** (`--accent-gradient`, `--surface-card`,
+  `--text-strong`, …).
+- alcance del cambio, para quien lo ejecute: `globals.css` se sustituye entero; `layout.tsx` carga
+  las fuentes (Sora display, Inter cuerpo, IBM Plex Mono datos) y cambia `metadata`; las tres
+  pantallas (`Landing.tsx`, `FormWizard.tsx`, `ResultScreen.tsx`) se re-visten. **La lógica de
+  `src/core/` no se toca**: es cálculo, no marca.
+- restricción heredada que sigue vigente: el principio 24 de la constitución exige **WCAG 2.2 AA en
+  el recorrido del formulario** — contraste, foco visible, errores anunciados. El cambio a fondo
+  oscuro obliga a re-verificar los contrastes; el foco cobre `#b4622a` actual desaparece y hay que
+  sustituirlo por un foco visible sobre navy. Las pruebas de `a11y.test.tsx` son el guardián.
+- supersedes: `S-0003`.
+
+---
+
+## S-0015 — Alcance de SEO y GEO: capa técnica en todo el sitio más una página explicativa
+
+- fecha: 2026-09-02
+- context: el usuario pide "meter SEO-GEO" explicando bien la diferencia entre ambos. Hoy el sitio
+  tiene el mínimo: un `title` y una `description` en `layout.tsx`, y nada más — sin canonical, sin
+  Open Graph, sin JSON-LD, sin `robots.txt`, sin `sitemap.xml`.
+- options considered:
+  1. **Ambas cosas**: capa técnica SEO+GEO en todas las páginas más una página que explique la
+     diferencia (elegida).
+  2. Solo la capa técnica — descartada por el usuario.
+  3. Solo la página explicativa — descartada por el usuario.
+- decision: dos frentes. **(a) Capa técnica**: metadatos por página con la API de Next, canonical,
+  Open Graph y Twitter Cards, JSON-LD (`Organization`, `WebSite`, `Service`, `FAQPage`),
+  `robots.txt` que permita explícitamente los crawlers de IA, `sitemap.xml`, texto alternativo y
+  jerarquía de encabezados. **(b) Página explicativa** de la diferencia SEO / GEO, que además se
+  optimiza a sí misma con lo que predica.
+- why: en el workspace de una clase sobre SEO y GEO, una página que aplica lo que explica es a la vez
+  material didáctico y demostración verificable.
+- fundamento técnico: [SEO frente a GEO](../seo-geo/SEO%20frente%20a%20GEO.md), destilado del estudio
+  de Princeton (arXiv:2311.09735, KDD 2024) y de la skill `seo-geo`.
+- tensión con la constitución que quien ejecute debe resolver antes de escribir copy: el principio 27
+  prohíbe **promesas de resultado** en cualquier texto del sitio. Los porcentajes de GEO (+40 % por
+  citar fuentes, +37 % por estadísticas) son resultados de un estudio sobre *contenido genérico*, no
+  promesas de Nexus a un cliente. Se pueden citar **como hallazgo de investigación con su fuente**;
+  no se puede escribir "te subimos la visibilidad un 40 %". El principio 28 exige acta firmada por
+  una persona antes de publicar.
+- no ejecutado: el usuario pidió expresamente ordenar y no construir. No hay spec, ni plan, ni
+  páginas. La ejecución entra por `specify` en otra sesión.
+
+---
+
+## S-0016 — Alcance del sitio Nexus Consulting: el catálogo manda en la arquitectura de servicios; la marca, en todo lo demás
+
+- fecha: 2026-09-02
+- fase: `specify` (spec `sitio-nexus-consulting`, aprobada en autopilot)
+- context: `D-0015` fijó Nexus Consulting como marca canónica y dejó abierto un hueco de modelo de
+  negocio: el motor de precios (`src/core/catalog.ts`) vende seis servicios de *Strategy &
+  Technology* —incluidos ESG y ciberseguridad— y el masterprompt de Nexus Consulting describe cinco
+  áreas distintas. [gaps.md](../gaps.md) lo registró como bloqueo del copy de servicios con tres
+  salidas: (a) reescribir el catálogo, (b) mantenerlo y aceptar el desajuste, (c) no publicarlo.
+- respuesta del usuario (Carlos del Corral, 2026-09-02, sesión de ejecución): *«me gustaría mantener
+  la funcionalidad que ha hecho Eric pero con mi diseño, mis copys y todo lo demás que te he
+  adjuntado»*, más «ok a todo» a nueve decisiones de alcance, entre ellas: marca visible Nexus
+  Consulting con la oferta del catálogo; publicar los rangos oficiales en `/servicios` con su
+  advertencia; ninguna cifra inventada; tema oscuro; `/privacidad` en este ciclo; enmienda v1.1 de la
+  constitución; autopilot.
+- options considered:
+  1. **(b) hecha coherente** — el sitio se estructura por las cuatro líneas y los siete servicios del
+     catálogo 2026 (lo que el estimador puede estimar), con la marca, la voz y la esencia de Nexus
+     Consulting; las cinco áreas del masterprompt (software a medida, IA aplicada, automatización,
+     integración, consultoría tecnológica) se presentan como **capacidades** con las que Nexus
+     construye cada servicio. **Elegida.**
+  2. (a) reescribir el catálogo con las cinco áreas y nuevos rangos — descartada: toca los principios
+     4–11, rompe la prueba de regresión del 16 y contradice la petición explícita de conservar la
+     funcionalidad.
+  3. (c) catálogo interno, sin rangos en la web — descartada por el usuario (pregunta 4: sí a
+     publicar los rangos) y porque renuncia a la pieza más citable del sitio.
+- decision: opción 1. El hueco de `gaps.md` queda **resuelto a efectos del producto** (no del
+  negocio: si algún día Nexus Consulting quisiera vender solo sus cinco áreas, es otra spec y una
+  enmienda MAJOR).
+- consecuencias registradas en la spec como *suposiciones tomadas*: nombres oficiales del catálogo
+  conservados; dominio canónico `nexus.ad` por defecto y configurable; `/recursos/seo-frente-a-geo`
+  entra por `S-0015`; método en las cuatro fases de la marca; `robots` permite a todos los
+  rastreadores de IA; aviso de privacidad como borrador para revisión legal.
+- corrección respecto a la propuesta inicial de esta sesión: se había recomendado geografía Madrid y
+  dominio `nexus-st.com` sin conocer el masterprompt de Nexus Consulting; prevalece `D-0015`
+  (Andorra la Vella, `nexus.ad`), que el usuario eligió explícitamente en la sesión de ordenación.
+- supersedes: nada. Complementa `D-0015`, `S-0014` y `S-0015`.
+
+---
+
+## S-0017 — Constitución v1.1.0: git real, marca canónica y principios de visibilidad
+
+- fecha: 2026-09-02
+- fase: `constitution` (enmienda MINOR dentro del ciclo `sitio-nexus-consulting`)
+- context: la constitución v1.0.0 decía «este proyecto no usa git» (18) cuando el workspace lleva en
+  git desde `D-0014`; su ejecutor de voz apuntaba a la marca derogada; y no legislaba nada sobre
+  identidad visual, indexabilidad ni metadatos, que son el corazón de la spec `sitio-nexus-consulting`.
+  `analyze` y `verify` citan la constitución por número: sin enmienda, chocarían.
+- options considered:
+  1. **Enmienda MINOR ahora, dentro del ciclo** (elegida): tachar y sustituir 18–19, activar 20,
+     redirigir el ejecutor de 27, añadir la sección 9 (30–36) y ampliar el DoD.
+  2. Enmendar solo 18–20 y dejar la visibilidad como criterios de la spec — descartada: `verify`
+     necesita principios numerados para citarlos, y la spec caduca con la feature; la constitución no.
+  3. Reescribir la constitución entera para Nexus Consulting — descartada: los principios 1–17 y
+     21–26 siguen siendo correctos; reescribir lo que no cambia destruye la trazabilidad.
+- decision: v1.1.0 aplicada. Ratificación: Carlos del Corral, «ok a todo» (punto 8 de las nueve
+  decisiones de alcance), 2026-09-02. Se mantiene el 26 (sin presupuesto de rendimiento): el 32 es
+  indexabilidad, no velocidad, y así queda escrito.
+- aviso descendente: la spec y el plan anteriores (`landing-presupuestos-nexus`) citan el 18 y el 19
+  en su redacción original. Siguen siendo válidos como historia; `analyze` los leerá con la v1.1.0.
+
+---
+
+## S-0018 — Decisiones de diseño técnico del sitio (fase `plan`)
+
+- fecha: 2026-09-02
+- fase: `plan` (`sitio-nexus-consulting`, autopilot)
+- decisiones tomadas y su porqué (detalle en el plan §0–§2):
+  1. **Server Components por defecto; el estimador es el único island con estado.** El principio 32
+     exige todo el texto en el HTML inicial; un Server Component lo garantiza, un island lo rompe.
+  2. **El copy es contenido tipado en TypeScript** (`src/content/*`), no MDX ni CMS: tiene que
+     poder importarse en pruebas (palabras prohibidas, «orientativo» junto a cada cifra) y alimentar
+     el JSON-LD con los mismos objetos que pinta la página (CA-18 por construcción).
+  3. **Botón primario sólido azul (#145CFF, 4,93:1) en vez del degradado azul→cian del kit.** Medido
+     sobre los tokens: blanco sobre cian da 1,66:1 y falla AA (34). El degradado se reserva para
+     texto display ≥ 30 px (3,61:1 ≥ 3:1), líneas, barra de progreso y anillo de foco. Es la única
+     desviación consciente del kit del DS, y se documenta en `stack/design.md`.
+  4. **El estimador vive en una sola URL** (`/presupuesto`); la home ofrece la primera pregunta
+     como enlaces `/presupuesto?reto=…` (C-03). Sin duplicar la máquina de estados; el enlace es
+     indexable sin JS.
+  5. **Los rangos de `/servicios` se leen del catálogo** a través de `core/format.ts` (extracción
+     pura de `formatRange`) y de un selector `server-only` que expone solo campos públicos (C-08, 8).
+  6. **Consentimiento en cliente y servidor**: `Contact.consent` + regla en `validateContact` (C-02).
+     Único cambio funcional del formulario.
+  7. **La puerta de integración es `scripts/seo-gate.mjs` contra `next build` + `next start`**, no
+     Playwright: comprueba lo que un rastreador ve, que es lo que los CA-06…CA-20 piden, sin añadir
+     una dependencia pesada para un ciclo.
+  8. **Navegación móvil con `<details>/<summary>`**: cero JavaScript, accesible por defecto.
+  9. **`lucide-react` como única dependencia nueva** (iconos del DS); fuentes por `next/font/google`.
+- options descartadas: MDX para el artículo (dependencias por una página); Playwright (peso);
+  degradado con texto navy (3,61:1, falla para texto normal); estimador incrustado entero en `/`
+  (dos máquinas de estado, dos URLs para lo mismo).
+
+---
+
+## S-0019 — Decisiones de implementación (fase `implement`, autopilot con plazo)
+
+- fecha: 2026-09-02
+- `server-only` (0.0.1) añadido como dependencia: es el guardia que impide importar `catalog.ts` en un
+  Client Component (constitución 8). El plan solo preveía `lucide-react`; sin él el principio 8 dependía
+  de disciplina.
+- `Button` renderiza `<a>` (next/link) cuando recibe `href` en vez de `asChild`: menos API, misma
+  apariencia, semántica correcta para enlaces.
+- El H2 «Pregunta N de M» del estimador pasa a ser el texto visible de la barra de progreso (antes
+  duplicaba el label): una sola fuente para la lectura de pantalla y la visual.
+- Aviso de privacidad: **borrador para revisión legal**. Plazo de conservación propuesto **12 meses**;
+  responsable identificado como la marca, sin datos registrales. Bloquea `ship` hasta la firma humana.
+- Dominio canónico por defecto `https://nexus.ad` (`NEXT_PUBLIC_SITE_URL`): se sustituye por
+  configuración en el despliegue, sin tocar código.
+- Sin revisión por tarea con subagente: el plazo de presentación (una hora) obligó a agrupar por bloques;
+  la revisión adversarial se concentra en `review` sobre el diff completo.
+
+---
+
+## S-0020 — El usuario retira el artículo «SEO frente a GEO» del sitio público
+
+- fecha: 2026-09-02
+- fase: `implement` (petición directa de Carlos del Corral durante la ejecución)
+- context: `S-0015` había elegido publicar una página explicativa SEO/GEO. Al verla en el sitio, el usuario
+  decide: *«elimina la parte de SEO frente a GEO, no es algo que hagamos; quiero que ejecutes la skill
+  seo-geo del arnés en el proyecto»*. La skill sí está aplicada en todo el sitio (metadatos por página,
+  JSON-LD coherente, `robots` con rastreadores de IA, `sitemap`, `llms.txt`, contenido en el HTML,
+  redacción extraíble); lo que sale es la página que lo explicaba.
+- decision: el sitio pasa a **cinco páginas públicas** (`/`, `/presupuesto`, `/servicios`,
+  `/como-trabajamos`, `/privacidad`). Se elimina `app/recursos/`, `content/articulo-seo-geo.ts`, el
+  builder `article()` y sus pruebas; sitemap y `llms.txt` listan cinco. El artículo de la wiki
+  [SEO frente a GEO](../seo-geo/SEO%20frente%20a%20GEO.md) se conserva como conocimiento interno.
+- supersedes: la parte (b) de `S-0015`. La spec queda enmendada: CA-06/CA-17/CA-20 hablan de cinco páginas;
+  CA-11 queda sin objeto; la superficie S4 del acta de tono se marca como retirada (los IDs no se renumeran).
+- también a petición del usuario («a veces veo mucho texto junto y eso aburre»): párrafos del inicio y de
+  las cabeceras acortados, y las preguntas frecuentes pasan a acordeón (`<details>`), con el texto
+  completo en el HTML para los rastreadores.
+
+---
+
+## S-0021 — `/antes`: página-museo con el estimador original, para enseñar el antes y el después
+
+- fecha: 2026-09-02
+- fase: fuera del chain — **excepción deliberada al gate SDD**, declarada en voz alta
+- context: con el sitio ya verificado, el usuario pide *«una URL aparte de lo que era antes el
+  estimador, o sea lo que Eric nos entregó… OJO no borres ni toques nada de lo que ya hay»*. El motivo
+  es didáctico: enseñar en clase el antes y el después en la misma sesión.
+- por qué no pasa por `specify`: es **aditivo y aislado** — una ruta nueva, código **recuperado de
+  `main`** (no escrito), `noindex`, fuera del sitemap, sin tocar ninguna página ni componente vivo. El
+  gate reserva el atajo para lo de bajo riesgo, y esto lo es: si se borra la carpeta, el sitio queda
+  exactamente como estaba. Se registra aquí en vez de en una spec porque no hay producto que
+  especificar.
+- decision: `03-APP/src/app/antes/` con el snapshot en `_legacy/` (el guion bajo lo mantiene fuera del
+  enrutador). Restaurados verbatim de `main` con `git show`: `Landing.tsx`, `FormWizard.tsx`,
+  `ResultScreen.tsx`, la máquina de estados de `page.tsx` (renombrada `LegacyApp.tsx`) y `globals.css`.
+- tres adaptaciones, y sólo tres:
+  1. **CSS acotado bajo `.legacy`** (`legacy.css`): los nombres de clase del original —`.hero`, `.cta`,
+     `.choice`, `.wizard`, `.result`, `.progress`, `.disclaimer`— colisionan con los del sitio nuevo.
+     Ningún valor cambiado; el acotado es mecánico. Añade una regla `body:has(.legacy)` que oculta el
+     header y el footer actuales mientras el museo está en pantalla, para que se enseñe solo.
+  2. **Tipos congelados** en `_legacy/types.ts`: `Contact` ya no es lo que era (ganó `consent`). Si el
+     museo importara los tipos vivos, dejaría de compilar cada vez que el dominio evoluciona — o se
+     «arreglaría» solo y dejaría de ser el antes.
+  3. **Envío simulado** (`_legacy/simulate.ts`): el estimador original no pedía consentimiento y el
+     servidor actual lo exige (CA-12). Enchufar el museo a la acción real crearía una vía que se salta
+     ese requisito. Valida el contacto como hacía el original y devuelve el caso de referencia del
+     catálogo (28.000 – 35.000 €) con los textos del 2026-08-26. Un aviso en la propia página lo dice.
+- consecuencia en las pruebas: `src/design/brand.test.ts` excluye `app/antes/_legacy` con el motivo
+  escrito en el propio fichero — contiene la marca anterior y sus hex por definición. Es el único
+  fichero existente que se ha tocado. `verify.sh` sigue **VERDE**: 202 pruebas, cobertura 99 %,
+  `seo-gate` verde (el museo no entra en las cinco páginas ni en el sitemap).
+- reversible en un comando: `rm -rf 03-APP/src/app/antes` y quitar la exclusión de `brand.test.ts`.
+
+---
+
+## S-0022 — Fallo de convivencia entre el museo y el sitio vivo: texto claro sobre papel crema
+
+- fecha: 2026-09-02
+- fase: corrección (restituye el comportamiento previsto; no pasa por el chain)
+- síntoma reportado por el usuario: en `/antes`, el titular y los enunciados del formulario salían en
+  blanco sobre el fondo crema, ilegibles.
+- causa: el original **no declaraba color en los encabezados**, lo heredaba de `body`. El sitio nuevo sí
+  lo declara (`h1, h2, h3, h4 { color: var(--text-strong) }`, blanco frío) y una regla directa gana
+  siempre a la herencia, por muy específico que sea el ancestro. Lo mismo con `legend`, `.choice` y los
+  enlaces (cian sobre crema). Además, media docena de nombres de clase compartidos (`.hero`, `.cta`,
+  `.wizard`, `.result`, `.progress`, `.field`, `.nav`) empataban en especificidad, así que el ganador
+  dependía del orden de carga — una bomba de relojería, no solo un color.
+- arreglo, en dos movimientos mecánicos sobre `legacy.css`:
+  1. el acotado pasa de `.legacy` a **`.legacy.legacy`**: la clase repetida sube la especificidad sin
+     cambiar nada visual, y el snapshot gana siempre a las reglas homónimas del sitio nuevo;
+  2. un bloque final **restituye el color heredado** (`h1`–`h4`, `legend`, `.choice`, campos, `.range`
+     → `--ink`; enlaces → `--accent`) dentro de `:where()`, que aporta especificidad 0 y por tanto no
+     pisa las reglas propias del snapshot (`.lede`, `.eyebrow`, `.disclaimer` siguen en `--ink-soft`).
+  De paso se corrigió un selector que el acotado automático había malformado
+  (`:where(a, button, input, [tabindex]):focus-visible`).
+- guardián: `03-APP/src/app/antes/legacy.test.ts` — 4 pruebas que exigen que toda regla esté acotada,
+  que el color heredado esté restituido, que el papel y la tinta originales sigan ahí y que no queden
+  selectores malformados. Suite: **206 pruebas**, `verify.sh` verde.
+- lección: al revivir una hoja de estilos global junto a otra, el riesgo no es el valor que copias,
+  es **lo que el original no declaraba**. La herencia no viaja con el snapshot.

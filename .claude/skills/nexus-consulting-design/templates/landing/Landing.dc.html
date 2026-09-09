@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Nexus Landing" description="On-brand marketing landing — hero, services, CTA — built on Nexus components" -->
+<helmet>
+<script src="./ds-base.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  body { margin:0; background:#07111F; }
+  * { box-sizing:border-box; }
+</style>
+</helmet>
+
+<div style="font-family:'Inter',sans-serif; background:#07111F; color:#C8D4E6; min-height:100vh;">
+
+  <header data-screen-label="Nav" style="display:flex; align-items:center; justify-content:space-between; padding:18px 48px; border-bottom:1px solid rgba(148,163,184,0.14); position:sticky; top:0; background:rgba(7,17,31,0.72); backdrop-filter:blur(14px); z-index:50;">
+    <div style="display:flex; align-items:center; gap:11px;">
+      <div style="font-family:'Sora',sans-serif; font-weight:600; font-size:17px; letter-spacing:0.22em; color:#F5F8FF;">NEXUS</div>
+      <div style="font-family:'Sora',sans-serif; font-weight:400; font-size:9px; letter-spacing:0.34em; color:#94A3B8; border-left:1px solid rgba(148,163,184,0.3); padding-left:11px;">CONSULTING</div>
+    </div>
+    <nav style="display:flex; gap:28px; font-family:'Sora',sans-serif; font-weight:500; font-size:14px;">
+      <span style="color:#F5F8FF;">Soluciones</span>
+      <span style="color:#94A3B8;">Servicios</span>
+      <span style="color:#94A3B8;">Nosotros</span>
+      <span style="color:#94A3B8;">Contacto</span>
+    </nav>
+    <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Button" variant="primary" size="sm" hint-size="110px,34px">Hablemos</x-import>
+  </header>
+
+  <section data-screen-label="Hero" style="position:relative; text-align:center; padding:120px 48px 130px; overflow:hidden; background:radial-gradient(ellipse 60% 50% at 50% 35%, rgba(20,92,255,0.20), transparent 70%);">
+    <div style="display:inline-block; margin-bottom:28px;">
+      <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Badge" tone="cyan" dot="{{ true }}" hint-size="240px,28px">Consultoría tecnológica · Andorra</x-import>
+    </div>
+    <h1 style="font-family:'Sora',sans-serif; font-weight:700; font-size:66px; line-height:1.04; letter-spacing:-0.02em; color:#F5F8FF; margin:0; max-width:880px; margin-left:auto; margin-right:auto;">El punto donde todo <span style="background:linear-gradient(120deg,#145CFF,#21D4FD); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">conecta</span>.</h1>
+    <p style="font-family:'Inter',sans-serif; font-size:19px; line-height:1.6; color:#C8D4E6; max-width:600px; margin:24px auto 40px;">Software a medida, IA aplicada, automatización e integración de sistemas para empresas que quieren operar mejor.</p>
+    <div style="display:flex; gap:14px; justify-content:center;">
+      <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Button" variant="primary" size="lg" hint-size="220px,52px">Descubrir soluciones</x-import>
+      <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Button" variant="outline" size="lg" hint-size="140px,52px">Hablemos</x-import>
+    </div>
+  </section>
+
+  <section data-screen-label="Services" style="max-width:1100px; margin:0 auto; padding:40px 48px 100px;">
+    <div style="text-align:center; margin-bottom:48px;">
+      <div style="font-family:'Sora',sans-serif; font-weight:600; font-size:13px; letter-spacing:0.28em; text-transform:uppercase; color:#21D4FD; margin-bottom:14px;">Servicios</div>
+      <h2 style="font-family:'Sora',sans-serif; font-weight:700; font-size:38px; letter-spacing:-0.02em; color:#F5F8FF; margin:0;">Tecnología que conecta</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+      <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Card" variant="gradient" interactive="{{ true }}" padding="lg" hint-size="320px,200px">
+        <h3 style="font-family:'Sora',sans-serif; font-weight:600; font-size:20px; color:#F5F8FF; margin:0 0 10px;">Software a medida</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:15px; line-height:1.6; color:#C8D4E6; margin:0;">Plataformas diseñadas en torno a tu operación real, no al revés.</p>
+      </x-import>
+      <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Card" variant="gradient" interactive="{{ true }}" padding="lg" hint-size="320px,200px">
+        <h3 style="font-family:'Sora',sans-serif; font-weight:600; font-size:20px; color:#F5F8FF; margin:0 0 10px;">Inteligencia artificial</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:15px; line-height:1.6; color:#C8D4E6; margin:0;">IA aplicada con control: copilotos, clasificación y decisiones asistidas.</p>
+      </x-import>
+      <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Card" variant="gradient" interactive="{{ true }}" padding="lg" hint-size="320px,200px">
+        <h3 style="font-family:'Sora',sans-serif; font-weight:600; font-size:20px; color:#F5F8FF; margin:0 0 10px;">Automatización</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:15px; line-height:1.6; color:#C8D4E6; margin:0;">Eliminamos trabajo manual conectando tus procesos de extremo a extremo.</p>
+      </x-import>
+    </div>
+  </section>
+
+  <section data-screen-label="CTA" style="max-width:1000px; margin:0 auto; padding:0 48px 110px;">
+    <div style="position:relative; overflow:hidden; border-radius:20px; border:1px solid rgba(148,163,184,0.22); background:linear-gradient(160deg,#0E2238,#07111F); padding:64px 56px; text-align:center; box-shadow:0 0 0 1px rgba(20,92,255,0.30), 0 10px 40px rgba(20,92,255,0.30);">
+      <h2 style="font-family:'Sora',sans-serif; font-weight:700; font-size:36px; letter-spacing:-0.02em; color:#F5F8FF; margin:0;">¿Listos para operar mejor?</h2>
+      <p style="font-family:'Inter',sans-serif; font-size:17px; color:#C8D4E6; margin:14px auto 32px; max-width:480px;">Cuéntanos qué quieres mejorar. Diseñamos la solución contigo.</p>
+      <div style="display:flex; justify-content:center;">
+        <x-import component-from-global-scope="NexusConsultingDesignSystem_c7745a.Button" variant="primary" size="lg" hint-size="200px,52px">Solicitar propuesta</x-import>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</x-dc>
+</body>
+</html>

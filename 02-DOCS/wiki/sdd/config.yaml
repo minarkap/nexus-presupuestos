@@ -25,7 +25,7 @@ sdd:
   registry_path: ".rsc/skill-registry.json"   # AUSENTE en este workspace: selección de skills a mano
   review_budget:
     line_budget: 400
-  delivery_strategy: exception   # constitution 18: sin git, no hay PR que trocear
+  delivery_strategy: exception   # 2026-09-02: autopilot aprobado por el usuario + presentación el mismo día; la excepción original («sin git», v1.0.0 §18) quedó superada por D-0014 / constitución v1.1.0
 
 models:
   enabled: false   # sin routing: se honra el modelo de sesión en silencio

@@ -53,6 +53,8 @@ export interface Contact {
   readonly name: string
   readonly email: string
   readonly company: string
+  /** Consentimiento explícito al aviso de privacidad (spec CA-12). Se exige en cliente y en servidor. */
+  readonly consent: boolean
 }
 
 export interface BusinessAnswers {

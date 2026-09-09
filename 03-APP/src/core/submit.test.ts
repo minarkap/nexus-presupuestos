@@ -8,7 +8,7 @@ import type { EmailPort } from '@/ports/email'
 const answers: Answers = {
   challenge: 'ia', need: 'diagnostico', size: '250-999', maturity: 'inicial',
   timing: '3-6m', sponsor: 'si', budget: 'asignado',
-  contact: { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme' },
+  contact: { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme', consent: true },
 }
 
 let email: FakeEmailPort
@@ -144,7 +144,7 @@ describe('SubmitAction — validación de contacto', () => {
   it.each([
     ['name', { ...answers.contact, name: '  ' }],
     ['email', { ...answers.contact, email: 'no-es-un-correo' }],
-    ['company', { ...answers.contact, company: '' }],
+    ['company', { ...answers.contact, company: '', consent: true }],
   ])('señala el campo %s sin calcular nada', async (field, contact) => {
     const r = await submitLead({ ...answers, contact }, 's1', deps(), cache)
     expect(r).toMatchObject({ kind: 'validation_error', field })

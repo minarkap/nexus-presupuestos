@@ -1,5 +1,27 @@
 # Wiki Log
 
+## [2026-09-02] ingest | Marca canónica, design system y base de SEO/GEO — ordenado, no ejecutado
+
+Sesión de **ordenación** a petición del usuario: *"conforme al harness ordena lo que tienes para luego
+ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni página.
+
+- **Resuelto el conflicto de marca.** El proyecto tenía dos identidades incompatibles. El usuario
+  eligió **Nexus Consulting** (`D-0015`). Compilado
+  [Marca Nexus Consulting](firma/Marca%20Nexus%20Consulting.md) desde el masterprompt aportado.
+- Fetch: `referencias/` copiado al cerebro (`D-0017`) — masterprompt a `raw/firma/_originals/`,
+  landing y presentación a `raw/producto/_originals/`. Hash verificado en los tres.
+- **Design system instalado como skill** del proyecto en `.claude/skills/nexus-consulting-design/`
+  (`D-0016`). 12 MB → 6,6 MB deduplicando tres PNG byte a byte idénticos.
+- Created: [SEO frente a GEO](seo-geo/SEO%20frente%20a%20GEO.md) — topic nuevo `seo-geo`, destilado del
+  estudio de Princeton (arXiv:2311.09735, KDD 2024) y de la skill `seo-geo`.
+- Decisions: `D-0015`, `D-0016`, `D-0017` en [harness](harness/decisions.md); `S-0014` (adopta el
+  design system, **deroga S-0003**) y `S-0015` (alcance SEO+GEO) en [sdd](sdd/decisions.md).
+- Updated: [user-profile](harness/user-profile.md) — cerrada la pregunta abierta de identidad visual.
+- **Conflicto anotado, no reconciliado**: los tres artículos de `firma/` describen la marca derogada.
+  Llevan aviso de superación y se conservan porque siguen siendo la fuente del catálogo de precios.
+- 5 huecos nuevos en [gaps.md](gaps.md). El primero **bloquea** el copy de servicios: el catálogo de
+  precios pertenece a la marca derogada y vende ESG y ciberseguridad, que Nexus Consulting no ofrece.
+
 ## [2026-08-26] worklog | arranque-arnes → 0 artículos nuevos, 3 decisiones enrutadas
 - Capturado: [raw/worklog/2026-08-26-arranque-arnes.md](../raw/worklog/2026-08-26-arranque-arnes.md) (status: processed)
 - Decisiones enrutadas a harness/decisions.md: D-0009 (taxonomía de topics), D-0010 (cálculo en servidor), D-0011 (nota sobre el hueco de numeración)
@@ -23,3 +45,10 @@
 - Creados inbox/ (+README, _processed/), raw/ (+worklog/), wiki/ (index, log, gaps, scores, .ingested), reports/, attachments/, audits/.
 - Vault de Obsidian: Articles.base, Worklog.base, Decisions.base, .obsidian/app.json (enlaces markdown relativos, sin wikilinks).
 - Límite de escaneo: .rscignore. Sin base vectorial, sin embeddings, sin RAG — navegación por estructura.
+
+## 2026-09-02 — implement `sitio-nexus-consulting`
+- Constitución v1.1.0 (S-0017). Spec, plan (39 tareas) y análisis (BLOCKED→PASS) indexados.
+- Implementado el sitio de Nexus Consulting en `03-APP`: seis páginas, estimador re-vestido, capa SEO/GEO, puerta `seo-gate`.
+- Nuevos artículos: `stack/design.md`, `stack/nextjs.md`; `tone-checklist.md` reescrito sobre S1–S12.
+- Añadida `/antes` (S-0021): snapshot del estimador original recuperado de `main`, `noindex`, fuera del sitemap, envío simulado. `verify.sh` verde tras el añadido.
+- Corregido S-0022: el museo heredaba color del sitio nuevo (texto claro sobre crema). Acotado a `.legacy.legacy` + color heredado restituido, con prueba de regresión. 206 pruebas.

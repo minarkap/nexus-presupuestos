@@ -12,7 +12,7 @@ import type { Answers } from '@/core/types'
 
 const cache = new DedupCache()
 
-const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'oportunidades@nexus-st.com'
+const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'oportunidades@nexus.ad'
 
 export async function submitAction(answers: Answers, submissionId: string): Promise<SubmitResult> {
   return submitLead(

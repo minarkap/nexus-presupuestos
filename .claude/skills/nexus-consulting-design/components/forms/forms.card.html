@@ -1,0 +1,48 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Form Controls" subtitle="Inputs & toggles on dark surfaces" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { margin:0; font-family:var(--font-body); background:var(--surface-base); padding:28px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px 24px; max-width:600px; }
+  .stack { display:flex; flex-direction:column; gap:16px; }
+  .sec { font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-faint); margin:0 0 4px; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="../../_ds_bundle.js"></script>
+  <script type="text/babel">
+    const { Input, Switch } = window.NexusConsultingDesignSystem_c7745a;
+    function Demo() {
+      const [a, setA] = React.useState('hola@nexus.ad');
+      const [s1, setS1] = React.useState(true);
+      const [s2, setS2] = React.useState(false);
+      return (
+        <div className="grid">
+          <div className="stack">
+            <Input label="Correo de contacto" value={a} onChange={e=>setA(e.target.value)} placeholder="tu@empresa.com" />
+            <Input label="Empresa" placeholder="Nombre de la empresa" />
+          </div>
+          <div className="stack">
+            <Input label="Presupuesto" error="Selecciona un rango válido" placeholder="€" />
+            <div>
+              <div className="sec">Toggles</div>
+              <div className="stack" style={{gap:12}}>
+                <Switch checked={s1} onChange={setS1} label="Automatización activa" />
+                <Switch checked={s2} onChange={setS2} label="Alertas por correo" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+  </script>
+</body>
+</html>

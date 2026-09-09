@@ -1,4 +1,5 @@
 import { QUALIFICATION_THRESHOLD } from './catalog'
+import { formatRange } from './format'
 import type { PriceRange, RedactedOutcome, Score, ServiceRef } from './types'
 
 /** Advertencia obligatoria en toda salida con cifra (constitution 5, CA-05). */
@@ -8,18 +9,6 @@ const DISCLAIMER =
 
 const DISCLAIMER_SIN_CIFRA =
   'Preferimos no dar un número antes de entender el problema. Es criterio de la casa, no una evasiva.'
-
-function formatEuros(amount: number): string {
-  return `${amount.toLocaleString('es-ES')} €`
-}
-
-function formatRange(price: PriceRange): string {
-  const sufijo = price.unit === 'month' ? ' / mes' : ''
-  if (price.high === null) {
-    return `Desde ${formatEuros(price.low)}${sufijo}, con el techo a confirmar en llamada de alcance`
-  }
-  return `${price.low.toLocaleString('es-ES')} – ${formatEuros(price.high)}${sufijo}`
-}
 
 const CUERPO_CUALIFICADO =
   'Con lo que nos has contado, este es el orden de magnitud en el que se mueve un encargo así. ' +

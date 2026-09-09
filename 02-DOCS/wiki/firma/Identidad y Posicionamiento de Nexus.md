@@ -8,10 +8,18 @@ aliases: [identidad-y-posicionamiento-de-nexus]
 topic: firma
 status: stable
 sources: ["[Masterprompt CEO](../../raw/firma/2026-08-26-masterprompt-ceo-nexus.md)", "[Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)"]
-score: 9.0
+score: 11.0
 ---
 
 # Identidad y Posicionamiento de Nexus
+
+> ⚠ **Superado en parte por [D-0015](../harness/decisions.md) (2026-09-02).** La marca canónica del
+> proyecto es ahora **Nexus Consulting** — ver [Marca Nexus Consulting](./Marca%20Nexus%20Consulting.md).
+> Este artículo describe *Nexus Strategy & Technology*, la identidad anterior: **nombre,
+> posicionamiento, geografía y catálogo de servicios ya no aplican al sitio público.** Se conserva sin
+> reescribir porque sigue siendo la fuente del catálogo de precios y del método de estimación, que no
+> se han migrado. No lo uses para redactar copy.
+
 
 > Sources: Masterprompt CEO de Nexus; Criterios de estimación económica, edición 2026
 > Raw: [Masterprompt CEO](../../raw/firma/2026-08-26-masterprompt-ceo-nexus.md); [Criterios de estimación económica](../../raw/comercial/2026-08-26-criterios-estimacion-economica.md)
