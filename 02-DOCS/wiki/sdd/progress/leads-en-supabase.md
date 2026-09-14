@@ -73,14 +73,36 @@ de frecuencia del formulario, que es una spec propia (`S-0027`).
 
 Tras las correcciones: `verify.sh` **VERDE**, 266 pruebas.
 
-## Lo que queda en manos humanas
+## Publicado — 2026-09-14
 
-- [ ] Crear el proyecto en Supabase y ejecutar `01-TOOLS/SUPABASE/schema.sql` **entero**.
-- [ ] Pegar `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en `01-TOOLS/SUPABASE/.env` y en
-      `03-APP/.env.local`.
-- [ ] Las mismas dos variables en Vercel (Production + Preview).
-- [ ] `bash 01-TOOLS/SUPABASE/test_connection.sh` → las tres marcas en verde.
-- [ ] Enviar un lead de prueba contra producción y comprobar que aparece la fila.
+- [x] Proyecto Supabase creado, `schema.sql` y `retention.sql` ejecutados.
+- [x] Credenciales en `01-TOOLS/SUPABASE/.env` y `03-APP/.env.local`.
+- [x] `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en Vercel (production + preview, la clave cifrada).
+- [x] `test_connection.sh` → las dos marcas en verde.
+- [x] Rama fusionada a `main` (merge `649223c`) y publicada. Despliegue de producción **READY**.
+- [x] Comprobado sobre el sitio en vivo: ni `sb_secret_`, ni `service_role`, ni `supabase.co`
+      aparecen en el HTML ni en ningún fichero de JavaScript que descarga el visitante.
+- [ ] **Pendiente**: enviar un lead de prueba desde el formulario publicado y comprobar la fila.
+
+### Verificación contra el Supabase real (antes de fusionar)
+
+| Prueba | Resultado |
+|---|---|
+| Insertar un lead | `201` |
+| Reenviar el mismo envío | `201`, **una sola fila** |
+| Leer con la clave pública | `401 permission denied for table leads` |
+| Borrar | `204`, tabla vacía |
+
+### Tres fallos que sólo enseñó la puesta en marcha real
+
+1. `SUPABASE_URL` pegada con `/rest/v1/` incluido → la petición iba a `/rest/v1/rest/v1/leads` y
+   Supabase contestaba **404 «la tabla no existe»**, que manda a buscar el fallo donde no está. Se
+   normaliza la URL en vez de rechazarla.
+2. `Prefer: resolution=ignore-duplicates` **no hacía nada** sin `on_conflict` nombrando la columna.
+   El comportamiento era correcto por accidente —porque el adaptador trata el 409 como éxito—, no
+   porque la cabecera funcionara.
+3. El script de humo se rompía con `unbound variable`: bash se tragaba un `»` como parte del nombre
+   de la variable. Llaves explícitas.
 
 ## Desviaciones respecto al plan
 
