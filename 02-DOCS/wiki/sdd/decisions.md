@@ -831,3 +831,30 @@ status: stable
   riesgo opuestos. Preguntar «¿para qué?» antes que «¿cómo?» costó un turno y evitó construir la que
   no era.
 - supersedes: none
+
+## S-0034 — El catálogo se inyecta: el núcleo sigue síncrono y puro
+
+- fecha: 2026-09-14
+- fase: `plan` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: el catálogo lo leen ocho módulos de `src/core`, todos síncronos y puros. Sacarlo a la base
+  de datos admitía dos formas: convertir esas funciones en asíncronas para que se buscasen el
+  catálogo solas, o **pasárselo como parámetro** y dejar el viaje de red en la frontera de servidor.
+- decision: **inyección**. `app/actions.ts` carga el catálogo una vez por envío y lo pasa hacia
+  abajo; `priceService`, `scoreLead`, `resolveService` y `mapOutcome` siguen siendo síncronas, puras
+  y sin `any`.
+- why: con el núcleo asíncrono, `priceService` y `scoreLead` podrían leer el catálogo en instantes
+  distintos y **usar dos catálogos dentro del mismo cálculo**. La inyección lo hace imposible por
+  construcción, en vez de por vigilancia. Además conserva la cobertura ≥ 95 % del principio 14 sin
+  llenar el motor de caminos de fallo de red.
+- decisión asociada: **cuatro tablas editables celda a celda**, no un documento JSON en una fila. Un
+  blob habría dado atomicidad gratis, pero convertiría «cambiar un precio sin publicar» en «editar
+  JSON a mano», que es apenas mejor que editar el fichero. La atomicidad se recupera con una función
+  de Postgres que lee las cuatro tablas en una sentencia — una instantánea, un viaje, nunca medio
+  catálogo. Es el mismo camino que `registrar_intento` del tope.
+- decisión asociada: **llave de solo lectura** distinta de la de servicio. Es la única credencial
+  nueva del plan, y existe para que CA-14 —«el sitio nunca escribe precios»— sea una imposibilidad y
+  no una promesa.
+- riesgo principal identificado: **R-1, que la mudanza cambie una cifra sin que nadie lo note**. Se
+  retira con un fichero dorado generado desde el código actual ANTES de tocar nada, y sembrando la
+  base desde la semilla en vez de tecleando a mano.
+- supersedes: none
