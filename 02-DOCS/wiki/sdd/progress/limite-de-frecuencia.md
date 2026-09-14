@@ -1,12 +1,12 @@
 ---
 type: progress
 title: Progreso — Límite de frecuencia del formulario
-description: Ledger de implementación del tope de envíos — TDD, la decisión pura en el núcleo, y la puerta humana que impide publicarlo.
+description: Ledger de implementación del tope de envíos — TDD, la decisión pura en el núcleo, y la puerta humana, abierta por Jose el 2026-09-14.
 tags: [sdd, progress, seguridad, privacidad]
 timestamp: 2026-09-14T13:55:00Z
 topic: sdd
 slug: limite-de-frecuencia
-status: awaiting-human-review
+status: complete
 ---
 
 # Progreso — limite-de-frecuencia
@@ -84,20 +84,22 @@ y el plan tampoco la mencionaba entre sus riesgos. Un limitador que se comprueba
 parece funcionar: el fallo sólo existe cuando dos peticiones se pisan, que es exactamente lo que hace
 un atacante y nunca hace una prueba secuencial.
 
-## PUERTA HUMANA — por qué esto no se publica
+## PUERTA HUMANA — abierta por Jose el 2026-09-14
 
-Este ciclo **redacta párrafos nuevos del aviso de privacidad**, marcados como borrador en la cabecera
-de `src/content/privacidad.ts`. Los ha escrito un agente y son texto que compromete a la empresa
-frente a terceros.
+Este ciclo **redacta párrafos nuevos del aviso de privacidad**. Los ha escrito un agente y son texto
+que compromete a la empresa frente a terceros. Jose los aprobó el 2026-09-14 **sin asesoría jurídica
+externa**, que es lo que hay: no existe tal asesoría en este proyecto y la puerta que pedía «revisión
+legal» la había puesto el agente sin nadie detrás que pudiera cruzarla.
 
-- [ ] **Revisión legal** de los tres párrafos nuevos (huella técnica, interés legítimo, plazo).
+- [x] **Aprobación de los tres párrafos nuevos** (huella técnica, interés legítimo, plazo) por Jose,
+      2026-09-14. La cabecera de `src/content/privacidad.ts` deja constancia de que no ha pasado por
+      asesoría jurídica y de que esos tres párrafos son lo primero que habría que mirar si la hay.
 - [ ] **Firma de la superficie nueva** del acta de tono: el mensaje que ve quien cruza el tope.
+      Sigue pendiente, junto con S1–S12 desde el 2026-09-02. No bloquea la publicación.
 - [x] `01-TOOLS/SUPABASE/rate-limit.sql` ejecutado (2026-09-14): tabla, función atómica con bloqueo
       por huella, y limpieza horaria.
 - [x] **Prueba real de concurrencia superada**, tres rondas de 30 peticiones simultáneas.
 - [x] Prueba de humo ampliada: la tabla de intentos y la función están cerradas al público (`401`).
 - [x] Filas de prueba borradas (120 → 0). El lead real intacto.
-- [ ] `RATE_LIMIT_SALT` en Vercel (production + preview). Ya generada en los `.env` locales.
-
-Sin lo primero, **no se fusiona**. La constitución ya exigía revisión legal de `/privacidad` (S5 del
-acta de tono) y seguía pendiente desde el 2026-09-02: este cambio la hace más necesaria, no menos.
+- [x] `RATE_LIMIT_SALT` en Vercel (production + preview), 2026-09-14. Es **distinta** de la local a
+      propósito: una huella de desarrollo no debe coincidir con una de producción.

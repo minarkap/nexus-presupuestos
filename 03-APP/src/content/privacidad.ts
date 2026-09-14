@@ -1,24 +1,24 @@
 /**
- * BORRADOR PENDIENTE DE REVISIÓN LEGAL HUMANA — 2026-09-14
+ * APROBADO POR JOSE EL 2026-09-14. No ha pasado por asesoría jurídica externa.
  *
  * Los párrafos sobre la «huella técnica» (secciones `datos`, `base-legal` y `conservacion`) los
- * redactó un agente para la spec `limite-de-frecuencia` y NO los ha revisado nadie con criterio
- * legal. Es texto que compromete a la empresa frente a terceros.
+ * redactó un agente para la spec `limite-de-frecuencia`. Son texto que compromete a la empresa
+ * frente a terceros, así que quedan señalados aquí: si algún día hay asesoría, esto es lo primero
+ * que tiene que mirar.
  *
  * Los plazos y el alcance de la frase fueron CORREGIDOS el 2026-09-14 tras una revisión adversarial
  * que demostró que el texto anterior prometía «menos de 48 horas» mientras el mecanismo real podía
  * conservar hasta 72, y que afirmaba una no-asociación con la solicitud más fuerte de la que el
- * diseño puede sostener. Los números de ahora sí cuadran con el código; el juicio legal sigue faltando.
+ * diseño puede sostener. Los números de ahora cuadran con el código: la limpieza corre cada hora y
+ * borra lo que pase de 48, así que el peor caso real es 49 horas y el aviso promete tres días.
  *
- * NO PUBLICAR esta rama hasta que esa revisión exista. La constitución ya exige revisión legal de
- * /privacidad (superficie S5 del acta de tono) y sigue pendiente desde el 2026-09-02: este cambio la
- * hace más necesaria, no menos.
+ * La superficie S5 del acta de tono sigue sin firmar desde el 2026-09-02; este cambio no la cierra.
  */
 export type PrivacyId = 'responsable' | 'datos' | 'finalidad' | 'base-legal' | 'destinatarios' | 'transferencias' | 'conservacion' | 'derechos'
 export interface PrivacySection { readonly id: PrivacyId; readonly h2: string; readonly paragraphs: readonly string[] }
 
 /**
- * Aviso de privacidad del estimador. BORRADOR para revisión por asesoría legal (ver wiki/sdd/decisions.md).
+ * Aviso de privacidad del estimador. Aprobado por Jose el 2026-09-14, sin asesoría jurídica externa (ver wiki/sdd/decisions.md).
  * Describe SOLO el tratamiento que el sitio hace: no hay analítica, ni cookies de seguimiento, ni perfilado.
  */
 export const privacidad = {

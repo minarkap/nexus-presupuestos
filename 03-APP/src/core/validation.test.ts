@@ -119,7 +119,8 @@ describe('Validación de frenos — multi-valor sobre lista cerrada', () => {
   })
 
   it('rechaza un array disperso, aunque sus elementos presentes sean válidos', () => {
-    // eslint-disable-next-line no-sparse-arrays
+    // El hueco es intencionado: `no-sparse-arrays` no está activo en esta configuración, así que
+    // no hace falta silenciarlo — y un `eslint-disable` que no tapa nada es un aviso en sí mismo.
     const conHueco = [, 'sin_perfiles'] as unknown[]
     expect(validateAnswers(conBasura('blockers', conHueco))?.field).toBe('blockers')
   })

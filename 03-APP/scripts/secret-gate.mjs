@@ -39,6 +39,10 @@ for (const fichero of ['.env.local', '.env.production.local', '.env']) {
 /** Variables cuyo VALOR no puede aparecer jamás en el cliente. */
 const VALORES_PROHIBIDOS = [
   'SUPABASE_SERVICE_ROLE_KEY',
+  // La sal del límite de frecuencia es tan secreta como una clave: con ella, las 4.300 millones de
+  // direcciones IPv4 se recorren en minutos y la huella deja de proteger nada. Es justo lo que el
+  // HMAC existe para impedir, así que filtrarla anula la medida entera (`CA-L5`).
+  'RATE_LIMIT_SALT',
   'SUPABASE_URL',
   'RESEND_API_KEY',
   'GOOGLE_SERVICE_ACCOUNT_JSON',
@@ -57,6 +61,8 @@ const VALORES_PROHIBIDOS = [
  */
 const CADENAS_PROHIBIDAS = [
   'NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY',
+  'NEXT_PUBLIC_RATE_LIMIT_SALT',
+  'RATE_LIMIT_SALT',
   'NEXT_PUBLIC_SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
   'service_role',
