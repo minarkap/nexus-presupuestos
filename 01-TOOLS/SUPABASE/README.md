@@ -11,8 +11,16 @@ Base de datos donde se guarda cada lead del estimador. Sustituye a la hoja de c�
    dentro de una transacción, así que o se crea la tabla **y** queda cerrada, o no se crea nada.
 3. **Conservación.** Otra consulta nueva con `retention.sql` entero. Programa el borrado automático
    a los doce meses que el aviso de privacidad promete en público.
-4. **Credenciales.** *Settings* → *API*. Copia el *Project URL* y la clave **`service_role`** (la
-   marcada como *secret*) en `.env`. La clave `anon` es opcional y sólo la usa la prueba de humo.
+4. **Credenciales.** Están en **dos pantallas distintas**, no en una:
+   - **Project URL** → menú izquierdo, *INTEGRATIONS* → **Data API**. Ya no vive en API Keys.
+   - **Clave de servidor** → *Settings* → *API Keys* → **Secret keys** → revelar con el ojo.
+     Empieza por `sb_secret_`.
+   - **Clave pública** (opcional, sólo para la prueba de seguridad) → misma pantalla,
+     **Publishable key**, empieza por `sb_publishable_`.
+
+   Supabase renovó el formato: `sb_secret_` sustituye a la antigua `service_role` y
+   `sb_publishable_` a la antigua `anon`. Las viejas siguen en la pestaña *Legacy* y funcionan
+   igual, pero no hacen falta. **No pulses «Disable JWT-based API keys».**
 5. **Comprueba.** `bash test_connection.sh`. Verifica tres cosas: que la clave vale, que la tabla
    existe, y que **la tabla no responde a quien no tiene la llave**.
 6. **Producción.** Las mismas dos variables en Vercel → *Settings* → *Environment Variables*,
@@ -32,7 +40,7 @@ Tres comprobaciones automáticas la vigilan, y fallan solas si algo se tuerce:
 |---|---|
 | `03-APP/src/ports/registry.ts` | `import 'server-only'`: si un componente de cliente importara el registro, **la compilación falla** |
 | `03-APP/src/ports/registry-security.test.ts` | que ninguna credencial esté marcada como pública y que ningún error la incluya |
-| `03-APP/scripts/secret-gate.mjs` | inspecciona el paquete **ya compilado** y falla si alguna credencial viajó al navegador |
+| `03-APP/scripts/secret-gate.mjs` | inspecciona el paquete **ya compilado** y falla si alguna credencial viajó al navegador — incluida una clave del formato nuevo, que al no ser un JWT no la cazaba el detector estructural |
 
 ## Qué se guarda
 

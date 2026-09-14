@@ -45,12 +45,22 @@ const VALORES_PROHIBIDOS = [
   'GOOGLE_SHEET_ID',
 ]
 
-/** Cadenas que no pueden aparecer literalmente, haya o no credenciales cargadas ahora mismo. */
+/**
+ * Cadenas que no pueden aparecer literalmente, haya o no credenciales cargadas ahora mismo.
+ *
+ * `sb_secret_` es el prefijo de las claves de servidor NUEVAS de Supabase, que **no son JWT**. Sin
+ * esta línea, el detector de más abajo —que decodifica JWT y mira el rol— no las vería: sólo las
+ * cazaría la búsqueda por valor, y esa depende de tener el secreto cargado. Encontrado el 2026-09-14
+ * al ver el panel real de Supabase, que ya emite `sb_secret_…` en vez del `service_role` de siempre.
+ *
+ * `sb_publishable_` NO está aquí a propósito: esa clave es pública por diseño y puede aparecer.
+ */
 const CADENAS_PROHIBIDAS = [
   'NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY',
   'NEXT_PUBLIC_SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
   'service_role',
+  'sb_secret_',
 ]
 
 function ficheros(dir) {

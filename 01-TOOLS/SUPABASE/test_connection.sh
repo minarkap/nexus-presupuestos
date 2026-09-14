@@ -31,7 +31,7 @@ esac
 #    eso la prueba honesta necesita la clave `anon` — la que cualquiera puede ver en un navegador.
 if [ -z "${SUPABASE_ANON_KEY:-}" ]; then
   echo "· SUPABASE_ANON_KEY no está en .env: no puedo comprobar que la tabla esté cerrada."
-  echo "  Añádela (Settings → API → anon public) para que esta prueba sirva de algo."
+  echo "  Añádela (Settings → API Keys → Publishable key, empieza por sb_publishable_)."
   exit 0
 fi
 
