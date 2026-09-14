@@ -328,3 +328,19 @@ se ejecuta, no se interpreta.
 
 **T01 es innegociable y va primero.** Es la única tarea que no se puede hacer después: en cuanto se
 toque `catalog.ts`, el fichero dorado ya no se puede generar desde «el código de antes».
+
+### Estado al 2026-09-14
+
+| Tareas | Estado |
+|---|---|
+| T01–T07, T12–T15, T17 | ✅ **hechas y verificadas.** 364 pruebas, 96,2 % de cobertura, dorado sin divergencias, las dos puertas nuevas vistas fallar y pasar |
+| T16 | ◐ **escrita y probada en rojo.** El verde necesita la base sembrada |
+| T08–T11, T18, T19 | ⏳ **bloqueadas: requieren a Jose.** Ejecutar `catalogo.sql` contra el Supabase real, sembrarlo, y crear la llave con rol `catalogo_lector` en el panel. Ni la ejecución de DDL contra la base de producción ni la emisión de una credencial son cosas que deba hacer un agente por su cuenta |
+
+**T13 creció sobre lo previsto.** Al cablear se descubrió que las páginas públicas publican los
+rangos oficiales leyendo el mismo catálogo (`S-0035`), así que también se cablearon, con
+`revalidate = 300`. Siguen siendo HTML estático prerenderizado.
+
+**Apareció una tarea que el plan no tenía:** cerrar el camino en que `loadCatalog()` lanza y la
+excepción sube hasta la acción de servidor, que habría perdido el lead. `submitLead` acepta ahora
+`catalog: null` y guarda el lead sin cifra (CA-09).
