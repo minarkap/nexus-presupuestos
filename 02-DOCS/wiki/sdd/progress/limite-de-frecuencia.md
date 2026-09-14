@@ -64,6 +64,19 @@ Lo que **resistió**: falsificación de cabeceras (Vercel las sobrescribe), fuga
 huella hacia el cliente, los logs o los correos, reversibilidad del HMAC, elegir la huella de un
 tercero, y fuga por el mensaje de bloqueo.
 
+### Prueba real de concurrencia — 2026-09-14
+
+Ejecutada contra el Supabase de producción, no contra dobles. **Encontró un resto que el
+razonamiento no había visto**, que es exactamente para lo que sirve probar de verdad.
+
+| Intento | Resultado |
+|---|---|
+| Primera versión, 30 peticiones simultáneas | **5 aceptadas** — la fuga grande estaba cerrada. Pero los contadores salieron **repetidos** (23, 26 y 29 dos veces): dos transacciones simultáneas insertan cada una la suya y luego cuentan sin ver la ajena, porque el nivel de aislamiento por defecto de Postgres no se las enseña. Lejos del tope da igual; **justo en el tope dejaría pasar un envío de más** |
+| Con `pg_advisory_xact_lock(hashtext(huella))`, tres rondas de 30 | **5 aceptadas, contadores 1..30 exactos, cero duplicados, las tres veces** |
+
+El bloqueo es **por huella**: dos orígenes distintos no se esperan entre sí, y se libera solo al
+terminar la transacción.
+
 ### Lo que esto enseña
 
 El diseño anterior **parecía correcto y tenía 44 pruebas en verde**. Ninguna ejercitaba concurrencia,
@@ -79,11 +92,11 @@ frente a terceros.
 
 - [ ] **Revisión legal** de los tres párrafos nuevos (huella técnica, interés legítimo, plazo).
 - [ ] **Firma de la superficie nueva** del acta de tono: el mensaje que ve quien cruza el tope.
-- [ ] Ejecutar `01-TOOLS/SUPABASE/rate-limit.sql` en Supabase. **Incluye la función atómica**: sin
-      ella el tope no protege de una ráfaga concurrente.
-- [ ] **Prueba real de concurrencia** contra la base de datos, pendiente de lo anterior: la
-      atomicidad está razonada y escrita, pero **todavía no demostrada contra Postgres**. Dado que el
-      diseño anterior también parecía correcto, esta prueba no es opcional.
+- [x] `01-TOOLS/SUPABASE/rate-limit.sql` ejecutado (2026-09-14): tabla, función atómica con bloqueo
+      por huella, y limpieza horaria.
+- [x] **Prueba real de concurrencia superada**, tres rondas de 30 peticiones simultáneas.
+- [x] Prueba de humo ampliada: la tabla de intentos y la función están cerradas al público (`401`).
+- [x] Filas de prueba borradas (120 → 0). El lead real intacto.
 - [ ] `RATE_LIMIT_SALT` en Vercel (production + preview). Ya generada en los `.env` locales.
 
 Sin lo primero, **no se fusiona**. La constitución ya exigía revisión legal de `/privacidad` (S5 del

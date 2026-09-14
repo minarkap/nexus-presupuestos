@@ -723,3 +723,25 @@ status: stable
   puede publicarse sin revisión legal humana**. No es formalidad: es texto que compromete a la
   empresa frente a terceros, y lo ha redactado un agente.
 - supersedes: none
+
+## S-0030 — El conteo del tope se serializa por huella, porque la atomicidad sola no bastaba
+
+- fecha: 2026-09-14
+- fase: `verify` de [limite-de-frecuencia](./specs/limite-de-frecuencia.md)
+- context: tras corregir el `comprobar-luego-actuar` metiendo inserción y conteo en la misma función
+  de Postgres, se probó contra la base de datos **real** con 30 peticiones simultáneas. La fuga
+  grande estaba cerrada —pasaron 5, no 30— pero **los contadores salieron repetidos**: 23, 26 y 29
+  aparecieron dos veces. Dos transacciones simultáneas insertan cada una la suya y luego cuentan sin
+  ver la ajena, porque el nivel de aislamiento por defecto de Postgres no se las muestra.
+- decision: la función toma `pg_advisory_xact_lock(hashtext(huella))` antes de insertar. Serializa
+  **por huella y sólo por huella**: dos orígenes distintos no se esperan entre sí, y el bloqueo se
+  libera solo al terminar la transacción.
+- evidencia: tres rondas de 30 peticiones simultáneas contra el Supabase real → 5 aceptadas,
+  contadores 1..30 exactos, cero duplicados, las tres veces.
+- why: sin esto, el fallo sólo aparecía **justo en la frontera** del tope —dos peticiones viendo el
+  contador 5 en vez de 5 y 6—, que es el único sitio donde importa y el más difícil de reproducir a
+  propósito.
+- lo que enseña: meter las dos operaciones en la misma transacción **no las serializa**. Atomicidad
+  y aislamiento son cosas distintas, y el razonamiento sobre el papel no distinguía entre las dos.
+  Lo distinguió la ráfaga real.
+- supersedes: none

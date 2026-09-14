@@ -47,6 +47,18 @@ security definer
 set search_path = public
 as $$
 begin
+  -- Serializa por huella y sólo por huella.
+  --
+  -- Sin esto, dos transacciones simultáneas insertan cada una la suya y luego cuentan sin ver la
+  -- ajena —Postgres, en su nivel de aislamiento por defecto, no se las enseña—, así que las dos
+  -- reciben el MISMO contador. Medido contra la base real el 2026-09-14: en una ráfaga de 30, los
+  -- contadores 23, 26 y 29 salieron repetidos. Lejos del tope da igual; justo en el tope dejaría
+  -- pasar un envío de más.
+  --
+  -- El bloqueo es por huella, así que dos orígenes distintos NO se esperan entre sí, y se libera
+  -- solo al terminar la transacción.
+  perform pg_advisory_xact_lock(hashtext(huella));
+
   insert into public.submission_attempts (fingerprint) values (huella);
 
   return query
