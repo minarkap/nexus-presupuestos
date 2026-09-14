@@ -2,207 +2,201 @@
   "skills": {
     "orient": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/orient"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/orient"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/orient"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/orient"
     },
     "suggest": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/suggest"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/suggest"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/suggest"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/suggest"
     },
     "bro": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/bro"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/bro"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/bro"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/bro"
     },
     "analyze": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/analyze"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/analyze"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/analyze"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/analyze"
     },
     "automation-strategy": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/automation-strategy"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/automation-strategy"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/automation-strategy"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/automation-strategy"
     },
     "clarify": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/clarify"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/clarify"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/clarify"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/clarify"
     },
     "constitution": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/constitution"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/constitution"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/constitution"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/constitution"
     },
     "debug": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/debug"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/debug"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/debug"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/debug"
     },
     "decision-challenge": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/decision-challenge"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/decision-challenge"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/decision-challenge"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/decision-challenge"
     },
     "deprecation": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/deprecation"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/deprecation"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/deprecation"
-    },
-    "design-eng": {
-      "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/design-eng"
-      ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/design-eng"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/deprecation"
     },
     "fable-operator": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/fable-operator"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/fable-operator"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/fable-operator"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/fable-operator"
     },
     "harness": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/harness"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/harness"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/harness"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/harness"
     },
     "idea-refinement": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/idea-refinement"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/idea-refinement"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/idea-refinement"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/idea-refinement"
     },
     "implement": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/implement"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/implement"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/implement"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/implement"
     },
     "init": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/init"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/init"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/init"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/init"
     },
     "parallel": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/parallel"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/parallel"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/parallel"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/parallel"
     },
     "plan": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/plan"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/plan"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/plan"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/plan"
     },
     "review": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/review"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/review"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/review"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/review"
     },
     "sdd": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/sdd"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/sdd"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/sdd"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/sdd"
     },
     "sdd-init": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/sdd-init"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/sdd-init"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/sdd-init"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/sdd-init"
     },
     "ship": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/ship"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/ship"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/ship"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/ship"
     },
     "simplify-code": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/simplify-code"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/simplify-code"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/simplify-code"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/simplify-code"
     },
     "source-grounded-development": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/source-grounded-development"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/source-grounded-development"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/source-grounded-development"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/source-grounded-development"
     },
     "specify": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/specify"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/specify"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/specify"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/specify"
     },
     "tasks": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/tasks"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/tasks"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/tasks"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/tasks"
     },
     "verify": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/verify"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/verify"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/verify"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/verify"
     },
     "worktrees": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/worktrees"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/worktrees"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/worktrees"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/worktrees"
     },
     "nextjs": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/nextjs"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/nextjs"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/nextjs"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/nextjs"
     },
     "design": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/design"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/design"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/design"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/design"
     },
     "email-connector": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/email-connector"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/email-connector"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/email-connector"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/email-connector"
     },
     "landing-copy": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/landing-copy"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/landing-copy"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/landing-copy"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/landing-copy"
     },
     "deployment": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/deployment"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/deployment"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/deployment"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/deployment"
     },
     "gdpr-privacy": {
       "files": [
-        "/Volumes/EXTERN/DEV/nexus_presupuestos/.codex/rsc/gdpr-privacy"
+        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.codex/rsc/gdpr-privacy"
       ],
-      "base": "/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/skills/gdpr-privacy"
+      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/gdpr-privacy"
     }
   },
   "agents": [

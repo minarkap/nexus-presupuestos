@@ -42,6 +42,9 @@ request. If the user engaged **SDD autopilot**, that one consent covers the whol
 through the phases without re-asking.
 
 If `specify` / `sdd` are not installed, offer to add them (§2) before routing.
+When `.rsc.json` records SDD as deferred, first run `npx @ericrisco/rsc@latest reassess`.
+Stay silent on `RSC_REASSESSMENT_NO_CHANGE`. If it reports new evidence, explain what changed and
+show the new plan command; SDD still needs a newly accepted plan id and is never added silently.
 
 Method, phase map and full decision table: `../sdd/SKILL.md`. On Claude Code this rule also arrives
 as a per-turn hook; the brevity here is deduplication, not relaxation.
@@ -79,7 +82,31 @@ Not covered → one line, skill or agent. Rules: `skill-scout`.
 
 ---
 
-## 3. First contact
+## 3. A harness that is broken fixes itself
+
+You are injected into every session, so you are the only thing that can notice a broken
+harness before its owner does — and its owner usually cannot, because the symptoms name
+nothing they recognise. When any of these is true, act on it **once** in the session:
+
+- the assistant sees no skills in a project that clearly has a harness;
+- `.rsc.json` exists and what it declares is not what is installed;
+- the same hook seems to run several times;
+- the harness is wired for an assistant that is not the one running.
+
+Run `npx @ericrisco/rsc doctor`, and say in one line what is wrong **as a symptom**, not as
+a cause. Then:
+
+- Anything that only puts the harness back to what was already declared — dangling links, a
+  repeated hook, a layout no version uses — say you are fixing it and run
+  `npx @ericrisco/rsc repair`. Restoring is not deciding, and a recoverable copy is kept.
+- Anything that would change a decision — moving to another assistant, adopting a skill a
+  teammate added, disarming a gate — **ask first**. A `git pull` never rewrites someone's
+  machine.
+
+Offer once. A "no" holds for the session; a new session may look again, because the problem
+has not gone away. Never mention it when the harness is healthy.
+
+## 4. First contact
 
 Before handling the first request of a session, check the workspace:
 
@@ -89,6 +116,10 @@ Before handling the first request of a session, check the workspace:
 - The user declines a harness here ("sin harness", "solo código") → create an empty
   `.rsc/.no-harness`, confirm in one line, and never auto-start `init` in this repo again.
 - Once the profile exists, this gate is inert. Never re-onboard.
+
+## Explain without assuming
+
+Define a term at first use; never give a command, flag or path without saying what it does.
 
 ## Orientación (siempre)
 

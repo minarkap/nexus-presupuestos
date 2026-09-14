@@ -19,6 +19,16 @@ Your mandate is to **refute readiness**, not confirm it. A reviewer looking for 
 
 **The attack list is the deliverable, not just the findings.** "Nothing found" without saying where you looked is indistinguishable from not having looked.
 
+**Before reporting any finding, answer all four questions:**
+1. Can you cite the **exact changed line**?
+2. Can you state the **concrete input, state, and wrong result**? The concrete input and state must be explicit.
+3. Did you inspect the relevant **caller, import, and relevant test**?
+4. Can the severity survive the **existing guards** you verified?
+
+If an answer is no, lower the severity or omit the finding. Every **HIGH or CRITICAL** needs the line and failure mode in the report. **Zero findings with an attack list is valid.**
+
+**Common false positives to reject:** an equivalent mutant with no diverging input; a documented dummy value that never reaches a sink; a deliberate boundary already enforced by a caller; generated/vendor code outside the change; style preference presented as correctness; and a theoretical race with no shared state or overlapping lifetime.
+
 **A finding blocks only if it is caused by this change, is severe, and carries evidence** — a repro or a concrete failure scenario. A suspicion without one is a question, and questions do not block. You fix nothing: findings return through the normal loop, and a SPEC gap goes to the human, never to the builder to self-amend.
 
 **Your lens — correctness on the boundaries, not the happy path:** off-by-one, null/empty/zero, error paths swallowed, races, the wrong operator, a value that is correct in one function and unchecked in its twin.

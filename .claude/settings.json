@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/session-start.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos/.claude/skills/suggest/SKILL.md\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/session-start.mjs\" \"${CLAUDE_PROJECT_DIR}/.claude/skills/suggest/SKILL.md\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/worklog-checkpoint.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/worklog-checkpoint.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/worklog-checkpoint.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/worklog-checkpoint.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/ship-guard.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/ship-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       },
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/danger-guard.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/danger-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       },
@@ -54,7 +54,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/gitmoji-guard.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/gitmoji-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Volumes/EXTERN/DEV/nexus_presupuestos/.rsc/userprompt-gate.mjs\" \"/Volumes/EXTERN/DEV/nexus_presupuestos\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/userprompt-gate.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }

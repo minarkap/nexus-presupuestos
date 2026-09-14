@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "targets": [
+    "claude"
+  ],
+  "skills": [
+    "analyze",
+    "automation-strategy",
+    "bro",
+    "clarify",
+    "constitution",
+    "debug",
+    "decision-challenge",
+    "deployment",
+    "deprecation",
+    "design",
+    "email-connector",
+    "fable-operator",
+    "gdpr-privacy",
+    "harness",
+    "idea-refinement",
+    "implement",
+    "init",
+    "landing-copy",
+    "nextjs",
+    "orient",
+    "parallel",
+    "plan",
+    "review",
+    "sdd",
+    "sdd-init",
+    "ship",
+    "simplify-code",
+    "source-grounded-development",
+    "specify",
+    "suggest",
+    "tasks",
+    "verify",
+    "worktrees"
+  ],
+  "agents": [],
+  "ownSkills": [
+    "nexus-consulting-design"
+  ],
+  "catalogVersion": "1.3.6",
+  "tier": "balanced",
+  "optOuts": []
+}
