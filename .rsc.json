@@ -44,5 +44,9 @@
   ],
   "catalogVersion": "1.3.6",
   "tier": "balanced",
-  "optOuts": []
+  "optOuts": [],
+  "memory": {
+    "enabled": true,
+    "compactionHint": false
+  }
 }
