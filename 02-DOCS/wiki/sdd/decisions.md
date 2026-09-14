@@ -558,3 +558,72 @@ status: stable
   compilación con `ERR_INVALID_URL`. Está fuera del alcance de esta spec y en producción la variable
   está definida; queda anotado.
 - supersedes: none
+
+## S-0025 — El registro de leads pasa a una base de datos, y el fallo de guardado deja de ser mudo
+
+- fecha: 2026-09-14
+- fase: `specify` de [leads-en-supabase](./specs/leads-en-supabase.md)
+- context: comprobado el 2026-09-14 que el entorno de producción tiene cuatro variables
+  (`NEXT_PUBLIC_SITE_URL`, `NEXUS_INTERNAL_MAILBOX`, `RESEND_FROM`, `RESEND_API_KEY`) y **ninguna
+  credencial de Google**. Es decir: `selectRegistry` devuelve el puerto «mal configurado» y el
+  registro de respaldo nunca ha escrito una fila real. Cada lead vive en un solo correo, y el fallo
+  no produce ningún síntoma visible.
+- options considered:
+  1. **Sustituir la hoja de cálculo por Supabase** (elegida por Jose): registro consultable, apto para
+     preguntas agregadas y para ejecutar de verdad la supresión a los doce meses que el aviso de
+     privacidad ya promete en público.
+  2. Rellenar las dos credenciales de Google y quedarse en la hoja — la alternativa barata, planteada
+     explícitamente como objeción antes de escribir la spec: minutos y cero código. Descartada por
+     Jose, no por inviable. Queda escrita en la spec como parche válido si el ciclo se retrasa.
+  3. Escribir en los dos sitios a la vez — descartada: dos proveedores que mantener y dos registros
+     que pueden desincronizarse.
+- decision: el lead se guarda en Supabase; la hoja de cálculo deja de usarse. Si el guardado falla o
+  el registro no está configurado, **el visitante no se entera** (ve su rango con normalidad) y el
+  **correo interno lleva un aviso explícito de que ese lead no ha quedado guardado**.
+- why: el silencio es el defecto real, no el proveedor. Cambiar de hoja a base de datos sin tocar el
+  silencio habría dejado el mismo agujero con mejor decorado.
+- alcance retirado en la propia conversación: Jose pidió primero «guardar + panel propio en la web» y
+  a los pocos minutos lo retiró («No hagas ningún panel de momento»). El panel queda como spec futura,
+  con su autenticación y sus permisos, y **no** como parte de este ciclo.
+- consecuencia asumida: el adaptador de Google Sheets queda sin uso. Si se borra o se deja dormido es
+  una pregunta abierta de la spec, no algo que este ciclo decida por su cuenta.
+- lo que NO cambia: el formulario, el motor de rango, la puntuación de cualificación, los correos al
+  visitante y el aviso de privacidad (su texto no nombra proveedores, así que sigue siendo cierto).
+- supersedes: none
+
+## S-0026 — La hoja de cálculo se deja dormida, y la base de datos se cierra con dos cerraduras
+
+- fecha: 2026-09-14
+- fase: `plan` de [leads-en-supabase](./specs/leads-en-supabase.md)
+- context: la spec dejó abierta una pregunta —¿el adaptador de Google Sheets se borra o se deja
+  dormido?— y Jose añadió durante la implementación un requisito explícito y repetido: «que no quede
+  expuesta la BBDD a fuera, quiero que sea completamente seguro».
+- decision 1 — **el adaptador de hoja de cálculo se deja dormido, no se borra.** Queda por debajo de
+  Supabase en la precedencia de `selectRegistryPort`, así que en cuanto Supabase está configurado no
+  se usa. Borrarlo eliminaría código probado y en verde a cambio de nada, y es exactamente el parche
+  barato que la spec deja escrito por si el ciclo se retrasa.
+- decision 2 — **la seguridad del registro no se sostiene con disciplina, se sostiene con puertas
+  que fallan solas.** Cuatro, deliberadamente de naturalezas distintas para que no fallen a la vez:
+  1. `import 'server-only'` en `src/ports/registry.ts` — barrera de **compilación**: si un componente
+     de cliente importara el registro, el build de producción falla en vez de empaquetar la clave.
+  2. `src/ports/registry-security.test.ts` — invariantes sobre el **fuente**: ninguna credencial
+     marcada `NEXT_PUBLIC_`, ningún componente de cliente importando el registro, ningún mensaje de
+     error que incluya la clave.
+  3. `scripts/secret-gate.mjs` — inspección del **paquete ya compilado**: busca los valores reales de
+     las variables sensibles, los nombres prohibidos y la huella de un JWT con rol distinto de `anon`.
+     Integrada en `verify.sh`. **Probada en los dos sentidos**: sale 1 con un secreto expuesto y 0 sin
+     él (una puerta que nunca se ha visto fallar no está probada).
+  4. `01-TOOLS/SUPABASE/schema.sql` — en la **base de datos**: `enable row level security` sin ninguna
+     policy, más `revoke all` explícito a `anon`, `authenticated` y `public`. Redundante a propósito:
+     si alguien añadiera mañana una policy sin pensarlo, el revoke sigue negando.
+- decision 3 — **el guardado pasa a ser el primer paso del despacho**, antes de los correos. Es la
+  única forma de que el aviso interno pueda declarar si el lead quedó guardado (`CA-S3`); con el
+  orden anterior el correo se redactaba antes de saberlo.
+- decision 4 — **sin dependencias nuevas.** Supabase se habla por su API REST con `fetch`, igual que
+  ya se hablaba con Google Sheets. Añadir `@supabase/supabase-js` metería un árbol de dependencias
+  para hacer un `POST`.
+- consecuencia asumida: `LeadRecord` gana `submissionId`, y `buildInternalNotice` gana un segundo
+  argumento **obligatorio**. Obligatorio y no opcional a propósito: un valor por defecto `'ok'`
+  haría que un argumento olvidado afirmara en silencio que el lead está guardado (misma lógica que
+  `S-0024`: el criterio lo sostiene el sistema de tipos, no la disciplina).
+- supersedes: none

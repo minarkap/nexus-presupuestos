@@ -98,6 +98,7 @@ Especificaciones del chain SDD: qué se construye y por qué, antes de decidir c
 | [Spec — Landing y estimador de presupuesto de Nexus](sdd/specs/landing-presupuestos-nexus.md) | Landing + formulario de 7 preguntas, rango orientativo del catálogo 2026, tres salidas según cualificación y dos emails. | 2026-08-26 | — |
 | [Spec — Sitio web de Nexus Consulting](sdd/specs/sitio-nexus-consulting.md) | Marca del design system, cinco páginas con URL propia (seis aprobadas; el artículo retirado en S-0020), copy con la voz de Nexus Consulting y capa SEO/GEO indexable y citable; el motor de cálculo no cambia. Aprobada en autopilot. | 2026-09-02 | — |
 | [Spec — Pregunta de frenos del lead](sdd/specs/pregunta-frenos-lead.md) | Octava pregunta de negocio en el formulario, de respuesta múltiple, saltable y con cuatro opciones; informativa para el aviso interno, no toca ni la cifra ni la puntuación de cualificación. Aprobada e implementada el 2026-09-14. | 2026-09-14 | — |
+| [Spec — El registro de leads pasa a Supabase](sdd/specs/leads-en-supabase.md) | El lead se guarda en una base de datos consultable en lugar de la hoja de cálculo, y un fallo de guardado deja de ser silencioso: el correo interno lo avisa. Sin panel y sin cambios en el formulario. Aprobada en autopilot. | 2026-09-14 | — |
 
 ## sdd/plans
 
@@ -135,6 +136,7 @@ Listas que bloquean la publicación y que ninguna prueba automática puede cerra
 |---------|---------|---------|-------|
 | [Lista de comprobación de tono](sdd/tone-checklist.md) | 12 superficies (S1–S12), 8 comprobaciones, acta sin firmar. Bloquea publicar (CA-04). | 2026-09-02 | — |
 | [Recorrido manual de los tres perfiles](sdd/manual-walkthrough.md) | Perfiles A/B/C con su resultado esperado, incluida la inspección de la pestaña de red. | 2026-08-26 | — |
+| [Plan — El registro de leads pasa a Supabase](sdd/plans/leads-en-supabase.md) | Adaptador sobre la API REST de Supabase sin dependencias nuevas, inversión del orden de despacho para que el aviso interno pueda declarar el guardado, y la tabla cerrada con RLS sin policies más revoke explícito. | 2026-09-14 | — |
 
 > **Score**: puntuación compuesta de calidad (enlaces entrantes, número de fuentes, citas, frescura;
 > menos conflictos y penalización por orfandad). Se regenera en cada Maintenance Pass. Los artículos
