@@ -325,7 +325,7 @@ describe('Límite de frecuencia (spec limite-de-frecuencia)', () => {
 
   /** Llena el cupo de la hora para esa huella. */
   const agotarCupo = async () => {
-    for (let i = 0; i < RATE_LIMIT.perHour; i++) await limiter.record(HUELLA)
+    for (let i = 0; i < RATE_LIMIT.perHour; i++) await limiter.registerAndCount(HUELLA)
   }
 
   it('CA-L1 · un origen limpio no nota nada', async () => {
@@ -359,28 +359,31 @@ describe('Límite de frecuencia (spec limite-de-frecuencia)', () => {
     }
   })
 
+  /** Cuántos intentos lleva anotados esa huella, sin anotar uno nuevo. */
+  const cupoConsumido = async () => {
+    const antes = await limiter.registerAndCount(HUELLA)
+    return antes.enHora - 1
+  }
+
   it('cada envío aceptado consume cupo', async () => {
     await submitLead(answers, 's1', conTope(), cache)
-    expect(await limiter.recentAttempts(HUELLA, new Date(0))).toHaveLength(1)
+    expect(await cupoConsumido()).toBe(1)
   })
 
   it('un envío RECHAZADO por validación no consume cupo: no es culpa de nadie', async () => {
     const contact = { ...answers.contact, email: 'no-es-un-correo' }
     await submitLead({ ...answers, contact }, 's1', conTope(), cache)
-    expect(await limiter.recentAttempts(HUELLA, new Date(0))).toHaveLength(0)
+    expect(await cupoConsumido()).toBe(0)
   })
 
   it('un doble clic NO consume cupo dos veces: es el mismo envío', async () => {
     await submitLead(answers, 'misma-sesion', conTope(), cache)
     await submitLead(answers, 'misma-sesion', conTope(), cache)
-    expect(await limiter.recentAttempts(HUELLA, new Date(0))).toHaveLength(1)
+    expect(await cupoConsumido()).toBe(1)
   })
 
   it('CA-L6 · si el conteo está caído, el envío PASA', async () => {
-    const roto = {
-      recentAttempts: async () => { throw new Error('supabase caído') },
-      record: async () => { throw new Error('supabase caído') },
-    }
+    const roto = { registerAndCount: async () => { throw new Error('supabase caído') } }
     const r = await submitLead(answers, 's1', conTope({ rateLimitPort: roto }), cache)
     expect(r).not.toMatchObject({ kind: 'rate_limited' })
     expect(registry.rows).toHaveLength(1)

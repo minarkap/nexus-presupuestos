@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { RATE_LIMIT, isOverLimit, fingerprintFor } from './rate-limit'
-
-/** Marcas de tiempo a N minutos antes de `ahora`, en el formato que devuelve la base de datos. */
-const ahora = new Date('2026-09-14T12:00:00.000Z')
-const haceMinutos = (...ns: number[]) =>
-  ns.map((n) => new Date(ahora.getTime() - n * 60_000).toISOString())
+import { RATE_LIMIT, excedeElTope, fingerprintFor, normalizeIp } from './rate-limit'
 
 describe('El tope vive en un único punto de configuración (CA-L7)', () => {
   it('declara las dos ventanas y nada más', () => {
@@ -12,45 +7,58 @@ describe('El tope vive en un único punto de configuración (CA-L7)', () => {
   })
 })
 
+/**
+ * Los contadores llegan de la base de datos y YA INCLUYEN el intento en curso: la función que los
+ * produce inserta y cuenta en la misma transacción. Por eso el corte es «más que el tope», no «tanto
+ * como el tope» — con cinco permitidos por hora, el quinto envío llega con `enHora = 5`.
+ */
 describe('La decisión del tope — frontera por frontera', () => {
-  it('sin intentos previos, pasa', () => {
-    expect(isOverLimit([], ahora)).toBe(false)
+  it('el primer envío de un origen pasa', () => {
+    expect(excedeElTope({ enHora: 1, enDia: 1 })).toBe(false)
   })
 
   it('justo EN el tope de la hora todavía pasa: el quinto envío es legítimo', () => {
-    expect(isOverLimit(haceMinutos(1, 2, 3, 4), ahora)).toBe(false)
+    expect(excedeElTope({ enHora: RATE_LIMIT.perHour, enDia: 5 })).toBe(false)
   })
 
   it('uno por encima del tope de la hora, no pasa', () => {
-    expect(isOverLimit(haceMinutos(1, 2, 3, 4, 5), ahora)).toBe(true)
-  })
-
-  it('los intentos de hace más de una hora no cuentan para la ventana horaria', () => {
-    expect(isOverLimit(haceMinutos(61, 62, 63, 64, 65), ahora)).toBe(false)
-  })
-
-  it('un intento de hace exactamente una hora ya está fuera de la ventana', () => {
-    expect(isOverLimit(haceMinutos(60, 1, 2, 3, 4), ahora)).toBe(false)
+    expect(excedeElTope({ enHora: RATE_LIMIT.perHour + 1, enDia: 6 })).toBe(true)
   })
 
   it('el tope diario corta aunque la hora esté limpia', () => {
-    // Quince repartidos a lo largo del día, ninguno en la última hora.
-    const repartidos = haceMinutos(...Array.from({ length: 15 }, (_, i) => 70 + i * 60))
-    expect(isOverLimit(repartidos, ahora)).toBe(true)
+    expect(excedeElTope({ enHora: 1, enDia: RATE_LIMIT.perDay + 1 })).toBe(true)
   })
 
-  it('catorce en el día todavía pasan: el quince es el que sobra', () => {
-    const repartidos = haceMinutos(...Array.from({ length: 14 }, (_, i) => 70 + i * 60))
-    expect(isOverLimit(repartidos, ahora)).toBe(false)
+  it('justo EN el tope diario todavía pasa', () => {
+    expect(excedeElTope({ enHora: 1, enDia: RATE_LIMIT.perDay })).toBe(false)
   })
 
-  it('lo de hace más de un día no cuenta para nada', () => {
-    const viejos = haceMinutos(...Array.from({ length: 40 }, (_, i) => 1500 + i))
-    expect(isOverLimit(viejos, ahora)).toBe(false)
+  it('contadores absurdos se tratan como pasados de tope, no se ignoran', () => {
+    expect(excedeElTope({ enHora: 9999, enDia: 9999 })).toBe(true)
+  })
+})
+
+describe('Normalización de la dirección — IPv6 no da cupo infinito', () => {
+  /**
+   * Un atacante con un bloque /64 enrutado —lo trae cualquier servidor barato— puede usar una
+   * dirección IPv6 distinta en cada petición. Sin recortar al prefijo, cada una sería «un origen
+   * nuevo» y el tope no existiría para él.
+   */
+  it('recorta una IPv6 a su prefijo /64: todo el bloque comparte cupo', () => {
+    expect(normalizeIp('2001:db8:1:2:aaaa:bbbb:cccc:dddd'))
+      .toBe(normalizeIp('2001:db8:1:2:9999:8888:7777:6666'))
   })
 
-  it('una marca de tiempo ilegible se ignora en vez de romper el envío', () => {
-    expect(isOverLimit(['no-es-una-fecha', ...haceMinutos(1, 2)], ahora)).toBe(false)
+  it('dos bloques /64 distintos NO comparten cupo', () => {
+    expect(normalizeIp('2001:db8:1:2::1')).not.toBe(normalizeIp('2001:db8:1:3::1'))
+  })
+
+  it('una IPv4 se deja intacta: ahí cada dirección ya es un origen', () => {
+    expect(normalizeIp('81.203.4.7')).toBe('81.203.4.7')
+  })
+
+  it('una IPv6 comprimida también se recorta', () => {
+    expect(normalizeIp('2001:db8::1')).toBe(normalizeIp('2001:db8:0:0:ffff::2'))
   })
 })
 

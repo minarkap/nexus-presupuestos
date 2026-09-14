@@ -11,29 +11,49 @@ import { createHmac } from 'node:crypto'
  */
 export const RATE_LIMIT = { perHour: 5, perDay: 15 } as const
 
-const UNA_HORA = 60 * 60 * 1000
-const UN_DÍA = 24 * UNA_HORA
+/** Lo que devuelve la base de datos: los dos contadores, **incluyendo el intento en curso**. */
+export interface AttemptCounts {
+  readonly enHora: number
+  readonly enDia: number
+}
 
 /**
  * ¿Este envío pasa del tope?
  *
- * Función pura a propósito: recibe los intentos previos y el instante actual, sin reloj propio y sin
- * red, para poder probar las fronteras exactas —justo en el tope, uno por encima, la ventana que
- * acaba de caducar— que es donde viven los errores de un limitador.
+ * Función pura sobre contadores, no sobre marcas de tiempo. El cambio no es cosmético: la primera
+ * versión leía los intentos y luego anotaba, en dos viajes separados, y la revisión adversarial del
+ * 2026-09-14 demostró que eso se atraviesa entero — treinta peticiones simultáneas leen todas el
+ * mismo contador antes de que ninguna haya anotado, y las treinta se creen por debajo del tope.
  *
- * Una marca de tiempo ilegible se ignora en lugar de romper el envío: un dato corrupto en la tabla
- * de conteo no puede costarle un lead a nadie.
+ * Ahora insertar y contar ocurren en la misma transacción dentro de la base de datos, y aquí sólo
+ * queda decidir. Los contadores **incluyen el intento en curso**, así que el corte es «más que el
+ * tope»: con cinco por hora permitidos, el quinto envío llega con `enHora = 5` y pasa.
  */
-export function isOverLimit(intentosPrevios: readonly string[], ahora: Date): boolean {
-  const t = ahora.getTime()
-  const marcas = intentosPrevios
-    .map((s) => new Date(s).getTime())
-    .filter((ms) => Number.isFinite(ms))
+export function excedeElTope(counts: AttemptCounts): boolean {
+  return counts.enHora > RATE_LIMIT.perHour || counts.enDia > RATE_LIMIT.perDay
+}
 
-  const enLaÚltimaHora = marcas.filter((ms) => t - ms < UNA_HORA).length
-  const enElÚltimoDía = marcas.filter((ms) => t - ms < UN_DÍA).length
+/**
+ * Recorta una dirección IPv6 a su prefijo `/64`; las IPv4 se dejan intactas.
+ *
+ * Sin esto, el tope no existe para quien tenga un bloque IPv6 enrutado —lo trae cualquier servidor
+ * barato—: bastaría con usar una dirección distinta del mismo bloque en cada petición para que cada
+ * una pareciera un origen nuevo. Un `/64` es la unidad que se asigna a un único cliente, así que
+ * recortar ahí agrupa lo que de verdad es un mismo origen sin mezclar a desconocidos.
+ */
+export function normalizeIp(ip: string): string {
+  if (!ip.includes(':')) return ip
 
-  return enLaÚltimaHora >= RATE_LIMIT.perHour || enElÚltimoDía >= RATE_LIMIT.perDay
+  const [izquierda = '', derecha = ''] = ip.split('::', 2)
+  const cabeza = izquierda.split(':').filter(Boolean)
+
+  if (!ip.includes('::')) return cabeza.slice(0, 4).join(':')
+
+  // Con `::` hay grupos de ceros implícitos: se reconstruyen sólo los que caben antes del cuarto.
+  const cola = derecha.split(':').filter(Boolean)
+  const ceros = Math.max(0, 8 - cabeza.length - cola.length)
+  const completa = [...cabeza, ...Array(ceros).fill('0'), ...cola]
+  return completa.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, '')).join(':')
 }
 
 /**
@@ -52,5 +72,5 @@ export function fingerprintFor(
   sal: string | undefined,
 ): string | null {
   if (!ip || !sal) return null
-  return createHmac('sha256', sal).update(ip).digest('hex').slice(0, 32)
+  return createHmac('sha256', sal).update(normalizeIp(ip)).digest('hex').slice(0, 32)
 }

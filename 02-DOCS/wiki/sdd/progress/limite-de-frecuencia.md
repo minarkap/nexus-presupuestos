@@ -47,6 +47,30 @@ Dos guardianes del proyecto saltaron solos y acertaron:
 
 `bash scripts/verify.sh` → **VERDE** en los seis pasos, 314 pruebas.
 
+## Revisión adversarial de seguridad — encontró un fallo que derrotaba la función entera
+
+Cinco hallazgos. **Los dos primeros eran defectos reales y graves**, y el primero anulaba el
+propósito de la spec:
+
+| # | Hallazgo | Estado |
+|---|---|---|
+| 1 | **El tope no era atómico.** Leía el contador y luego anotaba, en dos viajes. Treinta peticiones simultáneas —un `Promise.all` de cinco líneas— leen todas el mismo contador antes de que ninguna haya anotado, y las treinta pasan. En Vercel cada una corre en una instancia distinta: nada las coordina salvo la base de datos | **Corregido**: `registrar_intento`, una función de Postgres que inserta y cuenta en la misma transacción. Una sola llamada |
+| 2 | **El aviso de privacidad prometía un plazo falso.** Decía «menos de cuarenta y ocho horas»; con una limpieza diaria, una fila insertada justo después de una pasada sobrevivía **hasta 72 horas**. Comprobado con la aritmética del cron | **Corregido**: limpieza **horaria** (peor caso 49 h) y el texto dice «un máximo de tres días», que sí es cierto |
+| 3 | **La promesa de no-asociación era más fuerte de lo que el diseño sostiene.** Ambas tablas reciben una fila en la misma petición, con menos de un segundo de diferencia: quien tenga la clave de servicio puede emparejarlas por proximidad temporal | **Corregido el texto**, no el diseño: ahora dice que la huella «se guarda aparte de tu solicitud, en un registro que no contiene tu nombre, tu correo ni ninguna de tus respuestas» — que es lo que de verdad ocurre |
+| 4 | **Rotación IPv6 en un `/64` propio** daba cupo infinito a quien tuviera un bloque enrutado | **Corregido**: la dirección se recorta al prefijo `/64` antes de calcular la huella |
+| 5 | La prueba de humo no cubría la tabla nueva, **pese a que el plan lo prometía** | **Corregido**: comprueba la tabla y que la función atómica esté cerrada al público |
+
+Lo que **resistió**: falsificación de cabeceras (Vercel las sobrescribe), fuga de la sal o de la
+huella hacia el cliente, los logs o los correos, reversibilidad del HMAC, elegir la huella de un
+tercero, y fuga por el mensaje de bloqueo.
+
+### Lo que esto enseña
+
+El diseño anterior **parecía correcto y tenía 44 pruebas en verde**. Ninguna ejercitaba concurrencia,
+y el plan tampoco la mencionaba entre sus riesgos. Un limitador que se comprueba en serie siempre
+parece funcionar: el fallo sólo existe cuando dos peticiones se pisan, que es exactamente lo que hace
+un atacante y nunca hace una prueba secuencial.
+
 ## PUERTA HUMANA — por qué esto no se publica
 
 Este ciclo **redacta párrafos nuevos del aviso de privacidad**, marcados como borrador en la cabecera
@@ -55,7 +79,11 @@ frente a terceros.
 
 - [ ] **Revisión legal** de los tres párrafos nuevos (huella técnica, interés legítimo, plazo).
 - [ ] **Firma de la superficie nueva** del acta de tono: el mensaje que ve quien cruza el tope.
-- [ ] Ejecutar `01-TOOLS/SUPABASE/rate-limit.sql` en Supabase.
+- [ ] Ejecutar `01-TOOLS/SUPABASE/rate-limit.sql` en Supabase. **Incluye la función atómica**: sin
+      ella el tope no protege de una ráfaga concurrente.
+- [ ] **Prueba real de concurrencia** contra la base de datos, pendiente de lo anterior: la
+      atomicidad está razonada y escrita, pero **todavía no demostrada contra Postgres**. Dado que el
+      diseño anterior también parecía correcto, esta prueba no es opcional.
 - [ ] `RATE_LIMIT_SALT` en Vercel (production + preview). Ya generada en los `.env` locales.
 
 Sin lo primero, **no se fusiona**. La constitución ya exigía revisión legal de `/privacidad` (S5 del

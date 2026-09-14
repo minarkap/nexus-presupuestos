@@ -3,21 +3,24 @@
 // empaquetar la credencial en el navegador.
 import 'server-only'
 import { normalizeSupabaseUrl, type SupabaseConfig } from './registry'
+import type { AttemptCounts } from '@/core/rate-limit'
 
 /**
  * Conteo de intentos de envío por huella de origen.
  *
- * Dos operaciones y ninguna decisión: leer los intentos recientes y anotar uno. **Quién decide si
- * eso pasa del tope es `src/core/rate-limit.ts`**, que es una función pura — el puerto sólo entra y
- * sale de la base de datos.
+ * **Una sola operación**: anotar el intento y devolver los contadores resultantes. No son dos pasos
+ * a propósito — leer y luego escribir en dos viajes es un *comprobar-luego-actuar*, y la revisión
+ * adversarial del 2026-09-14 demostró que treinta peticiones simultáneas lo atraviesan entero. La
+ * atomicidad la da la base de datos; aquí sólo se la pide.
  *
- * `recentAttempts` **lanza** cuando falla, en vez de devolver una lista vacía. La diferencia importa:
- * una lista vacía significa «no ha habido intentos» y un fallo significa «no lo sé», y quien llama
- * tiene que poder distinguirlos para decidir abrir a conciencia (`CA-L6`).
+ * Quién decide si los contadores pasan del tope es `src/core/rate-limit.ts`, que es puro.
+ *
+ * **Lanza** cuando falla, en vez de devolver ceros. La diferencia importa: unos contadores a cero
+ * significan «no ha habido intentos» y un fallo significa «no lo sé», y quien llama tiene que poder
+ * distinguirlos para decidir abrir a conciencia (`CA-L6`).
  */
 export interface RateLimitPort {
-  recentAttempts(fingerprint: string, since: Date): Promise<readonly string[]>
-  record(fingerprint: string): Promise<void>
+  registerAndCount(fingerprint: string): Promise<AttemptCounts>
 }
 
 /**
@@ -29,26 +32,20 @@ export interface RateLimitPort {
  * más. Entre perder un lead y aceptar uno de más, se acepta uno de más.
  */
 export class DisabledRateLimitPort implements RateLimitPort {
-  async recentAttempts(): Promise<readonly string[]> {
-    return []
-  }
-  async record(): Promise<void> {
-    // Nada que anotar: no hay dónde.
+  async registerAndCount(): Promise<AttemptCounts> {
+    return { enHora: 0, enDia: 0 }
   }
 }
 
 /** El doble con el que se desarrolla sin base de datos. */
 export class FakeRateLimitPort implements RateLimitPort {
-  private readonly intentos = new Map<string, string[]>()
+  private readonly cuenta = new Map<string, number>()
 
-  async recentAttempts(fingerprint: string, since: Date): Promise<readonly string[]> {
-    const todos = this.intentos.get(fingerprint) ?? []
-    return todos.filter((s) => new Date(s).getTime() >= since.getTime())
-  }
-
-  async record(fingerprint: string): Promise<void> {
-    const previos = this.intentos.get(fingerprint) ?? []
-    this.intentos.set(fingerprint, [...previos, new Date().toISOString()])
+  async registerAndCount(fingerprint: string): Promise<AttemptCounts> {
+    const n = (this.cuenta.get(fingerprint) ?? 0) + 1
+    this.cuenta.set(fingerprint, n)
+    // El doble no distingue ventanas: en pruebas todo ocurre en el mismo instante.
+    return { enHora: n, enDia: n }
   }
 }
 
@@ -72,31 +69,24 @@ export class SupabaseRateLimitPort implements RateLimitPort {
   }
 
   /**
-   * Una sola petición para las dos ventanas: se piden las marcas del último día y se cuentan en
-   * memoria. Son como mucho quince filas, así que traerlas no cuesta nada y ahorra un viaje.
+   * Anota el intento y devuelve los contadores, **en una sola transacción de la base de datos**.
+   *
+   * La función `registrar_intento` inserta y cuenta dentro de la misma sentencia, así que dos
+   * peticiones simultáneas no pueden ver ambas el contador de antes: la segunda ve lo que anotó la
+   * primera. Es lo que convierte el tope en un tope de verdad.
    */
-  async recentAttempts(fingerprint: string, since: Date): Promise<readonly string[]> {
-    const url =
-      `${this.base}/rest/v1/submission_attempts` +
-      `?fingerprint=eq.${encodeURIComponent(fingerprint)}` +
-      `&attempted_at=gte.${encodeURIComponent(since.toISOString())}` +
-      `&select=attempted_at`
-
-    const res = await this.fetchImpl(url, { headers: this.headers })
+  async registerAndCount(fingerprint: string): Promise<AttemptCounts> {
+    const res = await this.fetchImpl(`${this.base}/rest/v1/rpc/registrar_intento`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify({ huella: fingerprint }),
+    })
     if (!res.ok) throw new Error(`Supabase respondió ${res.status} al contar intentos`)
 
-    const filas = (await res.json()) as { attempted_at: string }[]
-    return filas.map((f) => f.attempted_at)
-  }
-
-  /** Se escribe la huella y nada más: la fecha la pone la propia base de datos. */
-  async record(fingerprint: string): Promise<void> {
-    const res = await this.fetchImpl(`${this.base}/rest/v1/submission_attempts`, {
-      method: 'POST',
-      headers: { ...this.headers, Prefer: 'return=minimal' },
-      body: JSON.stringify({ fingerprint }),
-    })
-    if (!res.ok) throw new Error(`Supabase respondió ${res.status} al anotar el intento`)
+    const filas = (await res.json()) as { en_hora: number; en_dia: number }[]
+    const fila = filas[0]
+    if (!fila) throw new Error('Supabase no devolvió contadores de intentos')
+    return { enHora: Number(fila.en_hora), enDia: Number(fila.en_dia) }
   }
 }
 

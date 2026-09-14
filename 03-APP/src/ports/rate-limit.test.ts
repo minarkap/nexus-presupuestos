@@ -7,7 +7,6 @@ import {
 const CLAVE = 'sb_secret_de_pruebas'
 const config = { url: 'https://proyecto.supabase.co', serviceRoleKey: CLAVE }
 const HUELLA = 'a'.repeat(32)
-const DESDE = new Date('2026-09-13T12:00:00.000Z')
 
 function espía(status: number, body = '[]') {
   const llamadas: { url: string; init: RequestInit }[] = []
@@ -18,61 +17,68 @@ function espía(status: number, body = '[]') {
   return { llamadas, impl: impl as unknown as typeof fetch }
 }
 
-describe('SupabaseRateLimitPort — leer los intentos recientes', () => {
-  it('pregunta sólo por esa huella y sólo desde la fecha dada', async () => {
-    const { llamadas, impl } = espía(200, '[]')
-    await new SupabaseRateLimitPort(config, impl).recentAttempts(HUELLA, DESDE)
-    const url = llamadas[0]?.url ?? ''
-    expect(url).toContain('/rest/v1/submission_attempts')
-    expect(url).toContain(`fingerprint=eq.${HUELLA}`)
-    expect(url).toContain(`attempted_at=gte.${encodeURIComponent(DESDE.toISOString())}`)
-    expect(url).toContain('select=attempted_at')
+const CUENTAS = '[{"en_hora":3,"en_dia":7}]'
+
+describe('SupabaseRateLimitPort — anotar y contar en UNA operación', () => {
+  /**
+   * Que sea una sola llamada es el arreglo, no un detalle: dos viajes —leer y luego anotar— es un
+   * comprobar-luego-actuar, y treinta peticiones simultáneas lo atraviesan entero.
+   */
+  it('llama a la función que inserta y cuenta en la misma transacción', async () => {
+    const { llamadas, impl } = espía(200, CUENTAS)
+    await new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA)
+    expect(llamadas).toHaveLength(1)
+    expect(llamadas[0]?.url).toContain('/rest/v1/rpc/registrar_intento')
+    expect(llamadas[0]?.init.method).toBe('POST')
   })
 
-  it('devuelve las marcas de tiempo tal cual', async () => {
-    const { impl } = espía(200, '[{"attempted_at":"2026-09-14T11:00:00Z"},{"attempted_at":"2026-09-14T11:30:00Z"}]')
-    const marcas = await new SupabaseRateLimitPort(config, impl).recentAttempts(HUELLA, DESDE)
-    expect(marcas).toEqual(['2026-09-14T11:00:00Z', '2026-09-14T11:30:00Z'])
+  it('manda sólo la huella, jamás la dirección ni nada identificativo (CA-L5)', async () => {
+    const { llamadas, impl } = espía(200, CUENTAS)
+    await new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA)
+    const cuerpo = JSON.parse(String(llamadas[0]?.init.body))
+    expect(Object.keys(cuerpo)).toEqual(['huella'])
+    expect(cuerpo.huella).toBe(HUELLA)
+  })
+
+  it('devuelve los dos contadores', async () => {
+    const { impl } = espía(200, CUENTAS)
+    const c = await new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA)
+    expect(c).toEqual({ enHora: 3, enDia: 7 })
+  })
+
+  it('se autentica con la clave de servidor', async () => {
+    const { llamadas, impl } = espía(200, CUENTAS)
+    await new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA)
+    const headers = llamadas[0]?.init.headers as Record<string, string>
+    expect(headers.apikey).toBe(CLAVE)
+    expect(headers.Authorization).toBe(`Bearer ${CLAVE}`)
   })
 
   it('normaliza la URL igual que el registro', async () => {
-    const { llamadas, impl } = espía(200, '[]')
+    const { llamadas, impl } = espía(200, CUENTAS)
     const port = new SupabaseRateLimitPort(
       { url: 'https://proyecto.supabase.co/rest/v1/', serviceRoleKey: CLAVE }, impl,
     )
-    await port.recentAttempts(HUELLA, DESDE)
-    expect(llamadas[0]?.url).toContain('https://proyecto.supabase.co/rest/v1/submission_attempts')
+    await port.registerAndCount(HUELLA)
     expect(llamadas[0]?.url).not.toContain('/rest/v1/rest/v1/')
   })
 
   it('un error del servidor LANZA, para que quien llama decida abrir', async () => {
     const { impl } = espía(500, 'boom')
-    await expect(new SupabaseRateLimitPort(config, impl).recentAttempts(HUELLA, DESDE))
+    await expect(new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA))
       .rejects.toThrow(/500/)
+  })
+
+  it('una respuesta vacía también lanza: no se inventan contadores a cero', async () => {
+    const { impl } = espía(200, '[]')
+    await expect(new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA))
+      .rejects.toThrow()
   })
 
   it('el mensaje de error nunca lleva la credencial', async () => {
     const { impl } = espía(500, `explota con ${CLAVE}`)
-    await expect(new SupabaseRateLimitPort(config, impl).recentAttempts(HUELLA, DESDE))
+    await expect(new SupabaseRateLimitPort(config, impl).registerAndCount(HUELLA))
       .rejects.not.toThrow(new RegExp(CLAVE))
-  })
-})
-
-describe('SupabaseRateLimitPort — anotar un intento', () => {
-  it('escribe sólo la huella, jamás la dirección ni nada identificativo (CA-L5)', async () => {
-    const { llamadas, impl } = espía(201, '')
-    await new SupabaseRateLimitPort(config, impl).record(HUELLA)
-    const cuerpo = JSON.parse(String(llamadas[0]?.init.body))
-    expect(Object.keys(cuerpo)).toEqual(['fingerprint'])
-    expect(cuerpo.fingerprint).toBe(HUELLA)
-  })
-
-  it('se autentica con la clave de servidor', async () => {
-    const { llamadas, impl } = espía(201, '')
-    await new SupabaseRateLimitPort(config, impl).record(HUELLA)
-    const headers = llamadas[0]?.init.headers as Record<string, string>
-    expect(headers.apikey).toBe(CLAVE)
-    expect(headers.Authorization).toBe(`Bearer ${CLAVE}`)
   })
 })
 
@@ -80,27 +86,22 @@ describe('DisabledRateLimitPort — cuando no hay con qué contar, se abre', () 
   // Se prueba a través del contrato, no de la clase: lo que importa es que cumpla `RateLimitPort`.
   const desactivado: RateLimitPort = new DisabledRateLimitPort()
 
-  it('no devuelve ningún intento, así que nunca bloquea', async () => {
-    expect(await desactivado.recentAttempts(HUELLA, DESDE)).toEqual([])
-  })
-
-  it('anotar no hace nada y no rompe', async () => {
-    await expect(desactivado.record(HUELLA)).resolves.toBeUndefined()
+  it('devuelve contadores a cero, así que nunca bloquea', async () => {
+    expect(await desactivado.registerAndCount(HUELLA)).toEqual({ enHora: 0, enDia: 0 })
   })
 })
 
 describe('FakeRateLimitPort — el doble con el que se desarrolla', () => {
-  it('recuerda lo que se le anota', async () => {
+  it('cuenta hacia arriba con cada intento', async () => {
     const port = new FakeRateLimitPort()
-    await port.record(HUELLA)
-    await port.record(HUELLA)
-    expect(await port.recentAttempts(HUELLA, DESDE)).toHaveLength(2)
+    expect(await port.registerAndCount(HUELLA)).toMatchObject({ enHora: 1 })
+    expect(await port.registerAndCount(HUELLA)).toMatchObject({ enHora: 2 })
   })
 
   it('no mezcla huellas distintas', async () => {
     const port = new FakeRateLimitPort()
-    await port.record(HUELLA)
-    expect(await port.recentAttempts('b'.repeat(32), DESDE)).toHaveLength(0)
+    await port.registerAndCount(HUELLA)
+    expect(await port.registerAndCount('b'.repeat(32))).toMatchObject({ enHora: 1 })
   })
 })
 
