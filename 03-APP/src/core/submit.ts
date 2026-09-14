@@ -191,6 +191,7 @@ export async function submitLead(
   const proposal = composeProposal(answers.contact, service, price, outcome.kind)
 
   const lead: LeadRecord = {
+    submissionId,
     submittedAt: deps.now().toISOString(),
     contact: answers.contact,
     answers,
@@ -200,7 +201,12 @@ export async function submitLead(
     blockers: answers.blockers,
   }
 
+  // El guardado va PRIMERO, y no por gusto: el aviso interno tiene que poder declarar si este lead
+  // ha quedado registrado (CA-S3), y con el orden anterior el correo se redactaba antes de saberlo.
+  const registry = await attempt(() => deps.registryPort.append(lead))
+
   const report: DispatchReport = {
+    registry,
     clientEmail: await attempt(() =>
       deps.emailPort.send({
         to: answers.contact.email,
@@ -212,10 +218,9 @@ export async function submitLead(
       deps.emailPort.send({
         to: deps.internalMailbox,
         subject: `Nuevo lead · ${answers.contact.company} · ${score.total}/10`,
-        body: buildInternalNotice(lead),
+        body: buildInternalNotice(lead, registry),
       }),
     ),
-    registry: await attempt(() => deps.registryPort.append(lead)),
   }
 
   deps.onDispatch?.(report)
@@ -233,10 +238,25 @@ function frenosLegibles(blockers: readonly Blocker[]): string {
   return blockers.map((b) => BLOCKER_LABEL[b]).join(' · ')
 }
 
+/**
+ * El aviso de que este lead no está guardado en ninguna parte.
+ *
+ * Va ARRIBA DEL TODO y sólo cuando falla. Las dos cosas son la decisión: al final se lee tarde, y un
+ * aviso que apareciera siempre dejaría de leerse a la tercera vez (`CA-S2`/`CA-S3`, riesgo R-S2).
+ */
+function avisoDeNoGuardado(): readonly string[] {
+  return [
+    '⚠️  ESTE LEAD NO ha quedado guardado en el registro. Este correo es la ÚNICA copia:',
+    '    guárdalo o pásalo al CRM a mano antes de archivarlo.',
+    '',
+  ]
+}
+
 /** El aviso interno sin desglose es inservible (CA-16). */
-export function buildInternalNotice(lead: LeadRecord): string {
+export function buildInternalNotice(lead: LeadRecord, registry: 'ok' | 'failed'): string {
   const líneas = lead.score.breakdown.map((b) => `  - ${b.signal}: ${b.answer} → ${b.points > 0 ? '+' : ''}${b.points}`)
   return [
+    ...(registry === 'failed' ? avisoDeNoGuardado() : []),
     `Contacto: ${lead.contact.name} <${lead.contact.email}> — ${lead.contact.company}`,
     `Recibido: ${lead.submittedAt}`,
     `Consentimiento: sí (${lead.submittedAt})`,

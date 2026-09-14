@@ -9,6 +9,7 @@ import {
 import type { LeadRecord } from '@/core/types'
 
 const lead: LeadRecord = {
+  submissionId: 'env-1',
   submittedAt: '2026-08-26T10:00:00.000Z',
   contact: { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme', consent: true },
   answers: {

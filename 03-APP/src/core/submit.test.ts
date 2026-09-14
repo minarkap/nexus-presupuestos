@@ -58,6 +58,7 @@ describe('SubmitAction — el aviso interno lleva el desglose (CA-16)', () => {
 
   it('un aviso que sólo dijera «8 puntos» sería inservible: hay 5 líneas de desglose', () => {
     const notice = buildInternalNotice({
+      submissionId: 'env-1',
       submittedAt: '2026-08-26T10:00:00.000Z',
       contact: answers.contact,
       answers,
@@ -71,7 +72,7 @@ describe('SubmitAction — el aviso interno lleva el desglose (CA-16)', () => {
         { signal: 'madurez', answer: 'd', points: 0 },
         { signal: 'tamaño', answer: 'e', points: 1 },
       ] },
-    })
+    }, 'ok')
     expect(notice.split('\n').filter((l) => l.trim().startsWith('- ') && l.includes('→'))).toHaveLength(5)
   })
 })
@@ -210,5 +211,56 @@ describe('Frenos declarados — informativos, nunca una señal de cualificación
   it('el registro de respaldo se lleva los frenos en su propia columna', async () => {
     await submitLead({ ...answers, blockers: ['intento_fallido'] }, 's1', deps(), cache)
     expect(registry.rows[0]?.blockers).toEqual(['intento_fallido'])
+  })
+})
+
+describe('El guardado va primero y el aviso interno lo declara (spec leads-en-supabase)', () => {
+  /** Puertos que anotan en qué orden se les llama. */
+  const conTestigo = () => {
+    const orden: string[] = []
+    const registryPort = { append: async () => { orden.push('registro') } }
+    const emailPort: EmailPort = { send: async (m: EmailMessage) => { orden.push(`correo:${m.to}`) } }
+    return { orden, registryPort, emailPort }
+  }
+
+  it('el lead se guarda ANTES de que salga ningún correo', async () => {
+    const { orden, registryPort, emailPort } = conTestigo()
+    await submitLead(answers, 's1', { ...deps(), registryPort, emailPort }, cache)
+    expect(orden[0]).toBe('registro')
+  })
+
+  it('CA-S3 · si el guardado falla, el correo interno lo dice con todas las letras', async () => {
+    const roto = { append: async () => { throw new Error('supabase caído') } }
+    await submitLead(answers, 's1', { ...deps(), registryPort: roto }, cache)
+    const interno = email.sent.find((m) => m.to === 'oportunidades@nexus-st.com')
+    expect(interno?.body).toMatch(/NO ha quedado guardado/i)
+  })
+
+  it('CA-S3 · el aviso va arriba del todo, no enterrado al final', async () => {
+    const roto = { append: async () => { throw new Error('supabase caído') } }
+    await submitLead(answers, 's1', { ...deps(), registryPort: roto }, cache)
+    const interno = email.sent.find((m) => m.to === 'oportunidades@nexus-st.com')
+    const líneas = (interno?.body ?? '').split('\n')
+    const posición = líneas.findIndex((l) => /NO ha quedado guardado/i.test(l))
+    expect(posición).toBeGreaterThanOrEqual(0)
+    expect(posición).toBeLessThan(3)
+  })
+
+  it('CA-S2 · cuando el guardado funciona, el correo interno NO gana ningún aviso', async () => {
+    await submitLead(answers, 's1', deps(), cache)
+    const interno = email.sent.find((m) => m.to === 'oportunidades@nexus-st.com')
+    expect(interno?.body).not.toMatch(/NO ha quedado guardado/i)
+  })
+
+  it('CA-S7 · un fallo de guardado no altera lo que ve el visitante', async () => {
+    const roto = { append: async () => { throw new Error('supabase caído') } }
+    const conFallo = await submitLead(answers, 'sa', { ...deps(), registryPort: roto }, cache)
+    const sinFallo = await submitLead(answers, 'sb', deps(), new DedupCache())
+    expect(conFallo).toEqual(sinFallo)
+  })
+
+  it('el identificador de envío viaja al registro: es la clave que lo hace idempotente', async () => {
+    await submitLead(answers, 'envio-42', deps(), cache)
+    expect(registry.rows[0]?.submissionId).toBe('envio-42')
   })
 })

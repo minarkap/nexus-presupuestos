@@ -1,6 +1,10 @@
+// Barrera de compilación, no una convención: si algún día un componente de cliente importa este
+// módulo —directa o indirectamente—, la compilación de producción FALLA en vez de empaquetar la
+// credencial del registro en el navegador. Es lo que sostiene CA-S5 sin depender de la disciplina.
+import 'server-only'
 import { createSign } from 'node:crypto'
 import { BLOCKER_LABEL } from '@/core/options'
-import type { LeadRecord } from '@/core/types'
+import type { LeadRecord, SignalContribution } from '@/core/types'
 
 export interface RegistryPort {
   append(row: LeadRecord): Promise<void>
@@ -40,6 +44,99 @@ export function toSheetRow(row: LeadRecord): string[] {
     row.answers.budget,
     row.blockers.length === 0 ? 'ninguno' : row.blockers.map((b) => BLOCKER_LABEL[b]).join(' · '),
   ]
+}
+
+/** La fila tal y como la recibe la base de datos. Las claves son los nombres de columna. */
+export interface LeadRow {
+  readonly submission_id: string
+  readonly submitted_at: string
+  readonly contact_name: string
+  readonly contact_email: string
+  readonly contact_company: string
+  readonly consent: boolean
+  readonly challenge: string
+  readonly need: string | null
+  readonly size: string
+  readonly maturity: string
+  readonly timing: string
+  readonly sponsor: string
+  readonly budget: string
+  readonly blockers: readonly string[]
+  readonly service_label: string | null
+  readonly range_text: string | null
+  readonly score_total: number
+  readonly score_breakdown: readonly SignalContribution[]
+}
+
+/**
+ * El lead como fila de base de datos. A diferencia de `toSheetRow`, aquí NO se aplana nada a texto
+ * legible: la hoja de cálculo la lee una persona, la tabla la consulta una pregunta. El desglose de
+ * puntuación se conserva entero, y «sin catalogar» se representa con un nulo explícito en vez de con
+ * una cadena que luego nadie puede distinguir de un dato real.
+ */
+export function toLeadRow(row: LeadRecord): LeadRow {
+  return {
+    submission_id: row.submissionId,
+    submitted_at: row.submittedAt,
+    contact_name: row.contact.name,
+    contact_email: row.contact.email,
+    contact_company: row.contact.company,
+    consent: row.contact.consent,
+    challenge: row.answers.challenge,
+    need: row.answers.need,
+    size: row.answers.size,
+    maturity: row.answers.maturity,
+    timing: row.answers.timing,
+    sponsor: row.answers.sponsor,
+    budget: row.answers.budget,
+    blockers: row.blockers,
+    service_label: row.serviceLabel,
+    range_text: row.rangeText,
+    score_total: row.score.total,
+    score_breakdown: row.score.breakdown,
+  }
+}
+
+export interface SupabaseConfig {
+  readonly url: string
+  readonly serviceRoleKey: string
+  readonly table?: string | undefined
+}
+
+/**
+ * Registro sobre la API REST de Supabase. Sin SDK: es un `POST`, y añadir un árbol de dependencias
+ * para hacer un `POST` no se paga (plan §0).
+ *
+ * La clave de servicio se salta las reglas de acceso de la tabla por diseño, así que vive sólo aquí,
+ * en servidor, y no aparece nunca en un mensaje de error (R-S1).
+ */
+export class SupabaseRegistryPort implements RegistryPort {
+  constructor(
+    private readonly config: SupabaseConfig,
+    private readonly fetchImpl: typeof fetch = fetch,
+  ) {}
+
+  async append(row: LeadRecord): Promise<void> {
+    const tabla = this.config.table ?? 'leads'
+    const res = await this.fetchImpl(`${this.config.url}/rest/v1/${tabla}`, {
+      method: 'POST',
+      headers: {
+        apikey: this.config.serviceRoleKey,
+        Authorization: `Bearer ${this.config.serviceRoleKey}`,
+        'Content-Type': 'application/json',
+        // `ignore-duplicates` es lo que hace que un reintento del mismo envío no cree una segunda
+        // fila: choca contra la restricción única de `submission_id` y la API lo ignora.
+        Prefer: 'return=minimal,resolution=ignore-duplicates',
+      },
+      body: JSON.stringify(toLeadRow(row)),
+    })
+
+    // Un conflicto significa «esa fila ya está», que es justo lo que se pedía. Tratarlo como fallo
+    // haría que el aviso interno declarase perdido un lead que está guardado — peor que no avisar.
+    if (res.ok || res.status === 409) return
+
+    throw new Error(`Supabase respondió ${res.status} al guardar el lead`)
+  }
 }
 
 interface ServiceAccount {
@@ -102,16 +199,32 @@ export class GoogleSheetsRegistryPort implements RegistryPort {
 
 export interface RegistryEnv {
   readonly NODE_ENV?: string | undefined
+  readonly SUPABASE_URL?: string | undefined
+  readonly SUPABASE_SERVICE_ROLE_KEY?: string | undefined
+  readonly SUPABASE_LEADS_TABLE?: string | undefined
   readonly GOOGLE_SERVICE_ACCOUNT_JSON?: string | undefined
   readonly GOOGLE_SHEET_ID?: string | undefined
   readonly USE_FAKE_ADAPTERS?: string | undefined
 }
 
-/** Misma regla que el correo: en producción sin credencial se falla ruidosamente (F-1). */
+/**
+ * Misma regla que el correo: en producción sin credencial se falla ruidosamente (F-1).
+ *
+ * Precedencia (plan §4.1): Supabase primero; la hoja de cálculo queda por debajo, dormida, como el
+ * parche barato que la spec deja escrito. Media credencial no es una credencial.
+ */
 export function selectRegistryPort(env: RegistryEnv): RegistryPort {
   const isProd = env.NODE_ENV === 'production'
 
   if (env.USE_FAKE_ADAPTERS === '1' && !isProd) return new FakeRegistryPort()
+
+  if (env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY) {
+    return new SupabaseRegistryPort({
+      url: env.SUPABASE_URL,
+      serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+      table: env.SUPABASE_LEADS_TABLE,
+    })
+  }
 
   if (env.GOOGLE_SERVICE_ACCOUNT_JSON && env.GOOGLE_SHEET_ID) {
     try {
@@ -125,7 +238,9 @@ export function selectRegistryPort(env: RegistryEnv): RegistryPort {
   }
 
   if (isProd) {
-    return new MisconfiguredRegistryPort('faltan GOOGLE_SERVICE_ACCOUNT_JSON y/o GOOGLE_SHEET_ID')
+    return new MisconfiguredRegistryPort(
+      'faltan SUPABASE_URL y/o SUPABASE_SERVICE_ROLE_KEY (o, en su defecto, las credenciales de Google)',
+    )
   }
 
   return new FakeRegistryPort()
