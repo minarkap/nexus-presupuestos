@@ -20,6 +20,17 @@ import { SEED_CATALOG } from '../src/core/catalog-seed.ts'
 const AQUÍ = dirname(fileURLToPath(import.meta.url))
 const DESTINO = join(AQUÍ, '..', 'src', 'core', 'catalog.snapshot.ts')
 
+/**
+ * Carga `.env.local` si existe. Node lo hace nativo desde la 20.6; sin esto, la puerta pediría las
+ * credenciales por el entorno del shell y en local nunca las encontraría, que es la forma más
+ * tonta de que una puerta quede roja para siempre y alguien acabe quitándola.
+ */
+try {
+  process.loadEnvFile(new URL('../.env.local', import.meta.url).pathname)
+} catch {
+  // No hay .env.local. Es normal en integración continua, donde las variables vienen del entorno.
+}
+
 const ESPERA_MS = 10_000
 
 /** ¿Es esto una publicación de verdad? Entonces la foto no es opcional. */

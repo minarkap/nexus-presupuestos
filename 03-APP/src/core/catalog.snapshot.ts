@@ -14,7 +14,7 @@ import 'server-only'
 import type { CatalogSnapshot } from '@/ports/catalog'
 
 export const CATALOG_SNAPSHOT: CatalogSnapshot = {
-  takenAt: "2026-09-14T20:07:43.686Z",
+  takenAt: "2026-09-14T20:14:31.085Z",
   catalog: {
     "services": {
       "ai_opportunity_assessment": {
