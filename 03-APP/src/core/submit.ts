@@ -74,8 +74,13 @@ function validateBlockers(answers: Answers): ValidationError | null {
   }
 
   if (!Array.isArray(valor)) return inválido
-  if (valor.some((v) => typeof v !== 'string' || !FRENOS_ADMISIBLES.includes(v))) return inválido
-  if (new Set(valor).size !== valor.length) return inválido
+
+  // `Array.from` materializa los huecos de un array disperso como `undefined`. Sin esto, `.some()`
+  // los SALTA —y por tanto no ve nada inválido— mientras que `new Set()` sí los cuenta: un
+  // `[, 'sin_perfiles']` pasaba el guardián y dejaba un separador huérfano en el aviso interno.
+  const items = Array.from(valor)
+  if (items.some((v) => typeof v !== 'string' || !FRENOS_ADMISIBLES.includes(v))) return inválido
+  if (new Set(items).size !== items.length) return inválido
   return null
 }
 

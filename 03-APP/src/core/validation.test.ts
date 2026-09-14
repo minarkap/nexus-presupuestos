@@ -116,4 +116,24 @@ describe('Validación de frenos — multi-valor sobre lista cerrada', () => {
     const error = validateAnswers(conBasura('blockers', ['sin_perfiles', 'sin_perfiles']))
     expect(error?.field).toBe('blockers')
   })
+
+  it('rechaza un array disperso, aunque sus elementos presentes sean válidos', () => {
+    // eslint-disable-next-line no-sparse-arrays
+    const conHueco = [, 'sin_perfiles'] as unknown[]
+    expect(validateAnswers(conBasura('blockers', conHueco))?.field).toBe('blockers')
+  })
+
+  it('un freno fuera de lista no produce ni cifra ni aviso (CA-5 entero)', async () => {
+    const email = new FakeEmailPort()
+    const registry = new FakeRegistryPort()
+    const resultado = await submitLead(
+      conBasura('blockers', ['pereza']),
+      's-frenos',
+      { emailPort: email, registryPort: registry, internalMailbox: 'x@y.z', now: () => new Date() },
+      new DedupCache(),
+    )
+    expect(resultado).toMatchObject({ kind: 'validation_error', field: 'blockers' })
+    expect(email.sent).toHaveLength(0)
+    expect(registry.rows).toHaveLength(0)
+  })
 })
