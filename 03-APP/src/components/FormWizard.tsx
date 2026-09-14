@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
-  BUDGET_OPTIONS, CHALLENGE_OPTIONS, MATURITY_OPTIONS, NEED_OPTIONS,
+  BLOCKER_OPTIONS, BUDGET_OPTIONS, CHALLENGE_OPTIONS, MATURITY_OPTIONS, NEED_OPTIONS,
   SIZE_OPTIONS, SPONSOR_OPTIONS, TIMING_OPTIONS, type Option,
 } from '@/core/options'
-import type { Answers, BudgetAnswer, Challenge, Contact, Maturity, Need, RedactedOutcome, Size, Sponsor, Timing } from '@/core/types'
+import type { Answers, Blocker, BudgetAnswer, Challenge, Contact, Maturity, Need, RedactedOutcome, Size, Sponsor, Timing } from '@/core/types'
 import type { SubmitResult } from '@/core/submit'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
@@ -20,20 +20,36 @@ type Draft = {
   timing: Timing | null
   sponsor: Sponsor | null
   budget: BudgetAnswer | null
+  blockers: readonly Blocker[]
 }
 
-const EMPTY: Draft = { challenge: null, need: null, size: null, maturity: null, timing: null, sponsor: null, budget: null }
+const EMPTY: Draft = {
+  challenge: null, need: null, size: null, maturity: null, timing: null,
+  sponsor: null, budget: null, blockers: [],
+}
 
-type StepKey = keyof Draft
+/** Las de respuesta única, que avanzan solas al elegir. `blockers` no está: admite varias. */
+type SingleKey = Exclude<keyof Draft, 'blockers'>
 
-const STEPS: { key: StepKey; question: string; options: readonly Option<never>[] }[] = [
-  { key: 'challenge', question: '¿Cuál es el reto que tienes delante?', options: CHALLENGE_OPTIONS as never },
-  { key: 'need', question: '¿Qué necesitas exactamente?', options: NEED_OPTIONS as never },
-  { key: 'size', question: '¿Cuánta gente sois en la organización?', options: SIZE_OPTIONS as never },
-  { key: 'maturity', question: '¿En qué punto estáis con los datos y la IA?', options: MATURITY_OPTIONS as never },
-  { key: 'timing', question: '¿Cuándo querríais arrancar?', options: TIMING_OPTIONS as never },
-  { key: 'sponsor', question: '¿Hay alguien de dirección detrás de esto?', options: SPONSOR_OPTIONS as never },
-  { key: 'budget', question: '¿Cómo estáis de presupuesto?', options: BUDGET_OPTIONS as never },
+type Step =
+  | { kind: 'single'; key: SingleKey; question: string; options: readonly Option<never>[] }
+  | { kind: 'multi'; key: 'blockers'; question: string; hint: string; options: readonly Option<Blocker>[] }
+
+const STEPS: readonly Step[] = [
+  { kind: 'single', key: 'challenge', question: '¿Cuál es el reto que tienes delante?', options: CHALLENGE_OPTIONS as never },
+  { kind: 'single', key: 'need', question: '¿Qué necesitas exactamente?', options: NEED_OPTIONS as never },
+  { kind: 'single', key: 'size', question: '¿Cuánta gente sois en la organización?', options: SIZE_OPTIONS as never },
+  { kind: 'single', key: 'maturity', question: '¿En qué punto estáis con los datos y la IA?', options: MATURITY_OPTIONS as never },
+  { kind: 'single', key: 'timing', question: '¿Cuándo querríais arrancar?', options: TIMING_OPTIONS as never },
+  { kind: 'single', key: 'sponsor', question: '¿Hay alguien de dirección detrás de esto?', options: SPONSOR_OPTIONS as never },
+  { kind: 'single', key: 'budget', question: '¿Cómo estáis de presupuesto?', options: BUDGET_OPTIONS as never },
+  {
+    kind: 'multi',
+    key: 'blockers',
+    question: '¿Qué os está frenando ahora mismo?',
+    hint: 'Marca todas las que apliquen. Si no encaja ninguna, puedes continuar sin marcar nada.',
+    options: BLOCKER_OPTIONS,
+  },
 ]
 
 const VALID_CHALLENGES = new Set<string>(CHALLENGE_OPTIONS.map((o) => o.value))
@@ -61,7 +77,16 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
   const onContactStep = index >= steps.length
   const current = steps[index]
 
-  function choose(key: StepKey, value: string) {
+  function toggle(value: Blocker) {
+    setDraft((prev) => ({
+      ...prev,
+      blockers: prev.blockers.includes(value)
+        ? prev.blockers.filter((b) => b !== value)
+        : [...prev.blockers, value],
+    }))
+  }
+
+  function choose(key: SingleKey, value: string) {
     setDraft((prev) => {
       const next = { ...prev, [key]: value } as Draft
       if (key === 'challenge' && value !== 'ia') next.need = null
@@ -81,6 +106,7 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
       timing: draft.timing as Timing,
       sponsor: draft.sponsor as Sponsor,
       budget: draft.budget as BudgetAnswer,
+      blockers: draft.blockers,
       contact,
     } satisfies Answers
     const result = await onSubmit(answers, submissionId)
@@ -127,7 +153,29 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
             </div>
           </fieldset>
         ) : (
-          current && (
+          current && (current.kind === 'multi' ? (
+            <fieldset aria-describedby="blockers-hint">
+              <legend>{current.question}</legend>
+              <p className="field__hint" id="blockers-hint">{current.hint}</p>
+              <div className="choices">
+                {current.options.map((o) => (
+                  <button
+                    key={o.value} type="button" className="choice"
+                    aria-pressed={draft.blockers.includes(o.value)}
+                    onClick={() => toggle(o.value)}
+                  >
+                    <span>{o.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="wizard__nav">
+                {index > 0 && <Button variant="ghost" onClick={() => setIndex((i) => i - 1)}>Atrás</Button>}
+                <Button onClick={() => setIndex((i) => Math.min(i + 1, total - 1))} iconRight={<Icon name="arrow-right" size={16} />}>
+                  Continuar
+                </Button>
+              </div>
+            </fieldset>
+          ) : (
             <fieldset>
               <legend>{current.question}</legend>
               <div className="choices">
@@ -144,7 +192,7 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
                 </div>
               )}
             </fieldset>
-          )
+          ))
         )}
       </div>
     </section>

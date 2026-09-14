@@ -17,6 +17,7 @@ const lead: LeadRecord = {
   },
   serviceLabel: 'AI Opportunity Assessment',
   rangeText: '28.000 – 35.000 €',
+  blockers: ['sin_perfiles'],
   score: { total: 8, breakdown: [{ signal: 'sponsor', answer: 'Identificado y comprometido', points: 3 }] },
 }
 

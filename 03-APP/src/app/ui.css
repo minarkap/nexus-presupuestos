@@ -77,5 +77,6 @@
 .field__input:focus { border-color: var(--border-accent); box-shadow: 0 0 0 3px var(--ring-accent); outline: none; }
 .field__input[aria-invalid='true'] { border-color: var(--nx-danger); }
 .field__error { font-size: var(--text-sm); color: var(--nx-danger); }
+.field__hint { font-size: var(--text-sm); color: var(--text-body); margin-bottom: var(--space-3); }
 .check { display: flex; gap: var(--space-3); align-items: flex-start; max-width: 32rem; font-size: var(--text-sm); color: var(--text-body); }
 .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--nx-blue-500); flex: none; }

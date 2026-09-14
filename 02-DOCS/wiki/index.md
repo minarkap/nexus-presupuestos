@@ -97,7 +97,7 @@ Especificaciones del chain SDD: qué se construye y por qué, antes de decidir c
 |---------|---------|---------|-------|
 | [Spec — Landing y estimador de presupuesto de Nexus](sdd/specs/landing-presupuestos-nexus.md) | Landing + formulario de 7 preguntas, rango orientativo del catálogo 2026, tres salidas según cualificación y dos emails. | 2026-08-26 | — |
 | [Spec — Sitio web de Nexus Consulting](sdd/specs/sitio-nexus-consulting.md) | Marca del design system, cinco páginas con URL propia (seis aprobadas; el artículo retirado en S-0020), copy con la voz de Nexus Consulting y capa SEO/GEO indexable y citable; el motor de cálculo no cambia. Aprobada en autopilot. | 2026-09-02 | — |
-| [Spec — Pregunta de frenos del lead](sdd/specs/pregunta-frenos-lead.md) | Octava pregunta de negocio en el formulario, de respuesta múltiple, saltable y con cuatro opciones; informativa para el aviso interno, no toca ni la cifra ni la puntuación de cualificación. Borrador pendiente de aprobación. | 2026-09-14 | — |
+| [Spec — Pregunta de frenos del lead](sdd/specs/pregunta-frenos-lead.md) | Octava pregunta de negocio en el formulario, de respuesta múltiple, saltable y con cuatro opciones; informativa para el aviso interno, no toca ni la cifra ni la puntuación de cualificación. Aprobada e implementada el 2026-09-14. | 2026-09-14 | — |
 
 ## sdd/plans
 
@@ -125,6 +125,7 @@ Actas de la puerta de evidencia. Una por ejecución, fechadas y append-only.
 |---------|---------|---------|-------|
 | [Verification — 2026-08-26](sdd/verifications/landing-presupuestos-nexus-2026-08-26.md) | Puerta verde en 4 capas, 36/36 done-checks, 23/24 criterios. FAIL por CA-19: el acta de tono exige firma humana. | 2026-08-26 | — |
 | [Verification — Sitio web — 2026-09-02](sdd/verifications/sitio-nexus-consulting-2026-09-02.md) | VERDE en cinco capas: lint, tipos, 202 pruebas (99 % core), build, puerta SEO/GEO. Pendiente la puerta humana: acta de tono, 360 px, commits. | 2026-09-02 | — |
+| [Verification — Pregunta de frenos — 2026-09-14](sdd/verifications/pregunta-frenos-lead-2026-09-14.md) | VERDE: 228 pruebas (99,41 % core), lint, tipos, build y puerta SEO. Los ocho criterios cubiertos. Pendiente la firma humana de la superficie S13 del acta de tono. | 2026-09-14 | — |
 
 ## sdd/checklists
 

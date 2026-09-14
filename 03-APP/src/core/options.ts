@@ -1,4 +1,4 @@
-import type { BudgetAnswer, Challenge, Maturity, Need, Size, Sponsor, Timing } from './types'
+import type { Blocker, BudgetAnswer, Challenge, Maturity, Need, Size, Sponsor, Timing } from './types'
 
 export interface Option<T> {
   readonly value: T
@@ -61,6 +61,26 @@ export const BUDGET_OPTIONS: readonly Option<BudgetAnswer>[] = [
   { value: 'previsto', label: 'Hay partida prevista, sin cerrar' },
   { value: 'sin', label: 'Todavía sin presupuesto' },
 ]
+
+/**
+ * Frenos declarados. Lista cerrada y sin «otro»: el texto libre no se puede contar ni comparar
+ * entre leads, y abre una entrada de datos personales que nadie ha previsto.
+ *
+ * No incluye «el presupuesto no está aprobado» ni «resistencia interna al cambio», que venían en el
+ * encargo: las preguntas 6 y 7 ya los preguntan y SÍ puntúan, así que repetirlos aquí permitía que
+ * un mismo lead afirmase y negase el mismo hecho en dos pantallas (spec `pregunta-frenos-lead`).
+ */
+export const BLOCKER_OPTIONS: readonly Option<Blocker>[] = [
+  { value: 'sin_perfiles', label: 'No tenemos perfiles técnicos' },
+  { value: 'dudas_legales', label: 'Dudas legales o de protección de datos' },
+  { value: 'sin_punto_de_partida', label: 'No sabemos por dónde empezar' },
+  { value: 'intento_fallido', label: 'Ya lo intentamos y salió mal' },
+]
+
+/** Etiqueta legible de un freno, para el aviso interno y el registro. */
+export const BLOCKER_LABEL: Readonly<Record<Blocker, string>> = Object.fromEntries(
+  BLOCKER_OPTIONS.map((o) => [o.value, o.label]),
+) as Readonly<Record<Blocker, string>>
 
 /**
  * Los tramos como PARTICIÓN: toda plantilla cae en exactamente uno.

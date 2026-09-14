@@ -6,7 +6,7 @@ import type { Answers } from './types'
 
 const válidas: Answers = {
   challenge: 'ia', need: 'diagnostico', size: '250-999', maturity: 'inicial',
-  timing: '3-6m', sponsor: 'si', budget: 'asignado',
+  timing: '3-6m', sponsor: 'si', budget: 'asignado', blockers: [],
   contact: { name: 'Marta', email: 'marta@acme.ad', company: 'Acme', consent: true },
 }
 
@@ -73,5 +73,47 @@ describe('NUNCA sale una cifra improvisada de la firma (constitution 5, CA-02)',
       expect(JSON.stringify(r)).not.toContain('NaN')
       expect(email.sent).toHaveLength(0)
     }
+  })
+})
+
+/**
+ * Frenos declarados (spec `pregunta-frenos-lead`, CA-1 y CA-5). Es el único campo multi-valor del
+ * formulario: la lista vacía es una respuesta legítima —la pantalla se puede saltar— y por eso no
+ * puede colarse por el mismo hueco por el que se cuela un valor inventado.
+ */
+describe('Validación de frenos — multi-valor sobre lista cerrada', () => {
+  it('acepta la lista vacía: la pregunta es saltable (CA-1)', () => {
+    expect(validateAnswers({ ...válidas, blockers: [] })).toBeNull()
+  })
+
+  it('acepta un freno', () => {
+    expect(validateAnswers({ ...válidas, blockers: ['sin_perfiles'] })).toBeNull()
+  })
+
+  it('acepta los cuatro a la vez', () => {
+    const todos = ['sin_perfiles', 'dudas_legales', 'sin_punto_de_partida', 'intento_fallido'] as const
+    expect(validateAnswers({ ...válidas, blockers: todos })).toBeNull()
+  })
+
+  it('rechaza un freno inventado (CA-5)', () => {
+    const error = validateAnswers(conBasura('blockers', ['sin_perfiles', 'pereza']))
+    expect(error).not.toBeNull()
+    expect(error?.field).toBe('blockers')
+  })
+
+  it('rechaza que no sea una lista', () => {
+    const error = validateAnswers(conBasura('blockers', 'sin_perfiles'))
+    expect(error?.field).toBe('blockers')
+  })
+
+  it('rechaza el campo ausente: la lista vacía es explícita, no implícita', () => {
+    const sinCampo = { ...válidas } as Record<string, unknown>
+    delete sinCampo.blockers
+    expect(validateAnswers(sinCampo as unknown as Answers)?.field).toBe('blockers')
+  })
+
+  it('rechaza duplicados: es un conjunto, no una cesta', () => {
+    const error = validateAnswers(conBasura('blockers', ['sin_perfiles', 'sin_perfiles']))
+    expect(error?.field).toBe('blockers')
   })
 })

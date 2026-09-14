@@ -528,3 +528,33 @@ status: stable
 - diferido: la segunda pregunta propuesta, «¿Qué sistemas usáis?». Es la que de verdad cambiaría el
   dimensionado de un proyecto, pero es técnica y un perfil de dirección la sufre: fuera de este ciclo.
 - supersedes: none
+
+---
+
+## S-0024 — El criterio «no puntúa» se sostiene con el sistema de tipos, no con disciplina
+
+- fecha: 2026-09-14
+- fase: `implement` de [pregunta-frenos-lead](./specs/pregunta-frenos-lead.md), en autopiloto
+- context: la spec exige que los frenos declarados no influyan en la puntuación de cualificación
+  (CA-4). El sitio natural para el campo era `BusinessAnswers`, junto a las otras siete respuestas de
+  negocio — y `BusinessAnswers` es justo el tipo que recibe `scoreLead()`.
+- options considered:
+  1. **Poner `blockers` en `Answers` y no en `BusinessAnswers`** (elegida): el motor de puntuación no
+     puede leer el campo porque no está en su tipo de entrada.
+  2. Ponerlo en `BusinessAnswers` y confiar en que `scoreLead` no lo mire — descartada: el criterio
+     quedaría a merced de quien edite el motor dentro de seis meses, y una prueba que compara dos
+     puntuaciones sólo detecta la regresión después de cometerla.
+- decision: `blockers` vive en `Answers` (el objeto que se envía) y en `LeadRecord` (lo que va al aviso
+  interno y al registro). `BusinessAnswers` queda intacto.
+- why: un criterio de aceptación que el compilador puede sostener no necesita vigilancia. Es más barato
+  que una prueba y no se puede saltar por descuido.
+- consecuencia asumida: `LeadRecord` gana un campo propio en lugar de heredarlo de `answers`, así que
+  quien construya un `LeadRecord` a mano debe rellenarlo. El compilador lo exige.
+- decisión menor del mismo bloque: la pantalla múltiple **no auto-avanza**. Las otras siete avanzan al
+  pulsar, que es lo que hace un formulario corto agradable; con respuesta múltiple eso haría imposible
+  marcar dos. Estrena botón «Continuar», que además es el que permite saltarla sin marcar nada.
+- hallazgo lateral, NO corregido: `src/content/site.ts` usa `process.env.NEXT_PUBLIC_SITE_URL ?? …`.
+  Una variable **vacía** no es `undefined`, así que no activa el valor por defecto y rompe la
+  compilación con `ERR_INVALID_URL`. Está fuera del alcance de esta spec y en producción la variable
+  está definida; queda anotado.
+- supersedes: none

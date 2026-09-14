@@ -12,6 +12,8 @@ async function llegarAlContacto(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByText('De 3 a 6 meses'))
   await user.click(screen.getByText(/Todavía no/))
   await user.click(screen.getByText('Asignado y aprobado'))
+  // La pregunta de frenos es saltable: se continúa sin marcar nada (spec pregunta-frenos-lead, CA-1).
+  await user.click(screen.getByRole('button', { name: 'Continuar' }))
 }
 
 describe('Validación de contacto — avisa sin perder lo ya respondido', () => {

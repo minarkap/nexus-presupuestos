@@ -1,4 +1,5 @@
 import { createSign } from 'node:crypto'
+import { BLOCKER_LABEL } from '@/core/options'
 import type { LeadRecord } from '@/core/types'
 
 export interface RegistryPort {
@@ -37,6 +38,7 @@ export function toSheetRow(row: LeadRecord): string[] {
     row.answers.timing,
     row.answers.sponsor,
     row.answers.budget,
+    row.blockers.length === 0 ? 'ninguno' : row.blockers.map((b) => BLOCKER_LABEL[b]).join(' · '),
   ]
 }
 

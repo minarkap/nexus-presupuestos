@@ -5,11 +5,12 @@ import { resolveService } from './service-resolver'
 import { scoreLead } from './scoring'
 import type { EmailPort } from '@/ports/email'
 import type { RegistryPort } from '@/ports/registry'
-import type { Answers, LeadRecord, RedactedOutcome } from './types'
+import { BLOCKER_LABEL, BLOCKER_OPTIONS } from './options'
+import type { Answers, Blocker, LeadRecord, RedactedOutcome } from './types'
 
 export type ValidationField =
   | 'name' | 'email' | 'company' | 'consent'
-  | 'challenge' | 'need' | 'size' | 'maturity' | 'timing' | 'sponsor' | 'budget'
+  | 'challenge' | 'need' | 'size' | 'maturity' | 'timing' | 'sponsor' | 'budget' | 'blockers'
 
 export interface ValidationError {
   readonly kind: 'validation_error'
@@ -54,6 +55,30 @@ const ADMISIBLES: Readonly<Record<string, readonly string[]>> = {
   budget: ['asignado', 'previsto', 'sin'],
 }
 
+const FRENOS_ADMISIBLES: readonly string[] = BLOCKER_OPTIONS.map((o) => o.value)
+
+const ERROR_OPCIONES = 'Esa respuesta no es una de las opciones. Vuelve a empezar el formulario.'
+
+/**
+ * Valida los frenos declarados. Es el único campo multi-valor, y el único donde «nada» es una
+ * respuesta válida: la pantalla se puede saltar. Lo que no vale es que el campo no exista —la lista
+ * vacía se declara— ni que traiga repetidos: es un conjunto, y un duplicado sólo puede venir de algo
+ * que no es el formulario.
+ */
+function validateBlockers(answers: Answers): ValidationError | null {
+  const valor = (answers as unknown as Record<string, unknown>).blockers
+  const inválido: ValidationError = {
+    kind: 'validation_error',
+    field: 'blockers',
+    message: ERROR_OPCIONES,
+  }
+
+  if (!Array.isArray(valor)) return inválido
+  if (valor.some((v) => typeof v !== 'string' || !FRENOS_ADMISIBLES.includes(v))) return inválido
+  if (new Set(valor).size !== valor.length) return inválido
+  return null
+}
+
 /** Valida las respuestas de negocio. `need` puede ser null: sólo la línea de IA ramifica. */
 export function validateAnswers(answers: Answers): ValidationError | null {
   for (const [campo, valores] of Object.entries(ADMISIBLES)) {
@@ -63,11 +88,11 @@ export function validateAnswers(answers: Answers): ValidationError | null {
       return {
         kind: 'validation_error',
         field: campo as ValidationField,
-        message: 'Esa respuesta no es una de las opciones. Vuelve a empezar el formulario.',
+        message: ERROR_OPCIONES,
       }
     }
   }
-  return null
+  return validateBlockers(answers)
 }
 
 export function validateContact(answers: Answers): ValidationError | null {
@@ -167,6 +192,7 @@ export async function submitLead(
     serviceLabel: service?.label ?? null,
     rangeText: outcome.rangeText,
     score,
+    blockers: answers.blockers,
   }
 
   const report: DispatchReport = {
@@ -192,6 +218,16 @@ export async function submitLead(
   return outcome
 }
 
+/**
+ * Los frenos, en la línea del aviso interno. Cuando no hay ninguno se dice con todas las letras:
+ * una línea ausente se lee como un fallo de envío, y el comercial no puede distinguir «no le frena
+ * nada» de «esto se ha roto» (spec `pregunta-frenos-lead`, CA-3).
+ */
+function frenosLegibles(blockers: readonly Blocker[]): string {
+  if (blockers.length === 0) return 'ninguno — el lead no marcó ninguna opción'
+  return blockers.map((b) => BLOCKER_LABEL[b]).join(' · ')
+}
+
 /** El aviso interno sin desglose es inservible (CA-16). */
 export function buildInternalNotice(lead: LeadRecord): string {
   const líneas = lead.score.breakdown.map((b) => `  - ${b.signal}: ${b.answer} → ${b.points > 0 ? '+' : ''}${b.points}`)
@@ -205,6 +241,8 @@ export function buildInternalNotice(lead: LeadRecord): string {
     '',
     `Puntuación: ${lead.score.total}/10`,
     ...líneas,
+    '',
+    `Frenos declarados: ${frenosLegibles(lead.blockers)}`,
     '',
     'Respuestas completas:',
     `  - Reto: ${lead.answers.challenge}`,

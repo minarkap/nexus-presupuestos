@@ -9,6 +9,13 @@ export type Timing = '<3m' | '3-6m' | '>6m'
 export type Sponsor = 'si' | 'en_proceso' | 'no'
 export type BudgetAnswer = 'asignado' | 'previsto' | 'sin'
 
+/**
+ * Frenos que el lead declara por su cuenta. Deliberadamente FUERA de `BusinessAnswers`: ese es el
+ * tipo que lee el motor de puntuación, y la spec `pregunta-frenos-lead` decide que este dato no
+ * puntúa. Dejarlo fuera convierte esa decisión en algo que el compilador sostiene, no la disciplina.
+ */
+export type Blocker = 'sin_perfiles' | 'dudas_legales' | 'sin_punto_de_partida' | 'intento_fallido'
+
 export type ServiceId =
   | 'ai_opportunity_assessment'
   | 'ai_transformation_program'
@@ -69,6 +76,8 @@ export interface BusinessAnswers {
 
 export interface Answers extends BusinessAnswers {
   readonly contact: Contact
+  /** Multi-valor y saltable: la lista vacía es una respuesta, no un hueco. */
+  readonly blockers: readonly Blocker[]
 }
 
 /** Lo ÚNICO que cruza al navegador. Ningún otro campo puede existir aquí. */
@@ -88,6 +97,7 @@ export interface LeadRecord {
   readonly serviceLabel: string | null
   readonly rangeText: string | null
   readonly score: Score
+  readonly blockers: readonly Blocker[]
 }
 
 export interface EmailMessage {

@@ -6,12 +6,14 @@ tags: [sdd, spec, formulario, comercial]
 timestamp: 2026-09-14T10:05:00Z
 topic: sdd
 slug: pregunta-frenos-lead
-status: draft
+status: approved
 ---
 
 # Spec — Pregunta de frenos del lead
 
-> Slug: `pregunta-frenos-lead` · Status: **draft, pendiente de aprobación** · Created: 2026-09-14
+> Slug: `pregunta-frenos-lead` · Status: **aprobada** (2026-09-14, Jose Sanchis: «Apruébala y
+> publícala en autopilot» — leída y aprobada explícitamente; las fases siguientes corren en
+> autopiloto) · Created: 2026-09-14
 > Inherits: [constitution](../constitution.md) **v1.1.0**
 > Antecesor: [Spec — Landing y estimador de presupuesto](./landing-presupuestos-nexus.md), cuyo
 > comportamiento se conserva íntegro. Esta spec **añade** una pregunta; no modifica ninguna de las

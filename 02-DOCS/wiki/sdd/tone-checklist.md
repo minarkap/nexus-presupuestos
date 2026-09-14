@@ -18,7 +18,7 @@ status: stable
 Fuente del criterio: [Marca Nexus Consulting](../firma/Marca%20Nexus%20Consulting.md) (voz, léxico) y las
 prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Escrito.md).
 
-## Las doce superficies (spec `sitio-nexus-consulting`, principio 36)
+## Las trece superficies (spec `sitio-nexus-consulting`, principio 36; S13 añadida por `pregunta-frenos-lead`)
 
 | # | Superficie | Dónde vive |
 |---|---|---|
@@ -28,12 +28,13 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
 | S4 | ~~Artículo «SEO frente a GEO»~~ — **retirado** (`S-0020`); el ID se conserva | — |
 | S5 | Aviso de privacidad (**borrador para revisión legal**) | `src/content/privacidad.ts` |
 | S6 | Página de no encontrado | `src/content/not-found.ts` |
-| S7 | Enunciados de las ocho pantallas del estimador, incluida la casilla de consentimiento | `src/components/FormWizard.tsx`, `src/app/presupuesto/page.tsx` |
+| S7 | Enunciados de las **nueve** pantallas del estimador, incluida la casilla de consentimiento | `src/components/FormWizard.tsx`, `src/app/presupuesto/page.tsx` |
 | S8 | Etiquetas de las opciones | `src/core/options.ts` |
 | S9 | Las tres pantallas de resultado | `src/core/outcome.ts`, `src/components/ResultScreen.tsx` |
 | S10 | Correo de propuesta al cliente | `src/core/proposal.ts` |
 | S11 | Aviso interno al equipo | `src/core/submit.ts` |
 | S12 | Metadatos: títulos, descripciones, textos de tarjeta, `alt`, `llms.txt` | `src/seo/metadata.ts`, `src/app/llms.txt/route.ts`, `src/app/opengraph-image.tsx` |
+| S13 | **Pregunta de frenos**: enunciado, texto de ayuda y las cuatro opciones | `src/components/FormWizard.tsx`, `src/core/options.ts` |
 
 ## Qué se comprueba en cada una
 
@@ -64,6 +65,7 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
 | S10 | ☐ | | | |
 | S11 | ☐ | | | |
 | S12 | ☐ | | | |
+| S13 | ☐ | | | Nueva (`pregunta-frenos-lead`, 2026-09-14). Ojo: el lead declara una debilidad — el tono no puede sonar a interrogatorio ni a juicio |
 
 **Firma de la revisión:** ______________________  **Fecha:** ____________
 

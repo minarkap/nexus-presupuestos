@@ -21,6 +21,8 @@ async function irAlContacto(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByText('De 3 a 6 meses'))
   await user.click(screen.getByText(/Todavía no/))
   await user.click(screen.getByText('Asignado y aprobado'))
+  // La pregunta de frenos es saltable: se continúa sin marcar nada (spec pregunta-frenos-lead, CA-1).
+  await user.click(screen.getByRole('button', { name: 'Continuar' }))
 }
 
 describe('Accesibilidad — nombre accesible de cada control (WCAG 2.2 AA)', () => {
@@ -99,5 +101,61 @@ describe('Accesibilidad — estado y errores', () => {
   it('el progreso se expone como encabezado, legible fuera de contexto visual', () => {
     montar()
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(/Pregunta \d+ de \d+/)
+  })
+})
+
+/**
+ * La pantalla de frenos es la única de respuesta múltiple, así que es la única donde el estado
+ * marcado/sin marcar tiene que anunciarse y poder cambiarse sin ratón (constitution 24 · CA-7).
+ */
+describe('Accesibilidad — la pregunta de frenos (CA-7)', () => {
+  async function irAFrenos(user: ReturnType<typeof userEvent.setup>) {
+    await user.click(screen.getByText('Ciberseguridad'))
+    await user.click(screen.getByText('De 50 a 249'))
+    await user.click(screen.getByText(/Inicial/))
+    await user.click(screen.getByText('De 3 a 6 meses'))
+    await user.click(screen.getByText(/Todavía no/))
+    await user.click(screen.getByText('Asignado y aprobado'))
+  }
+
+  it('cada freno es un botón que anuncia si está marcado', async () => {
+    const user = montar()
+    await irAFrenos(user)
+    for (const nombre of [
+      'No tenemos perfiles técnicos',
+      'Dudas legales o de protección de datos',
+      'No sabemos por dónde empezar',
+      'Ya lo intentamos y salió mal',
+    ]) {
+      expect(screen.getByRole('button', { name: nombre })).toHaveAttribute('aria-pressed', 'false')
+    }
+  })
+
+  it('se marca y se desmarca con el teclado, sin ratón', async () => {
+    const user = montar()
+    await irAFrenos(user)
+    const freno = () => screen.getByRole('button', { name: 'No tenemos perfiles técnicos' })
+    freno().focus()
+    expect(freno()).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(freno()).toHaveAttribute('aria-pressed', 'true')
+    await user.keyboard(' ')
+    expect(freno()).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('el grupo explica que se puede marcar varias y que se puede saltar', async () => {
+    const user = montar()
+    await irAFrenos(user)
+    const grupo = screen.getByRole('group')
+    const descrito = grupo.getAttribute('aria-describedby')
+    expect(descrito).toBeTruthy()
+    expect(document.getElementById(descrito as string)?.textContent).toMatch(/todas las que apliquen/i)
+    expect(document.getElementById(descrito as string)?.textContent).toMatch(/sin marcar nada/i)
+  })
+
+  it('el enunciado de la pantalla sigue siendo la leyenda del grupo de campos', async () => {
+    const user = montar()
+    await irAFrenos(user)
+    expect(screen.getByText('¿Qué os está frenando ahora mismo?').tagName).toBe('LEGEND')
   })
 })

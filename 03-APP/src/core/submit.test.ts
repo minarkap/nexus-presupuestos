@@ -7,7 +7,7 @@ import type { EmailPort } from '@/ports/email'
 
 const answers: Answers = {
   challenge: 'ia', need: 'diagnostico', size: '250-999', maturity: 'inicial',
-  timing: '3-6m', sponsor: 'si', budget: 'asignado',
+  timing: '3-6m', sponsor: 'si', budget: 'asignado', blockers: [],
   contact: { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme', consent: true },
 }
 
@@ -63,6 +63,7 @@ describe('SubmitAction — el aviso interno lleva el desglose (CA-16)', () => {
       answers,
       serviceLabel: 'X',
       rangeText: 'Y',
+      blockers: [],
       score: { total: 8, breakdown: [
         { signal: 'sponsor', answer: 'a', points: 3 },
         { signal: 'presupuesto', answer: 'b', points: 3 },
@@ -164,5 +165,50 @@ describe('SubmitAction — la rama sin catalogar', () => {
     expect(r).toHaveProperty('kind', 'uncatalogued')
     expect(email.sent).toHaveLength(2)
     expect(registry.rows[0]?.serviceLabel).toBeNull()
+  })
+})
+
+/**
+ * Frenos declarados (spec `pregunta-frenos-lead`). El dato es para el comercial: entra en el aviso
+ * interno, no toca el cálculo y no vuelve al lead por ninguna vía.
+ */
+describe('Frenos declarados — informativos, nunca una señal de cualificación', () => {
+  const interno = (e: FakeEmailPort) => e.sent.find((m) => m.to === 'oportunidades@nexus-st.com')!
+  const alLead = (e: FakeEmailPort) => e.sent.find((m) => m.to === 'marta@acme.ad')!
+
+  it('el aviso interno nombra los frenos marcados y ningún otro (CA-2)', async () => {
+    await submitLead({ ...answers, blockers: ['sin_perfiles', 'intento_fallido'] }, 's1', deps(), cache)
+    const cuerpo = interno(email).body
+    expect(cuerpo).toMatch(/No tenemos perfiles técnicos/)
+    expect(cuerpo).toMatch(/Ya lo intentamos y salió mal/)
+    expect(cuerpo).not.toMatch(/Dudas legales/)
+    expect(cuerpo).not.toMatch(/No sabemos por dónde empezar/)
+  })
+
+  it('sin frenos marcados lo dice expresamente, no calla (CA-3)', async () => {
+    await submitLead({ ...answers, blockers: [] }, 's1', deps(), cache)
+    expect(interno(email).body).toMatch(/Frenos declarados: ninguno/)
+  })
+
+  it('dos leads idénticos con frenos distintos obtienen la misma cifra y la misma puntuación (CA-4)', async () => {
+    const a = await submitLead({ ...answers, blockers: [] }, 'sa', deps(), cache)
+    const b = await submitLead({ ...answers, blockers: ['dudas_legales', 'sin_punto_de_partida'] }, 'sb', deps(), new DedupCache())
+    expect(a).toEqual(b)
+
+    const puntuaciones = email.sent
+      .filter((m) => m.to === 'oportunidades@nexus-st.com')
+      .map((m) => m.body.match(/Puntuación: (\d+)\/10/)?.[1])
+    expect(puntuaciones[0]).toBe(puntuaciones[1])
+  })
+
+  it('el correo del lead no menciona sus frenos por ninguna vía (CA-6)', async () => {
+    await submitLead({ ...answers, blockers: ['sin_perfiles', 'dudas_legales'] }, 's1', deps(), cache)
+    const cuerpo = alLead(email).body
+    expect(cuerpo).not.toMatch(/perfiles técnicos|Dudas legales|freno|Freno/i)
+  })
+
+  it('el registro de respaldo se lleva los frenos en su propia columna', async () => {
+    await submitLead({ ...answers, blockers: ['intento_fallido'] }, 's1', deps(), cache)
+    expect(registry.rows[0]?.blockers).toEqual(['intento_fallido'])
   })
 })
