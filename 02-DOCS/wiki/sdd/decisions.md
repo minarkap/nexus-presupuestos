@@ -682,3 +682,44 @@ status: stable
   sentencia documentada que ejecuta una persona.
 - supersedes: deja sin efecto la «decisión diferida — la supresión automática a los doce meses» de
   la spec `leads-en-supabase`, que era diferida precisamente hasta que existiera la base de datos.
+
+## S-0029 — El tope de envíos se abre ante la duda, y obliga a tocar texto legal publicado
+
+- fecha: 2026-09-14
+- fase: `plan` de [limite-de-frecuencia](./specs/limite-de-frecuencia.md)
+- context: cierra el riesgo que `S-0027` dejó escrito y sin resolver. Al proponer la solución obvia
+  —contar por IP— apareció un obstáculo que no estaba previsto: **el aviso de privacidad publicado
+  dice «no recoge datos de navegación» y «solo los datos que introduces»**. Una dirección IP es un
+  dato de navegación y es dato personal. La propuesta original habría puesto al sitio en
+  contradicción con su propio texto legal: cumplir por fuera y fallar por dentro.
+- options considered:
+  1. **Huella HMAC de la IP + actualizar el aviso** (elegida por Jose): es la única quirúrgica —sólo
+     bloquea a quien abusa.
+  2. Cortafuegos de Vercel: no guarda nada y no toca el aviso, pero depende del plan. **No queda
+     descartada**: sigue siendo la primera barrera recomendable y son complementarias.
+  3. Tope global sin datos personales: **descartada por contraproducente**. Al atacante le bastaría
+     agotar el cupo común para bloquear a los leads legítimos — se le regala el apagado del
+     formulario.
+  4. Prueba anti-bot: añadiría un encargado del tratamiento nuevo y fricción en el último paso.
+- decision 1 — **HMAC con secreto propio, no un hash a secas.** El espacio IPv4 entero son 4.300
+  millones de valores y un portátil los recorre: un hash sin secreto es reversible, y por tanto sigue
+  siendo un dato personal en toda regla. `RATE_LIMIT_SALT` es variable propia, no reutilizada de
+  Supabase, para poder rotarse por separado.
+- decision 2 — **el tope se abre ante la duda, al revés que el correo y el registro.** Sin huella, sin
+  credenciales o con el conteo caído, el envío pasa. Rompe deliberadamente la regla `F-1`, y el motivo
+  es que el daño no es simétrico: un registro que falla pierde un lead para siempre; un tope que
+  falla deja pasar una fila de más.
+- decision 3 — **5 por hora y 15 por día, en un único punto de configuración.** Elegido por Jose sobre
+  el argumento de que varias personas de una misma empresa comparten una sola dirección pública, así
+  que un tope apretado bloquearía a compañeros entre sí. El hueco entre el uso legítimo y una
+  inundación real es tan ancho que afinar el número no cambia el resultado.
+- decision 4 — **el doble clic no consume cupo.** La deduplicación se resuelve antes del tope: es el
+  mismo envío, y gastarle cupo a alguien por tener el ratón nervioso sería castigarle por nuestra
+  cuenta.
+- decision 5 — **la segunda tabla no tiene ni una columna identificativa** y por tanto no se puede
+  cruzar con `leads`. Si se pudiera, la huella dejaría de ser una medida técnica y pasaría a ser un
+  rastro de comportamiento asociado a una persona.
+- **puerta humana declarada**: este ciclo redacta párrafos nuevos del aviso de privacidad y **no
+  puede publicarse sin revisión legal humana**. No es formalidad: es texto que compromete a la
+  empresa frente a terceros, y lo ha redactado un agente.
+- supersedes: none

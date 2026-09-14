@@ -5,6 +5,8 @@ import { resolveService } from './service-resolver'
 import { scoreLead } from './scoring'
 import type { EmailPort } from '@/ports/email'
 import type { RegistryPort } from '@/ports/registry'
+import type { RateLimitPort } from '@/ports/rate-limit'
+import { isOverLimit } from './rate-limit'
 import { BLOCKER_LABEL, BLOCKER_OPTIONS } from './options'
 import type { Answers, Blocker, LeadRecord, RedactedOutcome } from './types'
 
@@ -20,7 +22,18 @@ export interface ValidationError {
   readonly message: string
 }
 
-export type SubmitResult = RedactedOutcome | ValidationError
+/**
+ * Lo que ve quien cruza el tope de envíos. Lleva SIEMPRE una vía alternativa de contacto: un lead
+ * legítimo puede caer aquí sin haber hecho nada malo —varias personas de una misma empresa comparten
+ * una sola dirección pública— y no puede quedarse sin camino hasta el equipo (`CA-L3`).
+ */
+export interface RateLimited {
+  readonly kind: 'rate_limited'
+  readonly message: string
+  readonly contactEmail: string
+}
+
+export type SubmitResult = RedactedOutcome | ValidationError | RateLimited
 
 export interface DispatchReport {
   readonly clientEmail: 'ok' | 'failed'
@@ -31,9 +44,40 @@ export interface DispatchReport {
 export interface SubmitDeps {
   readonly emailPort: EmailPort
   readonly registryPort: RegistryPort
+  readonly rateLimitPort: RateLimitPort
   readonly internalMailbox: string
+  /** Huella del origen. `null` cuando no se pudo identificar: entonces no se aplica tope. */
+  readonly fingerprint: string | null
   readonly now: () => Date
   readonly onDispatch?: (report: DispatchReport) => void
+}
+
+/** Buzón público al que se manda a quien cruza el tope. No es el interno de oportunidades. */
+const BUZÓN_PÚBLICO = 'hola@nexus.ad'
+
+const MENSAJE_TOPE =
+  'Hemos recibido varios envíos desde tu conexión en poco rato. Prueba de nuevo dentro de unos ' +
+  'minutos — o escríbenos directamente y te atendemos igual.'
+
+/**
+ * ¿Hay que frenar este envío?
+ *
+ * Se abre ante cualquier duda: sin huella no hay tope, y si el conteo falla tampoco. El daño de los
+ * dos casos no es simétrico — bloquear a un lead legítimo cuesta un cliente, dejar pasar un envío de
+ * más cuesta una fila (`CA-L6`).
+ */
+async function superaElTope(
+  fingerprint: string | null,
+  port: RateLimitPort,
+  ahora: Date,
+): Promise<boolean> {
+  if (!fingerprint) return false
+  try {
+    const desde = new Date(ahora.getTime() - 24 * 60 * 60 * 1000)
+    return isOverLimit(await port.recentAttempts(fingerprint, desde), ahora)
+  } catch {
+    return false
+  }
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -210,8 +254,25 @@ export async function submitLead(
   const invalid = validateContact(answers)
   if (invalid) return invalid
 
+  // El doble clic se resuelve ANTES del tope a propósito: es el mismo envío, y gastarle cupo a
+  // alguien por tener el ratón nervioso sería castigarle por nuestra cuenta.
   const cached = cache.get(submissionId)
   if (cached) return cached
+
+  const ahora = deps.now()
+
+  if (await superaElTope(deps.fingerprint, deps.rateLimitPort, ahora)) {
+    return { kind: 'rate_limited', message: MENSAJE_TOPE, contactEmail: BUZÓN_PÚBLICO }
+  }
+
+  // Se anota después de aceptar y antes de escribir nada: si el conteo falla, el lead no lo paga.
+  if (deps.fingerprint) {
+    try {
+      await deps.rateLimitPort.record(deps.fingerprint)
+    } catch {
+      // Un intento sin anotar sólo significa un envío de más. No se interrumpe nada.
+    }
+  }
 
   const resolution = resolveService(answers.challenge, answers.need)
   const service = resolution.kind === 'service' ? resolution.service : null
@@ -225,7 +286,7 @@ export async function submitLead(
 
   const lead: LeadRecord = {
     submissionId,
-    submittedAt: deps.now().toISOString(),
+    submittedAt: ahora.toISOString(),
     contact: answers.contact,
     answers,
     serviceLabel: service?.label ?? null,

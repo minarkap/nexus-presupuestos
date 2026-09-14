@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { submitLead, DedupCache, validateAnswers } from './submit'
 import { FakeEmailPort } from '@/ports/email'
 import { FakeRegistryPort } from '@/ports/registry'
+import { FakeRateLimitPort } from '@/ports/rate-limit'
 import type { Answers } from './types'
 
 const válidas: Answers = {
@@ -53,7 +54,7 @@ describe('NUNCA sale una cifra improvisada de la firma (constitution 5, CA-02)',
     const registry = new FakeRegistryPort()
 
     const r = await submitLead(conBasura('size', 'INVENTADO'), 'adv1', {
-      emailPort: email, registryPort: registry,
+      emailPort: email, registryPort: registry, rateLimitPort: new FakeRateLimitPort(), fingerprint: null,
       internalMailbox: 'o@n.com', now: () => new Date('2026-01-01'),
     }, new DedupCache())
 
@@ -67,7 +68,7 @@ describe('NUNCA sale una cifra improvisada de la firma (constitution 5, CA-02)',
     for (const campo of ['size', 'maturity', 'timing']) {
       const email = new FakeEmailPort()
       const r = await submitLead(conBasura(campo, 'X'), `adv-${campo}`, {
-        emailPort: email, registryPort: new FakeRegistryPort(),
+        emailPort: email, registryPort: new FakeRegistryPort(), rateLimitPort: new FakeRateLimitPort(), fingerprint: null,
         internalMailbox: 'o@n.com', now: () => new Date('2026-01-01'),
       }, new DedupCache())
       expect(JSON.stringify(r)).not.toContain('NaN')
@@ -129,7 +130,7 @@ describe('Validación de frenos — multi-valor sobre lista cerrada', () => {
     const resultado = await submitLead(
       conBasura('blockers', ['pereza']),
       's-frenos',
-      { emailPort: email, registryPort: registry, internalMailbox: 'x@y.z', now: () => new Date() },
+      { emailPort: email, registryPort: registry, rateLimitPort: new FakeRateLimitPort(), fingerprint: null, internalMailbox: 'x@y.z', now: () => new Date() },
       new DedupCache(),
     )
     expect(resultado).toMatchObject({ kind: 'validation_error', field: 'blockers' })

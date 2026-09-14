@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { submitLead, DedupCache, validateContact, buildInternalNotice } from './submit'
+import { submitLead, DedupCache, validateContact, buildInternalNotice, type SubmitDeps } from './submit'
 import { FakeEmailPort } from '@/ports/email'
 import { FakeRegistryPort } from '@/ports/registry'
+import { FakeRateLimitPort } from '@/ports/rate-limit'
+import { RATE_LIMIT } from './rate-limit'
 import type { Answers, EmailMessage } from './types'
 import type { EmailPort } from '@/ports/email'
 
@@ -18,6 +20,10 @@ let cache: DedupCache
 const deps = () => ({
   emailPort: email,
   registryPort: registry,
+  // Sin huella por defecto: el tope no se aplica y las pruebas anteriores a esta función siguen
+  // midiendo lo que medían. Las del tope la ponen explícitamente.
+  rateLimitPort: new FakeRateLimitPort(),
+  fingerprint: null as string | null,
   internalMailbox: 'oportunidades@nexus-st.com',
   now: () => new Date('2026-08-26T10:00:00.000Z'),
 })
@@ -305,5 +311,98 @@ describe('Topes de tamaño — la acción pública ahora escribe en una base de 
   it('los valores normales siguen pasando sin rozar el tope', async () => {
     const r = await submitLead(answers, 's1', deps(), cache)
     expect(r).not.toMatchObject({ kind: 'validation_error' })
+  })
+})
+
+describe('Límite de frecuencia (spec limite-de-frecuencia)', () => {
+  const HUELLA = 'a'.repeat(32)
+  const conTope = (extra: Partial<SubmitDeps> = {}): SubmitDeps => ({
+    ...deps(), rateLimitPort: limiter, fingerprint: HUELLA, ...extra,
+  })
+  let limiter: FakeRateLimitPort
+
+  beforeEach(() => { limiter = new FakeRateLimitPort() })
+
+  /** Llena el cupo de la hora para esa huella. */
+  const agotarCupo = async () => {
+    for (let i = 0; i < RATE_LIMIT.perHour; i++) await limiter.record(HUELLA)
+  }
+
+  it('CA-L1 · un origen limpio no nota nada', async () => {
+    const r = await submitLead(answers, 's1', conTope(), cache)
+    expect(r).not.toMatchObject({ kind: 'rate_limited' })
+    expect(registry.rows).toHaveLength(1)
+  })
+
+  it('CA-L2 · por encima del tope no se crea NINGUNA fila', async () => {
+    await agotarCupo()
+    const r = await submitLead(answers, 's1', conTope(), cache)
+    expect(r).toMatchObject({ kind: 'rate_limited' })
+    expect(registry.rows).toHaveLength(0)
+  })
+
+  it('CA-L2 · por encima del tope no sale NINGÚN correo', async () => {
+    await agotarCupo()
+    await submitLead(answers, 's1', conTope(), cache)
+    expect(email.sent).toHaveLength(0)
+  })
+
+  it('CA-L3 · el bloqueo lleva mensaje Y vía alternativa de contacto', async () => {
+    await agotarCupo()
+    const r = await submitLead(answers, 's1', conTope(), cache)
+    expect(r).toMatchObject({ kind: 'rate_limited' })
+    if ('contactEmail' in r) {
+      expect(r.message.length).toBeGreaterThan(20)
+      expect(r.contactEmail).toContain('@')
+    } else {
+      throw new Error('el resultado bloqueado debe ofrecer una vía alternativa')
+    }
+  })
+
+  it('cada envío aceptado consume cupo', async () => {
+    await submitLead(answers, 's1', conTope(), cache)
+    expect(await limiter.recentAttempts(HUELLA, new Date(0))).toHaveLength(1)
+  })
+
+  it('un envío RECHAZADO por validación no consume cupo: no es culpa de nadie', async () => {
+    const contact = { ...answers.contact, email: 'no-es-un-correo' }
+    await submitLead({ ...answers, contact }, 's1', conTope(), cache)
+    expect(await limiter.recentAttempts(HUELLA, new Date(0))).toHaveLength(0)
+  })
+
+  it('un doble clic NO consume cupo dos veces: es el mismo envío', async () => {
+    await submitLead(answers, 'misma-sesion', conTope(), cache)
+    await submitLead(answers, 'misma-sesion', conTope(), cache)
+    expect(await limiter.recentAttempts(HUELLA, new Date(0))).toHaveLength(1)
+  })
+
+  it('CA-L6 · si el conteo está caído, el envío PASA', async () => {
+    const roto = {
+      recentAttempts: async () => { throw new Error('supabase caído') },
+      record: async () => { throw new Error('supabase caído') },
+    }
+    const r = await submitLead(answers, 's1', conTope({ rateLimitPort: roto }), cache)
+    expect(r).not.toMatchObject({ kind: 'rate_limited' })
+    expect(registry.rows).toHaveLength(1)
+  })
+
+  it('sin huella (no se pudo identificar el origen) el envío PASA', async () => {
+    await agotarCupo()
+    const r = await submitLead(answers, 's1', conTope({ fingerprint: null }), cache)
+    expect(r).not.toMatchObject({ kind: 'rate_limited' })
+  })
+
+  it('el bloqueo ocurre ANTES de tocar el registro', async () => {
+    await agotarCupo()
+    const orden: string[] = []
+    const testigo = { append: async () => { orden.push('registro') } }
+    await submitLead(answers, 's1', conTope({ registryPort: testigo }), cache)
+    expect(orden).toEqual([])
+  })
+
+  it('el tope es por origen: otra huella tiene su propio cupo', async () => {
+    await agotarCupo()
+    const r = await submitLead(answers, 's1', conTope({ fingerprint: 'b'.repeat(32) }), cache)
+    expect(r).not.toMatchObject({ kind: 'rate_limited' })
   })
 })
