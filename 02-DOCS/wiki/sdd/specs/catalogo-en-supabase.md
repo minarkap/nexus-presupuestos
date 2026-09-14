@@ -105,9 +105,14 @@ en vez de dejarse sin respuesta.
   propósito, no se olvida.
 - **No se versiona el catálogo ni se guarda historial de cambios.** Quién cambió qué precio y cuándo
   queda fuera de este ciclo.
-- **No se mudan los textos públicos de los servicios.** Lo que el visitante lee sobre cada servicio
-  es copy de marca, no precio, y se rige por el design system.
-- **No se cambia nada de lo que ve el visitante.** Para él, esta spec es invisible.
+- **No se muda el *copy editorial* de los servicios** —para quién es, qué incluye, cuándo aplica—,
+  que sigue en el código y se rige por el design system. **Corregido el 2026-09-14 (`S-0035`):** los
+  *rangos* que esas páginas publican SÍ se mudan, porque salen del mismo catálogo. Este non-goal
+  estaba escrito de memoria y decía «copy de marca, no precio» sobre un fichero que publica seis
+  rangos en euros. Dejarlo habría producido dos cifras distintas para el mismo servicio en el mismo
+  sitio tras cualquier cambio de precio.
+- **No se cambia ningún texto de lo que ve el visitante.** Las cifras publicadas pueden cambiar
+  —esa es la gracia—, pero ni una palabra del sitio se reescribe en este ciclo.
 
 ## Users & context
 

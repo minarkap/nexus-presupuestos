@@ -858,3 +858,31 @@ status: stable
   retira con un fichero dorado generado desde el código actual ANTES de tocar nada, y sembrando la
   base desde la semilla en vez de tecleando a mano.
 - supersedes: none
+
+## S-0035 — Los rangos publicados salen del mismo catálogo que los estimados
+
+- fecha: 2026-09-14
+- fase: `implement` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: la spec declaraba como **non-goal** que «no se mudan los textos públicos de los
+  servicios: lo que el visitante lee sobre cada servicio es copy de marca, no precio». Al
+  implementar apareció que eso era falso: `src/content/services.public.ts` publica `officialMin`,
+  `officialMax` y el rango formateado en `/servicios` y en la portada, leyendo el mismo catálogo que
+  el estimador. **Sí es precio.**
+- el fallo que habría causado: mudar el estimador y no la página habría dejado, tras cualquier
+  cambio de precio, **dos cifras distintas para el mismo servicio en el mismo sitio** — la página
+  anunciando la vieja y el formulario estimando con la nueva, hasta la siguiente publicación. Es
+  exactamente la incoherencia que la mudanza existe para evitar.
+- decision: `publicServices` y `publicLines` reciben el catálogo, y las dos páginas públicas lo
+  cargan con `revalidate = 300`. Siguen siendo **HTML estático prerenderizado** —el principio 32
+  exige que todo el contenido viaje en el HTML inicial— y se rehacen solas cada cinco minutos. Si la
+  base no responde durante una revalidación, el puerto se repliega a la foto y la página se rehace
+  igual: nunca se queda sin renderizar.
+- por qué cinco minutos y no al instante: la página pública no necesita ser inmediata, y hacerla
+  dinámica habría cambiado su naturaleza y puesto en riesgo la puerta SEO. El formulario, que sí
+  entrega una cifra personal, lee el catálogo en cada cálculo.
+- el non-goal de la spec queda **corregido**, no ignorado: lo que no se muda es el *copy editorial*
+  —para quién es, qué incluye, cuándo aplica—, que sigue en el código. Los rangos, no.
+- lo que enseña: un non-goal escrito de memoria describe lo que el autor **cree** que hay, no lo que
+  hay. Este decía «copy de marca, no precio» sobre un fichero que publicaba seis rangos en euros.
+  Lo encontró la implementación al seguir los imports, no ninguna de las tres lecturas anteriores.
+- supersedes: none
