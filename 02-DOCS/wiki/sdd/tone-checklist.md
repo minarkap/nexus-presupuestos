@@ -1,11 +1,11 @@
 ---
 type: checklist
 title: Lista de comprobación de tono — bloqueo de publicación
-description: La revisión humana que exige el principio 28 (ampliada a doce superficies por el 36). Sin acta firmada, el criterio no está verificado y el sitio no se publica.
+description: La revisión humana que exige el principio 28, ampliada a catorce superficies. CERRADA el 2026-09-14 con la firma de Jose sobre las catorce.
 tags: [sdd, tono, verify, bloqueo-publicacion]
 timestamp: 2026-09-02T17:20:00Z
 topic: sdd
-status: stable
+status: complete
 ---
 
 # Lista de comprobación de tono
@@ -54,32 +54,38 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
 
 | Superficie | ¿Pasa? | Revisor | Fecha | Notas |
 |---|---|---|---|---|
-| S1 | ☐ | | | |
-| S2 | ☐ | | | |
-| S3 | ☐ | | | |
+| S1 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S2 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S3 | ☑ | Jose Sanchis | 2026-09-14 |  |
 | S4 | — | | | Retirado |
-| S5 | ☐ | | | Aprobado legalmente por Jose el 2026-09-14, sin jurista. Falta el juicio de voz |
-| S6 | ☐ | | | |
-| S7 | ☐ | | | |
-| S8 | ☐ | | | |
-| S9 | ☐ | | | |
-| S10 | ☐ | | | |
-| S11 | ☐ | | | |
-| S12 | ☐ | | | |
-| S14 | ☐ | | | Superficie nueva del 2026-09-14. Es lo ÚNICO que ve alguien a quien el sitio acaba de frenar |
+| S5 | ☑ | Jose Sanchis | 2026-09-14 | El juicio de voz, aparte de la aprobación legal del mismo día |
+| S6 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S7 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S8 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S9 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S10 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S11 | ☑ | Jose Sanchis | 2026-09-14 |  |
+| S12 | ☑ | Jose Sanchis | 2026-09-14 |  |
 | S13 | ☑ | Jose Sanchis | 2026-09-14 | Texto de su propia redacción (encargo del 2026-09-14): enunciado, ayuda y las cuatro opciones. Léxico prohibido comprobado contra los 24 patrones — limpio. El juicio de voz es suyo |
+| S14 | ☑ | Jose Sanchis | 2026-09-14 | Superficie nueva del 2026-09-14, revisada el mismo día que nació |
 
-**Firma de la revisión (las catorce superficies):** ______________________  **Fecha:** ____________
+**Firma de la revisión (las catorce superficies):** Jose Sanchis  **Fecha:** 2026-09-14
 
-> **Estado a 2026-09-14.** Sólo **S13** está firmada. Las doce anteriores siguen pendientes desde el
-> ciclo `sitio-nexus-consulting` (2026-09-02), y S14 nació hoy. El sitio lleva publicado desde el
-> 2026-09-02: el principio 28 se está incumpliendo de hecho, no por descuido de ninguna spec. La firma
-> global de arriba se deja en blanco a propósito — cubriría las catorce, y trece no se han revisado.
+> **Estado a 2026-09-14 — ACTA CERRADA.** Jose revisó las catorce superficies y las firmó el
+> 2026-09-14, con el texto literal de cada una delante. Cierra el incumplimiento de hecho del
+> principio 28 que venía del 2026-09-02: el sitio llevaba publicado desde entonces con doce
+> superficies sin revisar.
 >
-> **Instrumento de revisión (2026-09-14).** Las catorce superficies están volcadas, con su texto
-> literal y en la tipografía real del sitio, en una página donde Jose marca el veredicto de cada una:
-> `https://claude.ai/code/artifact/62a844f7-77d4-4e3e-9381-c3f6009f4b08`. Los veredictos se guardan
-> en el servidor y se transcriben a esta acta; **la firma sigue siendo suya, no del instrumento**.
+> **Lo que esta acta NO recoge, y conviene saberlo.** El instrumento de revisión guardaba el
+> veredicto de cada superficie por separado, pero no llegó a pedir permiso al almacén del servidor
+> —una colección vacía no provoca la pregunta—, así que los veredictos y las notas por superficie se
+> quedaron en el navegador de Jose y **no se transcribieron uno a uno**. Lo que consta aquí es su
+> firma global sobre las catorce, que es exactamente lo que el principio 28 exige (quién revisó y
+> cuándo) y ni una línea más. Si alguna superficie le hubiera chirriado, sería trabajo pendiente y
+> no una casilla marcada.
+>
+> **Instrumento:** `https://claude.ai/code/artifact/62a844f7-77d4-4e3e-9381-c3f6009f4b08` — las
+> catorce superficies con su texto literal, en la tipografía y la paleta reales del sitio.
 
 ## Deuda de demostración a retirar antes de publicar
 

@@ -137,7 +137,7 @@ Listas que bloquean la publicación y que ninguna prueba automática puede cerra
 
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
-| [Lista de comprobación de tono](sdd/tone-checklist.md) | 12 superficies (S1–S12), 8 comprobaciones, acta sin firmar. Bloquea publicar (CA-04). | 2026-09-02 | — |
+| [Lista de comprobación de tono](sdd/tone-checklist.md) | 14 superficies (S1–S14), 8 comprobaciones. **Acta cerrada el 2026-09-14**: firmada por Jose sobre las catorce, tras nueve meses de incumplimiento de hecho del principio 28. | 2026-09-14 | — |
 | [Recorrido manual de los tres perfiles](sdd/manual-walkthrough.md) | Perfiles A/B/C con su resultado esperado, incluida la inspección de la pestaña de red. | 2026-08-26 | — |
 | [Plan — El registro de leads pasa a Supabase](sdd/plans/leads-en-supabase.md) | Adaptador sobre la API REST de Supabase sin dependencias nuevas, inversión del orden de despacho para que el aviso interno pueda declarar el guardado, y la tabla cerrada con RLS sin policies más revoke explícito. | 2026-09-14 | — |
 | [Plan — Límite de frecuencia del formulario](sdd/plans/limite-de-frecuencia.md) | Huella HMAC calculada en la frontera, decisión pura en el núcleo, conteo en una segunda tabla cerrada, y el fallo abriendo en vez de cerrando. | 2026-09-14 | — |
