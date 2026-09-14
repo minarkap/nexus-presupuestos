@@ -29,7 +29,12 @@ create table if not exists public.leads (
   range_text       text,
   score_total      integer     not null,
   score_breakdown  jsonb       not null,
-  created_at       timestamptz not null default now()
+  created_at       timestamptz not null default now(),
+  -- Excepción del aviso de privacidad: «si tu solicitud da lugar a una relación comercial, los
+  -- datos pasan a regirse por el contrato correspondiente». Una fila marcada NO se borra a los doce
+  -- meses. Por defecto false: sin intervención humana, el comportamiento es borrar, que es lo que
+  -- promete el aviso. Ver retention.sql y la spec `retencion-doce-meses`.
+  retention_hold   boolean     not null default false
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────

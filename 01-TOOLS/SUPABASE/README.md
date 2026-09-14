@@ -7,13 +7,15 @@ Base de datos donde se guarda cada lead del estimador. Sustituye a la hoja de c�
 
 1. **Proyecto.** supabase.com → *New project*. Región: Europa (no es obligatorio — el principio 22
    de la constitución dice que no hay requisito de residencia — pero evita explicaciones).
-2. **Tabla.** Abre *SQL Editor* → *New query*, pega `schema.sql` entero y ejecútalo. Entero: la
-   tabla y su cierre de acceso van juntos a propósito.
-3. **Credenciales.** *Settings* → *API*. Copia el *Project URL* y la clave **`service_role`** (la
+2. **Tabla.** Abre *SQL Editor* → *New query*, pega `schema.sql` entero y ejecútalo. Entero: va
+   dentro de una transacción, así que o se crea la tabla **y** queda cerrada, o no se crea nada.
+3. **Conservación.** Otra consulta nueva con `retention.sql` entero. Programa el borrado automático
+   a los doce meses que el aviso de privacidad promete en público.
+4. **Credenciales.** *Settings* → *API*. Copia el *Project URL* y la clave **`service_role`** (la
    marcada como *secret*) en `.env`. La clave `anon` es opcional y sólo la usa la prueba de humo.
-4. **Comprueba.** `bash test_connection.sh`. Verifica tres cosas: que la clave vale, que la tabla
+5. **Comprueba.** `bash test_connection.sh`. Verifica tres cosas: que la clave vale, que la tabla
    existe, y que **la tabla no responde a quien no tiene la llave**.
-5. **Producción.** Las mismas dos variables en Vercel → *Settings* → *Environment Variables*,
+6. **Producción.** Las mismas dos variables en Vercel → *Settings* → *Environment Variables*,
    marcando *Production* y *Preview*.
 
 ## La clave `service_role`
@@ -39,6 +41,28 @@ de negocio, los frenos declarados, el servicio aplicable, el rango entregado y l
 desglose. **Ningún dato nuevo del visitante** — ni IP, ni user-agent, ni procedencia.
 
 El aviso de privacidad del sitio no nombra proveedores y ya declara transferencias fuera de la UE,
-así que no hubo que tocarlo. Lo que sí promete es **conservación de doce meses**: el borrado
-automático todavía no está implementado (es una decisión diferida de la spec), pero a partir de
-ahora es ejecutable, que antes no lo era.
+así que no hubo que tocarlo.
+
+## Las tres operaciones de privacidad
+
+Lo que el aviso promete, y dónde se cumple. Todas se ejecutan en el *SQL Editor* de Supabase: ninguna
+está expuesta en la API, a propósito (spec `retencion-doce-meses`, `CA-R6`).
+
+| Promesa del aviso | Cómo se cumple |
+|---|---|
+| «Conservamos los datos durante doce meses» | Tarea programada diaria, instalada por `retention.sql`. Ocurre sola |
+| «Salvo que antes retires tu consentimiento o solicites su supresión» | `delete from public.leads where contact_email = '…'` — operación manual, documentada en `retention.sql` |
+| «Si tu solicitud da lugar a una relación comercial, los datos pasan a regirse por el contrato» | Columna `retention_hold`. Marcarla a `true` excluye esa fila del borrado automático |
+
+**El riesgo vivo de esto es humano, no técnico**: si nadie marca `retention_hold` en los leads que se
+convierten en cliente, a los doce meses se borran. El sistema no sabe quién es cliente — esa
+información vive fuera. Está registrado como riesgo R-R1 del plan.
+
+### Comprobar que el borrado está activo
+
+```sql
+select jobname, schedule, active from cron.job where jobname = 'nexus-retencion-leads';
+```
+
+Debe devolver una fila con `active = true`. Si no devuelve nada, `retention.sql` no llegó a
+ejecutarse y la promesa de los doce meses **no se está cumpliendo**.

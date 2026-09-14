@@ -653,3 +653,32 @@ status: stable
   enumera qué variables buscó y cuáles no. Una puerta que calla lo que no ha mirado miente por
   omisión, y es peor que no tener puerta porque da confianza falsa.
 - supersedes: none
+
+## S-0028 — El borrado a los doce meses vive dentro de la base de datos, no en la aplicación
+
+- fecha: 2026-09-14
+- fase: `plan` de [retencion-doce-meses](./specs/retencion-doce-meses.md)
+- context: con el registro en base de datos, la promesa pública de conservar doce meses pasa a ser
+  ejecutable por primera vez. Hasta ahora era cierta como intención y falsa como práctica.
+- options considered:
+  1. **Tarea programada dentro de Postgres** (`pg_cron`) — elegida.
+  2. Tarea programada de Vercel llamando a una ruta del sitio — descartada: sería un endpoint HTTP
+     público **capaz de borrar datos**, con su propio secreto que proteger y rotar. Contradice el
+     requisito que Jose repitió dos veces en este ciclo: no exponer nada nuevo.
+  3. Recordatorio en el calendario y borrado anual a mano — queda como plan B escrito en la spec.
+- decision: el borrado se programa en la propia base de datos. **Este ciclo no toca ni una línea de
+  la aplicación**: sin adaptador, sin ruta, sin puerto y sin pruebas de Vitest, porque no hay código
+  de aplicación que probar. El artefacto es SQL y su evidencia es SQL — dicho en voz alta, porque un
+  ciclo cuya evidencia no es la batería de pruebas tiene que declarar dónde está.
+- decision 2 — **la excepción del aviso se implementa, no se ignora.** El aviso dice que una
+  solicitud que da lugar a relación comercial pasa a regirse por el contrato; un borrado a secas la
+  incumpliría al revés, destruyendo datos que debían conservarse. Columna `retention_hold`, por
+  defecto `false`: sin intervención humana el comportamiento es **borrar**, que es lo que se promete.
+- riesgo vivo y declarado (R-R1): si nadie marca `retention_hold` en los leads que se convierten en
+  cliente, a los doce meses se borran. Es humano y no tiene mitigación técnica — el sistema no sabe
+  quién es cliente, esa información vive fuera.
+- decision 3 — **la supresión anticipada no se automatiza.** Automatizar un borrado identificado por
+  correo electrónico sería dar a cualquiera una vía para borrar los datos de otro. Queda como
+  sentencia documentada que ejecuta una persona.
+- supersedes: deja sin efecto la «decisión diferida — la supresión automática a los doce meses» de
+  la spec `leads-en-supabase`, que era diferida precisamente hasta que existiera la base de datos.
