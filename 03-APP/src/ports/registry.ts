@@ -104,6 +104,21 @@ export interface SupabaseConfig {
 }
 
 /**
+ * Deja la URL del proyecto en su forma base, venga como venga.
+ *
+ * El panel de Supabase enseña la URL del proyecto y la de la API en pantallas distintas, y es fácil
+ * pegar la segunda. Pasó en la puesta en marcha real: `SUPABASE_URL` acabó valiendo
+ * `https://…supabase.co/rest/v1/`, la petición se construía contra `…/rest/v1/rest/v1/leads` y la
+ * respuesta era un 404 «la tabla no existe» — un mensaje que manda a buscar el fallo donde no está.
+ *
+ * Se normaliza en vez de rechazar: las dos formas son la misma intención escrita de dos maneras, y
+ * un despliegue roto por una barra de más no le enseña nada a nadie.
+ */
+export function normalizeSupabaseUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '')
+}
+
+/**
  * Registro sobre la API REST de Supabase. Sin SDK: es un `POST`, y añadir un árbol de dependencias
  * para hacer un `POST` no se paga (plan §0).
  *
@@ -118,7 +133,11 @@ export class SupabaseRegistryPort implements RegistryPort {
 
   async append(row: LeadRecord): Promise<void> {
     const tabla = this.config.table ?? 'leads'
-    const res = await this.fetchImpl(`${this.config.url}/rest/v1/${tabla}`, {
+    const base = normalizeSupabaseUrl(this.config.url)
+    // `on_conflict` nombra la columna del choque. SIN ESTO la cabecera `ignore-duplicates` no hace
+    // nada: comprobado contra el Supabase real el 2026-09-14, un reenvío devolvía 409 en vez de
+    // ignorarse. Con `on_conflict` el duplicado es un 201 limpio y Postgres no registra un error.
+    const res = await this.fetchImpl(`${base}/rest/v1/${tabla}?on_conflict=submission_id`, {
       method: 'POST',
       headers: {
         apikey: this.config.serviceRoleKey,
@@ -131,8 +150,9 @@ export class SupabaseRegistryPort implements RegistryPort {
       body: JSON.stringify(toLeadRow(row)),
     })
 
-    // Un conflicto significa «esa fila ya está», que es justo lo que se pedía. Tratarlo como fallo
-    // haría que el aviso interno declarase perdido un lead que está guardado — peor que no avisar.
+    // El 409 se sigue aceptando como red: significa «esa fila ya está», que es justo lo que se
+    // pedía. Tratarlo como fallo haría que el aviso interno declarase perdido un lead que sí está
+    // guardado — peor que no avisar.
     if (res.ok || res.status === 409) return
 
     throw new Error(`Supabase respondió ${res.status} al guardar el lead`)

@@ -78,7 +78,7 @@ describe('SupabaseRegistryPort — la petición que guarda el lead', () => {
     const { llamadas, impl } = espía(201)
     await new SupabaseRegistryPort(config, impl).append(lead)
     expect(llamadas).toHaveLength(1)
-    expect(llamadas[0]?.url).toBe('https://proyecto.supabase.co/rest/v1/leads')
+    expect(llamadas[0]?.url).toBe('https://proyecto.supabase.co/rest/v1/leads?on_conflict=submission_id')
     expect(llamadas[0]?.init.method).toBe('POST')
   })
 
@@ -95,6 +95,9 @@ describe('SupabaseRegistryPort — la petición que guarda el lead', () => {
     await new SupabaseRegistryPort(config, impl).append(lead)
     const headers = llamadas[0]?.init.headers as Record<string, string>
     expect(headers.Prefer).toContain('resolution=ignore-duplicates')
+    // Sin nombrar la columna del choque, la cabecera anterior es decorativa: la API devuelve 409
+    // en vez de ignorar. Comprobado contra el Supabase real.
+    expect(llamadas[0]?.url).toContain('on_conflict=submission_id')
   })
 
   it('manda la fila completa en el cuerpo', async () => {
@@ -174,5 +177,40 @@ describe('selectRegistryPort — precedencia con Supabase delante', () => {
     const port = new SupabaseRegistryPort({ url: config.url, serviceRoleKey: CLAVE }, impl)
     await port.append(lead)
     expect(llamadas[0]?.url).toContain('/rest/v1/leads')
+  })
+})
+
+describe('La URL del proyecto se normaliza (caso real, 2026-09-14)', () => {
+  /**
+   * El panel de Supabase ofrece la URL del proyecto y la de la API en sitios distintos, y es fácil
+   * pegar la segunda. Pasó de verdad en la puesta en marcha: `SUPABASE_URL` acabó valiendo
+   * `https://…supabase.co/rest/v1/`, el adaptador construía `…/rest/v1/rest/v1/leads` y Supabase
+   * devolvía 404 «la tabla no existe» — un mensaje que manda a buscar el problema donde no está.
+   *
+   * Se normaliza en vez de validar y rechazar: las dos URLs son la misma intención escrita de dos
+   * maneras, y un fallo de despliegue por una barra de más no es una lección para nadie.
+   */
+  const casos = [
+    ['https://p.supabase.co', 'URL base, la correcta'],
+    ['https://p.supabase.co/', 'con barra final'],
+    ['https://p.supabase.co/rest/v1', 'con la ruta de la API pegada'],
+    ['https://p.supabase.co/rest/v1/', 'con la ruta de la API y barra final'],
+  ] as const
+
+  for (const [url, descripción] of casos) {
+    it(`${descripción} → siempre la misma dirección`, async () => {
+      const { llamadas, impl } = espía(201)
+      await new SupabaseRegistryPort({ url, serviceRoleKey: CLAVE }, impl).append(lead)
+      expect(llamadas[0]?.url).toBe('https://p.supabase.co/rest/v1/leads?on_conflict=submission_id')
+    })
+  }
+
+  it('el selector normaliza igual que el adaptador', async () => {
+    const port = selectRegistryPort({
+      NODE_ENV: 'production',
+      SUPABASE_URL: 'https://p.supabase.co/rest/v1/',
+      SUPABASE_SERVICE_ROLE_KEY: CLAVE,
+    })
+    expect(port).toBeInstanceOf(SupabaseRegistryPort)
   })
 })

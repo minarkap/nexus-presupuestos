@@ -11,7 +11,10 @@ set -a; . ./.env; set +a
 [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ] || { echo "✗ SUPABASE_SERVICE_ROLE_KEY vacía en .env"; exit 1; }
 TABLA="${SUPABASE_LEADS_TABLE:-leads}"
 
-url="${SUPABASE_URL%/}/rest/v1/${TABLA}?select=submission_id&limit=1"
+# Misma normalización que el adaptador: el panel enseña la URL del proyecto y la de la API en
+# pantallas distintas, y pegar la segunda produce un 404 «la tabla no existe» que despista.
+BASE=$(printf '%s' "$SUPABASE_URL" | sed -E 's#/+$##; s#/rest/v1$##')
+url="${BASE}/rest/v1/${TABLA}?select=submission_id&limit=1"
 
 # 1. ¿Responde y existe la tabla?
 code=$(curl -s -o /dev/null -w '%{http_code}' \
@@ -20,9 +23,9 @@ code=$(curl -s -o /dev/null -w '%{http_code}' \
   "$url")
 
 case "$code" in
-  200) echo "✓ Supabase responde y la tabla «$TABLA» existe." ;;
+  200) echo "✓ Supabase responde y la tabla «${TABLA}» existe." ;;
   401|403) echo "✗ Supabase rechaza la clave (HTTP $code). Revisa SUPABASE_SERVICE_ROLE_KEY."; exit 1 ;;
-  404) echo "✗ La tabla «$TABLA» no existe. Ejecuta schema.sql en el SQL Editor."; exit 1 ;;
+  404) echo "✗ La tabla «${TABLA}» no existe. Ejecuta schema.sql en el SQL Editor."; exit 1 ;;
   *) echo "✗ Respuesta inesperada de Supabase: HTTP $code"; exit 1 ;;
 esac
 
