@@ -109,7 +109,11 @@ if (!url || !readKey) {
   console.warn('⚠️  Sin credenciales de lectura: la foto del catálogo se toma de la SEMILLA del código.')
   console.warn('    Vale para desarrollo. En una publicación real esto habría fallado (CA-08).')
   console.warn('')
-  escribir(SEED_CATALOG, new Date().toISOString(), 'semilla del código (sin credenciales)')
+  // Marca FIJA, no `new Date()`. Con una fecha viva, cada `npm run build` local reescribiría este
+  // fichero con una marca nueva y ensuciaría el repositorio en cada compilación — y un fichero que
+  // sale sucio siempre acaba commiteado sin mirar. Con la marca fija, la foto sólo cambia cuando
+  // cambia la semilla, que es cuando de verdad ha cambiado algo.
+  escribir(SEED_CATALOG, 'semilla del código (sin fecha de toma)', 'semilla del código (sin credenciales)')
   process.exit(0)
 }
 

@@ -421,7 +421,7 @@ function avisoDeSinCatálogo(): string[] {
 function avisoDeFoto(takenAt: string): string[] {
   return [
     '⚠️  ESTA CIFRA SE CALCULÓ CON LA FOTO DEL CATÁLOGO, NO CON EL CATÁLOGO VIVO.',
-    `    La foto se tomó el ${takenAt}. Si desde entonces se ha cambiado algún precio, esta`,
+    `    Procedencia de la foto: ${takenAt}. Si desde entonces se ha cambiado algún precio, esta`,
     '    estimación NO lo refleja. Contrástala antes de usarla en una conversación comercial.',
     '',
   ]
