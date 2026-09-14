@@ -296,3 +296,35 @@ atrás real es revertir el paso 5: el núcleo vuelve a recibir la semilla y nada
 
 `main` es la rama por defecto, así que **aislar no es opcional**. El trabajo va a una rama propia,
 `feat/catalogo-en-supabase`, y se fusiona en `ship`.
+
+---
+
+## §9 — Tareas
+
+Orden de §6 sliceado. `∥` = puede correr en paralelo con la anterior. Cada comprobación es literal:
+se ejecuta, no se interpreta.
+
+| # | Tarea | Comprobación literal | Dep. | Traza |
+|---|---|---|---|---|
+| T01 | Generar el **fichero dorado** desde el código de HOY: toda combinación (reto × necesidad × tamaño × madurez × urgencia) → su rango | `npm test` verde con la prueba dorada incluida, **sin haber tocado `catalog.ts`** | — | CA-11 |
+| T02 | `core/catalog-types.ts`: la forma `Catalog` | `npm run typecheck` verde | T01 | §3 |
+| T03 | `catalog.ts` → `catalog-seed.ts`, mismos valores, exportando un `Catalog` | prueba: cada campo de la semilla == la constante que sustituye | T02 | §0 |
+| T04 | `core/catalog-validation.ts` con los límites de §0 | pruebas: acepta la semilla; rechaza min>max, negativo, multiplicador 50, punto 99, unidad inventada, cadena donde iba número, falta un servicio | T02 | CA-03/04/05/12, R-2 |
+| T05 | Inyectar en `priceService` y `resolveService` | `npm test` verde + **dorado idéntico** | T03 | CA-11 |
+| T06 ∥ | Inyectar en `scoreLead` y `mapOutcome` | `npm test` verde + dorado idéntico | T03 | CA-11 |
+| T07 | `submitLead` recibe `LoadedCatalog` en `deps`; una sola carga por envío | prueba con espía: `load()` se llama exactamente una vez; el mismo objeto llega a las cuatro | T05, T06 | CA-10 |
+| T08 | `01-TOOLS/SUPABASE/catalogo.sql`: cuatro tablas, `CHECK`s, disparador de los seis, RLS sin policies, `revoke` | ejecutado contra el Supabase real; las consultas de comprobación del pie del fichero dan lo esperado | T04 | CA-03/04/05/12/18 |
+| T09 | Función `catalogo_vigente()` | RPC real devuelve un jsonb que `validateCatalog` acepta y es **igual** a la semilla | T08 | CA-07, §4 |
+| T10 | Sembrar la base **desde `catalog-seed.ts`**, no a mano | script de siembra; `catalogo_vigente()` == semilla, campo a campo | T09 | R-1 |
+| T11 | Llave de **solo lectura** creada y probada | con esa llave: leer ✓, escribir ✗, borrar ✗ | T08 | CA-14 |
+| T12 | `ports/catalog.ts`: `SupabaseCatalogPort` + repliegue + espera 3 s + procedencia | unitarias con `fetch` fingido: ok→live; 500→snapshot; inválido→snapshot; nunca resuelve→snapshot a los 3 s; sin foto→lanza | T04, T09 | CA-06/07/09/13 |
+| T13 | `actions.ts` carga una vez y pasa | prueba de integración del recorrido completo | T07, T12 | CA-10 |
+| T14 | `buildInternalNotice` declara la foto y su fecha; `RedactedOutcome` no | prueba: aviso interno contiene la fecha; el resultado del lead no contiene «foto» ni fecha alguna | T13 | CA-06, const. 11 |
+| T15 | `scripts/snapshot-catalog.mjs` + `prebuild` | **dos sentidos**: sin credenciales en modo producción → salida ≠ 0; con credenciales → foto escrita y válida | T09 | CA-08 |
+| T16 | `scripts/catalog-gate.mjs` en `verify.sh` | **dos sentidos**: precio del diagnóstico movido en la base → roja; devuelto → verde. Sin catálogo vivo → salida ≠ 0 diciendo que no pudo ejecutarse | T09 | CA-15/19, CA-16 |
+| T17 | `secret-gate.mjs` vigila la llave de lectura | **dos sentidos**: llave plantada en `.next/static` → roja; quitada → verde | T11 | CA-17, R-3 |
+| T18 | Pasada completa de `verify` | `bash scripts/verify.sh` → VERDE | todas | DoD |
+| T19 | Prueba de extremo a extremo contra producción | cambiar un precio en la base → el formulario real lo usa sin publicar | T18 | CA-02 |
+
+**T01 es innegociable y va primero.** Es la única tarea que no se puede hacer después: en cuanto se
+toque `catalog.ts`, el fichero dorado ya no se puede generar desde «el código de antes».
