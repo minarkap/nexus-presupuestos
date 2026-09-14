@@ -784,3 +784,50 @@ status: stable
 - why: una puerta que nunca se ha visto fallar no se sabe si funciona. Las dos llevaban meses en
   verde sin que eso significara nada.
 - supersedes: none
+
+## S-0033 — El catálogo comercial se muda a la base de datos, con la objeción registrada
+
+- fecha: 2026-09-14
+- fase: `specify` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: la petición —«guardar también el catálogo de servicios en la base de datos»— admitía dos
+  lecturas muy distintas: guardar junto a cada lead **la foto** del catálogo con el que se calculó
+  (trazabilidad histórica, motor intacto), o que el catálogo **viva** en la base y el motor lea de
+  ahí (fuente de verdad, dependencia de red nueva).
+- objeción planteada: el catálogo lo leen ocho módulos del núcleo, entre ellos los dos motores de
+  cálculo, con una lectura inmediata que hoy no puede fallar. Mudarlo mete red en el camino que
+  produce la cifra que sale con el membrete de Nexus, y sin panel de edición —descartado— cambiar un
+  precio sigue siendo manual: SQL en vez de fichero, con menos red de seguridad debajo.
+- decision: **fuente de verdad en la base de datos**. Jose la tomó con la objeción delante. Apoyos:
+  el principio 10 de la constitución («rangos y factores son configuración, no constantes en el
+  código») está hoy incumplido, y la edición 2027 del catálogo llega en meses y no debe depender de
+  un despliegue.
+- alcance decidido: **todo lo que hoy vive en el fichero del catálogo** —seis servicios con sus
+  rangos, multiplicadores de tamaño/madurez/urgencia, tabla de puntos y umbral de cualificación—
+  frente a mudar solo los rangos. Razón: partirlo deja dos sitios donde mirar y mañana nadie recuerda
+  qué mitad está dónde.
+- ante un fallo: **consulta a la base en cada cálculo, más una foto del catálogo tomada en cada
+  publicación del sitio** como respaldo. Si la base no responde, se calcula con la foto y el aviso
+  interno de ese lead declara que se usó y de cuándo es.
+- **corrección durante la propia fase `specify`:** la primera decisión fue «copia en memoria cargada
+  al arranque». La revisión en frío de la spec la tumbó: descansaba en una premisa falsa —que existe
+  un servidor encendido— cuando el sitio se publica en Vercel, donde hay copias efímeras que arrancan
+  por su cuenta. Con el tráfico esperado la mayoría de visitas son arranques en frío, así que esa
+  copia apenas habría protegido de un corte; y al refrescar cada copia por su cuenta, dos visitantes
+  simultáneos podrían haber recibido precios distintos. Se le devolvió a Jose con la premisa
+  corregida y eligió la opción de arriba.
+- lo que se descartó y por qué: el respaldo a una copia del catálogo **mantenida a mano en el
+  código** entregaría un precio viejo con el membrete de Nexus sin que nadie se entere — principio 7,
+  «un fallo, no una tolerancia». La foto de la publicación es distinta: es la base de datos misma,
+  fotografiada, con fecha conocida y aviso ruidoso al usarse.
+- red de seguridad: **doble**. La base rechaza lo imposible en la escritura, y el caso de referencia
+  del principio 16 se comprueba contra el catálogo vivo. Razón: hoy un precio pasa por el linter, los
+  tipos y 230 pruebas; mañana pasaría por una sentencia SQL, y como el motor **ancla** al rango
+  oficial, un 1.800 tecleado donde iba 18.000 se anclaría perfectamente contra el número equivocado.
+- caducidad: la fecha del 31-12-2026 **viaja con el catálogo y sigue sin hacer nada**. Que tenga
+  consecuencias es función nueva y merece su propio ciclo.
+- why: el principio 10 describía una separación que no existía. Un principio escrito que nadie
+  cumple rebaja el listón de los otros 35.
+- lo que enseña: una petición de una línea puede esconder dos funciones distintas con perfiles de
+  riesgo opuestos. Preguntar «¿para qué?» antes que «¿cómo?» costó un turno y evitó construir la que
+  no era.
+- supersedes: none
