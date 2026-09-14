@@ -745,3 +745,42 @@ status: stable
   y aislamiento son cosas distintas, y el razonamiento sobre el papel no distinguía entre las dos.
   Lo distinguió la ráfaga real.
 - supersedes: none
+
+## S-0031 — La «revisión legal» que bloqueaba la publicación no existía; la aprueba Jose y se dice así
+
+- fecha: 2026-09-14
+- fase: `ship` de [limite-de-frecuencia](./specs/limite-de-frecuencia.md)
+- context: el ciclo se cerró con una puerta humana que exigía «revisión legal» de los tres párrafos
+  nuevos del aviso de privacidad. La puerta la había puesto un agente. Al preguntarle a Jose quién
+  revisaba, su respuesta fue *«¿qué revisión legal?»*: **no hay asesoría jurídica en este proyecto**,
+  así que la puerta no tenía a nadie detrás que pudiera cruzarla y la rama se habría quedado ahí
+  indefinidamente mientras el formulario seguía en producción sin ningún tope.
+- decision: Jose aprueba los tres párrafos el 2026-09-14 y se fusiona. La cabecera de
+  `src/content/privacidad.ts` deja escrito, en primera línea, que **no han pasado por un jurista** y
+  que son lo primero que habría que mirar si algún día lo hay.
+- why: una puerta que nadie puede cruzar no protege, sólo paraliza — y lo que paralizaba aquí no era
+  el texto, era el tope contra el abuso. Quedarse quieto también tiene un coste. Lo que sí se
+  conserva es la **trazabilidad**: quien lea el fichero mañana sabe exactamente qué respaldo tiene
+  ese texto, en vez de suponer que pasó un filtro que nunca existió.
+- lo que enseña: al inventar una puerta humana hay que nombrar **quién** la cruza. Una puerta sin
+  responsable asignado no es una salvaguarda, es un bloqueo con buena prensa.
+- supersedes: none
+
+## S-0032 — Dos puertas que no podían fallar: la sal sin vigilar y el linter que toleraba avisos
+
+- fecha: 2026-09-14
+- fase: `ship` de [limite-de-frecuencia](./specs/limite-de-frecuencia.md)
+- context: al publicar se revisaron las puertas que dicen proteger. Dos mentían.
+  (1) La puerta de secretos no buscaba `RATE_LIMIT_SALT`, la sal del HMAC de las huellas. Con esa
+  sal, los 4.300 millones de direcciones IPv4 se recorren en minutos: filtrarla convierte cada
+  huella en la dirección de vuelta, que es justo lo que el HMAC existe para impedir.
+  (2) `npm run lint` se anunciaba como «cero avisos» (constitution 12) y toleraba avisos, porque
+  eslint sale con código 0 mientras no haya errores. Había uno vivo desde hacía semanas: un
+  `eslint-disable` que no tapaba ninguna regla activa.
+- decision: `RATE_LIMIT_SALT` entra en la lista de valores y de cadenas prohibidas de
+  `scripts/secret-gate.mjs`; `lint` pasa a `eslint . --max-warnings=0`.
+- evidencia: ambas probadas **en los dos sentidos**. Sal plantada en `.next/static` → roja, quitada
+  → verde. Aviso plantado en `src/core` → salida 1, quitado → salida 0.
+- why: una puerta que nunca se ha visto fallar no se sabe si funciona. Las dos llevaban meses en
+  verde sin que eso significara nada.
+- supersedes: none
