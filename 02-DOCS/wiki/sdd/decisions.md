@@ -627,3 +627,29 @@ status: stable
   haría que un argumento olvidado afirmara en silencio que el lead está guardado (misma lógica que
   `S-0024`: el criterio lo sostiene el sistema de tipos, no la disciplina).
 - supersedes: none
+
+## S-0027 — El límite de frecuencia del formulario no entra en este ciclo, y se deja escrito como riesgo abierto
+
+- fecha: 2026-09-14
+- fase: `review` de [leads-en-supabase](./specs/leads-en-supabase.md)
+- context: la revisión adversarial de seguridad señaló que, al pasar el registro a una base de datos
+  real, la acción de servidor —que es un endpoint HTTP público, y el formulario no es su única vía de
+  entrada— pasa a escribir filas de verdad, con coste, sin ningún límite de frecuencia ni de tamaño.
+  Antes del cambio ese mismo abuso sólo engordaba un correo, porque el registro nunca escribía.
+- decision 1 — **los topes de tamaño SÍ entran**: nombre 120, correo 254 (el máximo de la norma),
+  organización 160, identificador de envío 100. Son validación de servidor en una función que ya
+  existía, reducen el daño por petición y no cambian nada para un lead real.
+- decision 2 — **el límite de frecuencia NO entra en este ciclo.** Es una función nueva: hay que
+  elegir entre límite por IP, prueba anti-bot o cuota en el borde, cada una con su almacenamiento y
+  con sus falsos positivos sobre leads legítimos, que es justo lo que este producto no se puede
+  permitir. Merece su propia spec, no un añadido al final de otro ciclo.
+- why: la alternativa era decidir a solas, en la última hora de un ciclo ajeno, algo que puede
+  rechazar leads buenos. El riesgo escrito es mejor que la mitigación improvisada.
+- riesgo aceptado y abierto: un atacante puede inundar la tabla de leads. Coste, no fuga: la revisión
+  descartó explícitamente cualquier vía de exposición de la credencial o de los datos.
+- decision 3 — **la puerta de secretos declara lo que no ha podido comprobar.** Se descubrió que la
+  búsqueda por valor se saltaba en silencio en local, porque `next build` carga `.env.local` dentro
+  de su propio proceso y no lo exporta al shell. Ahora la puerta carga el entorno ella misma y
+  enumera qué variables buscó y cuáles no. Una puerta que calla lo que no ha mirado miente por
+  omisión, y es peor que no tener puerta porque da confianza falsa.
+- supersedes: none

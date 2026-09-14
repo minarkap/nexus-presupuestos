@@ -61,6 +61,18 @@ la clave `anon` —la que cualquiera puede ver— que es la única que prueba de
 lint (cero avisos) · tipos · pruebas + cobertura ≥95 % en `src/core` · compilación de producción ·
 puerta SEO/GEO · **puerta de secretos** (17 ficheros de cliente inspeccionados, ninguna credencial).
 
+## Revisión adversarial de seguridad — 2026-09-14
+
+Acta completa: [../verifications/leads-en-supabase-2026-09-14.md](../verifications/leads-en-supabase-2026-09-14.md).
+
+Resistió lo que importaba: **ninguna vía de exposición** de la clave ni de la tabla hacia el
+navegador. Encontró cinco cosas; **cuatro corregidas en el mismo ciclo** (topes de tamaño en los
+campos libres, la puerta de secretos que se saltaba su comprobación principal en silencio, los mapas
+de fuente sin inspeccionar, y el SQL sin transacción) y **una dejada abierta a propósito**: el límite
+de frecuencia del formulario, que es una spec propia (`S-0027`).
+
+Tras las correcciones: `verify.sh` **VERDE**, 266 pruebas.
+
 ## Lo que queda en manos humanas
 
 - [ ] Crear el proyecto en Supabase y ejecutar `01-TOOLS/SUPABASE/schema.sql` **entero**.

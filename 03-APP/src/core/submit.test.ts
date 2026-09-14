@@ -264,3 +264,46 @@ describe('El guardado va primero y el aviso interno lo declara (spec leads-en-su
     expect(registry.rows[0]?.submissionId).toBe('envio-42')
   })
 })
+
+describe('Topes de tamaño — la acción pública ahora escribe en una base de datos real', () => {
+  /**
+   * Hallazgo de la revisión adversarial de seguridad (2026-09-14): antes de este ciclo el registro
+   * nunca escribía de verdad en producción, así que un campo libre enorme sólo engordaba un correo.
+   * Ahora inserta una fila real, y `validateContact` no imponía ningún máximo: una acción de
+   * servidor es un endpoint HTTP público, y el formulario no es su única vía de entrada.
+   */
+  const largo = (n: number) => 'a'.repeat(n)
+
+  it('un nombre desmesurado se rechaza en servidor', async () => {
+    const contact = { ...answers.contact, name: largo(500) }
+    const r = await submitLead({ ...answers, contact }, 's1', deps(), cache)
+    expect(r).toMatchObject({ kind: 'validation_error', field: 'name' })
+  })
+
+  it('una organización desmesurada se rechaza en servidor', async () => {
+    const contact = { ...answers.contact, company: largo(500) }
+    const r = await submitLead({ ...answers, contact }, 's1', deps(), cache)
+    expect(r).toMatchObject({ kind: 'validation_error', field: 'company' })
+  })
+
+  it('un correo más largo que el máximo de la norma se rechaza', async () => {
+    const contact = { ...answers.contact, email: `${largo(250)}@acme.ad` }
+    const r = await submitLead({ ...answers, contact }, 's1', deps(), cache)
+    expect(r).toMatchObject({ kind: 'validation_error', field: 'email' })
+  })
+
+  it('un identificador de envío desmesurado se rechaza: también viaja a la base de datos', async () => {
+    const r = await submitLead(answers, largo(500), deps(), cache)
+    expect(r).toMatchObject({ kind: 'validation_error' })
+  })
+
+  it('nada de esto llega a escribirse: el registro se queda vacío', async () => {
+    await submitLead({ ...answers, contact: { ...answers.contact, name: largo(500) } }, 's1', deps(), cache)
+    expect(registry.rows).toHaveLength(0)
+  })
+
+  it('los valores normales siguen pasando sin rozar el tope', async () => {
+    const r = await submitLead(answers, 's1', deps(), cache)
+    expect(r).not.toMatchObject({ kind: 'validation_error' })
+  })
+})

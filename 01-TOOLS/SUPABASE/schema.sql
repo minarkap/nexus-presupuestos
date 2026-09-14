@@ -1,8 +1,13 @@
 -- Tabla de leads de nexus-presupuestos.
 -- Pegar entero en Supabase → SQL Editor → New query → Run.
 --
--- Se ejecuta de una vez a propósito: la tabla y su cierre de acceso van en el mismo bloque, para que
--- no exista jamás un instante en el que la tabla esté creada y abierta (riesgo R-S4 del plan).
+-- Todo va dentro de UNA transacción a propósito: o se crea la tabla Y queda cerrada, o no se crea
+-- nada. Así no existe jamás un instante en el que la tabla esté creada y abierta, ni siquiera si
+-- alguien ejecuta el fichero por partes o se corta a mitad (riesgo R-S4 del plan; elevado a
+-- transacción explícita tras la revisión adversarial del 2026-09-14, que señaló que confiar en
+-- «pégalo entero» es una convención de operación, no una garantía).
+
+begin;
 
 create table if not exists public.leads (
   id               uuid primary key default gen_random_uuid(),
@@ -41,6 +46,8 @@ alter table public.leads enable row level security;
 --    esto sigue negando el acceso. Dos cerraduras distintas, no la misma dos veces.
 revoke all on public.leads from anon, authenticated;
 revoke all on public.leads from public;
+
+commit;
 
 -- 3. La única puerta es la clave `service_role`, que usa el servidor de la aplicación y que se
 --    salta la seguridad de fila por diseño. Esa clave no sale nunca del servidor: lo comprueban
