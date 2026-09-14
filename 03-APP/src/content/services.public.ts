@@ -1,5 +1,5 @@
 import 'server-only'
-import { SERVICES } from '@/core/catalog'
+import type { Catalog } from '@/core/catalog-types'
 import { formatRange } from '@/core/format'
 import type { Challenge, ServiceId } from '@/core/types'
 
@@ -103,8 +103,18 @@ const LINES: Record<Challenge, Omit<PublicLine, 'services' | 'key'>> = {
   },
 }
 
-export function publicServices(): PublicService[] {
-  return Object.values(SERVICES).map((s) => {
+/**
+ * Los rangos que se PUBLICAN en /servicios salen del mismo catálogo que los que se ESTIMAN.
+ *
+ * No es una comodidad: si la página pública leyera una copia distinta, cambiar un precio en la base
+ * de datos actualizaría la estimación y dejaría la página anunciando la cifra vieja — dos precios
+ * para el mismo servicio en el mismo sitio. La spec no lo había previsto (ver `S-0035`).
+ *
+ * Lo que sigue sin publicarse es todo lo demás: factores, tabla de puntos y umbral no existen en
+ * `PublicService`, no están ocultos (constitution 8).
+ */
+export function publicServices(catalog: Catalog): PublicService[] {
+  return Object.values(catalog.services).map((s) => {
     const e = EDITORIAL[s.id]
     return {
       id: s.id,
@@ -124,7 +134,7 @@ export function publicServices(): PublicService[] {
 
 const ORDER: readonly Challenge[] = ['ia', 'ciberseguridad', 'esg', 'estrategia_operaciones']
 
-export function publicLines(): PublicLine[] {
-  const services = publicServices()
+export function publicLines(catalog: Catalog): PublicLine[] {
+  const services = publicServices(catalog)
   return ORDER.map((key) => ({ key, ...LINES[key], services: services.filter((s) => s.line === key) }))
 }

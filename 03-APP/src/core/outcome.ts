@@ -1,4 +1,4 @@
-import { QUALIFICATION_THRESHOLD } from './catalog'
+import type { Catalog } from './catalog-types'
 import { formatRange } from './format'
 import type { PriceRange, RedactedOutcome, Score, ServiceRef } from './types'
 
@@ -32,11 +32,15 @@ const CUERPO_SIN_CATALOGAR =
  * convierte el principio 8 en una propiedad estructural en vez de una disciplina que recordar.
  */
 export function mapOutcome(
+  catalog: Catalog,
   service: ServiceRef | null,
   price: PriceRange | null,
   score: Score,
 ): RedactedOutcome {
-  const showCalendar = score.total >= QUALIFICATION_THRESHOLD
+  // El umbral entra por el catálogo, que es su único punto de configuración (constitution 9).
+  // Sigue sin aparecer en lo que se devuelve: la comparación ocurre aquí y lo que cruza al
+  // navegador es un sí/no, nunca el número con el que se comparó.
+  const showCalendar = score.total >= catalog.threshold
 
   if (service === null || price === null) {
     return {

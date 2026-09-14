@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest'
 import { publicLines, publicServices } from './services.public'
-import { SERVICES } from '@/core/catalog'
+import { SEED_CATALOG } from '@/core/catalog-seed'
 import { formatRange } from '@/core/format'
 import { faq, llamada } from './como-trabajamos'
 import { privacidad } from './privacidad'
 import { home } from './home'
 
 describe('Servicios públicos = catálogo (CA-09, constitution 4, 8)', () => {
-  const list = publicServices()
+  const list = publicServices(SEED_CATALOG)
   it('publica seis servicios con cifra y el rango es exactamente el oficial formateado por el motor', () => {
     expect(list).toHaveLength(6)
     for (const s of list) {
-      const ref = SERVICES[s.id]
+      const ref = SEED_CATALOG.services[s.id]
       expect(s.rangeText).toBe(formatRange({ low: ref.officialMin, high: ref.officialMax, unit: ref.unit }))
       expect(s.includes.length).toBeGreaterThanOrEqual(3)
     }
@@ -21,7 +21,7 @@ describe('Servicios públicos = catálogo (CA-09, constitution 4, 8)', () => {
     expect(json).not.toMatch(/factor|points|threshold|umbral|multiplier/i)
   })
   it('cuatro líneas, una sin rango y con motivo', () => {
-    const lines = publicLines()
+    const lines = publicLines(SEED_CATALOG)
     expect(lines).toHaveLength(4)
     const sin = lines.find((l) => !l.priced)!
     expect(sin.key).toBe('estrategia_operaciones')

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { SEED_CATALOG } from './catalog-seed'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { mapOutcome } from './outcome'
@@ -59,11 +60,11 @@ function recorrerTodo(): Record<string, string> {
           for (const timing of TIMINGS) {
             for (const sponsor of SPONSORS) {
               for (const budget of BUDGETS) {
-                const resolution = resolveService(challenge, need)
+                const resolution = resolveService(SEED_CATALOG, challenge, need)
                 const service = resolution.kind === 'service' ? resolution.service : null
-                const price = service ? priceService(service, size, maturity, timing) : null
-                const score = scoreLead({ challenge, need, size, maturity, timing, sponsor, budget })
-                const outcome = mapOutcome(service, price, score)
+                const price = service ? priceService(SEED_CATALOG, service, size, maturity, timing) : null
+                const score = scoreLead(SEED_CATALOG, { challenge, need, size, maturity, timing, sponsor, budget })
+                const outcome = mapOutcome(SEED_CATALOG, service, price, score)
 
                 const clave = [challenge, need ?? '—', size, maturity, timing, sponsor, budget].join('|')
                 salida[clave] = [

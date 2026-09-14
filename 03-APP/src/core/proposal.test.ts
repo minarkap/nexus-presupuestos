@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest'
+import { SEED_CATALOG } from './catalog-seed'
 import { composeProposal } from './proposal'
 import { priceService } from './pricing'
-import { SERVICES } from './catalog'
 import type { Contact } from './types'
 
 const contacto: Contact = { name: 'Marta Vives', email: 'marta@acme.ad', company: 'Acme', consent: true }
-const precio = priceService(SERVICES.ai_opportunity_assessment, '250-999', 'inicial', '3-6m')
+const precio = priceService(SEED_CATALOG, SEED_CATALOG.services.ai_opportunity_assessment, '250-999', 'inicial', '3-6m')
 
 const ROTULOS = ['Tesis', 'Problema', 'Enfoque', 'Diferenciación', 'Resultado esperado', 'Siguiente paso']
 
 describe('ProposalComposer — se lee como un texto, no como una plantilla (CA-20)', () => {
   it('no lleva ninguna sección etiquetada', () => {
-    const t = composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'qualified')
+    const t = composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified')
     for (const rotulo of ROTULOS) {
       expect(t).not.toContain(`${rotulo}:`)
       expect(t).not.toContain(`## ${rotulo}`)
@@ -20,26 +20,26 @@ describe('ProposalComposer — se lee como un texto, no como una plantilla (CA-2
   })
 
   it('se dirige a la persona por su nombre', () => {
-    const t = composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'qualified')
+    const t = composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified')
     expect(t).toContain('Marta')
   })
 
   it('nombra el servicio aplicable', () => {
-    const t = composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'qualified')
+    const t = composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified')
     expect(t).toContain('AI Opportunity Assessment')
   })
 })
 
 describe('ProposalComposer — la cifra y su advertencia (CA-05)', () => {
   it('incluye el rango y la advertencia de orientativo', () => {
-    const t = composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'qualified')
+    const t = composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified')
     expect(t).toContain('28.000')
     expect(t).toMatch(/orientativ/i)
   })
 
   it('el cualificado ve confirmada su cita; el no cualificado, una invitación a responder', () => {
-    const cual = composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'qualified')
-    const noCual = composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'not_qualified')
+    const cual = composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified')
+    const noCual = composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'not_qualified')
     expect(cual).toMatch(/cita|hueco|agenda/i)
     expect(noCual).toMatch(/responder|responde/i)
   })
@@ -60,22 +60,22 @@ describe('ProposalComposer — la rama sin cifra (CA-24)', () => {
 
 describe('ProposalComposer — casos que la redacción tiene que resolver', () => {
   it('la cuota mensual se dice «al mes», no como importe total (CA-04)', () => {
-    const mensual = priceService(SERVICES.ai_executive_advisory, '250-999', 'inicial', '3-6m')
-    const t = composeProposal(contacto, SERVICES.ai_executive_advisory, mensual, 'qualified')
+    const mensual = priceService(SEED_CATALOG, SEED_CATALOG.services.ai_executive_advisory, '250-999', 'inicial', '3-6m')
+    const t = composeProposal(contacto, SEED_CATALOG.services.ai_executive_advisory, mensual, 'qualified')
     expect(t).toMatch(/al mes/)
   })
 
   it('un nombre de una sola palabra no rompe el saludo', () => {
     const t = composeProposal(
       { name: 'Marta', email: 'marta@acme.ad', company: 'Acme', consent: true },
-      SERVICES.ai_opportunity_assessment, precio, 'qualified',
+      SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified',
     )
     expect(t.startsWith('Marta,')).toBe(true)
   })
 
   it('el rango abierto se explica sin inventar un techo', () => {
-    const abierto = priceService(SERVICES.custom_ai_solutions, '250-999', 'inicial', '3-6m')
-    const t = composeProposal(contacto, SERVICES.custom_ai_solutions, abierto, 'qualified')
+    const abierto = priceService(SEED_CATALOG, SEED_CATALOG.services.custom_ai_solutions, '250-999', 'inicial', '3-6m')
+    const t = composeProposal(contacto, SEED_CATALOG.services.custom_ai_solutions, abierto, 'qualified')
     expect(t).toMatch(/desde/)
     expect(t).toMatch(/techo por cerrar/)
   })
@@ -84,11 +84,11 @@ describe('ProposalComposer — casos que la redacción tiene que resolver', () =
 describe('ProposalComposer — anti-patrones prohibidos (CA-19)', () => {
   it('ninguna variante promete resultado, descuento, urgencia ni plazo de entrega', () => {
     const variantes = [
-      composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'qualified'),
-      composeProposal(contacto, SERVICES.ai_opportunity_assessment, precio, 'not_qualified'),
+      composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'qualified'),
+      composeProposal(contacto, SEED_CATALOG.services.ai_opportunity_assessment, precio, 'not_qualified'),
       composeProposal(contacto, null, null, 'uncatalogued'),
-      composeProposal(contacto, SERVICES.custom_ai_solutions,
-        priceService(SERVICES.custom_ai_solutions, '<50', 'avanzada', '>6m'), 'qualified'),
+      composeProposal(contacto, SEED_CATALOG.services.custom_ai_solutions,
+        priceService(SEED_CATALOG, SEED_CATALOG.services.custom_ai_solutions, '<50', 'avanzada', '>6m'), 'qualified'),
     ]
     for (const t of variantes) {
       expect(t).not.toMatch(/descuento|rebaja|oferta especial/i)
