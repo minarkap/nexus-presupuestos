@@ -91,6 +91,13 @@ export interface RedactedOutcome {
 
 /** Lo que viaja al aviso interno y al registro. NUNCA al cliente. */
 export interface LeadRecord {
+  /**
+   * Identificador del envío. Ya existía para deduplicar en memoria; llega al registro porque es la
+   * clave que hace el guardado idempotente en la base de datos: un reintento del mismo envío no
+   * puede producir una segunda fila aunque la caché se haya perdido en un arranque en frío
+   * (plan `leads-en-supabase` §3).
+   */
+  readonly submissionId: string
   readonly submittedAt: string
   readonly contact: Contact
   readonly answers: BusinessAnswers

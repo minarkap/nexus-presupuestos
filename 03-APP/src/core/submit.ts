@@ -11,6 +11,8 @@ import type { Answers, Blocker, LeadRecord, RedactedOutcome } from './types'
 export type ValidationField =
   | 'name' | 'email' | 'company' | 'consent'
   | 'challenge' | 'need' | 'size' | 'maturity' | 'timing' | 'sponsor' | 'budget' | 'blockers'
+  /** No es una pregunta del formulario: es el identificador del envío, que también se valida. */
+  | 'submissionId'
 
 export interface ValidationError {
   readonly kind: 'validation_error'
@@ -100,10 +102,31 @@ export function validateAnswers(answers: Answers): ValidationError | null {
   return validateBlockers(answers)
 }
 
+/**
+ * Topes de tamaño de los campos libres.
+ *
+ * No son cosmética del formulario: desde que el registro escribe de verdad en una base de datos, una
+ * acción de servidor —que es un endpoint HTTP público, y el formulario no es su única vía de
+ * entrada— permite insertar filas con campos de cientos de kilobytes. El límite del correo es el de
+ * la norma; los otros dos son holgados para un nombre y una razón social reales.
+ */
+const MAX = { name: 120, email: 254, company: 160, submissionId: 100 } as const
+
+const ERROR_LARGO = 'Ese valor es demasiado largo. Revísalo, por favor.'
+
 export function validateContact(answers: Answers): ValidationError | null {
   const { name, email, company } = answers.contact
   if (!name.trim()) {
     return { kind: 'validation_error', field: 'name', message: 'Necesitamos tu nombre.' }
+  }
+  if (name.length > MAX.name) {
+    return { kind: 'validation_error', field: 'name', message: ERROR_LARGO }
+  }
+  if (email.length > MAX.email) {
+    return { kind: 'validation_error', field: 'email', message: ERROR_LARGO }
+  }
+  if (company.length > MAX.company) {
+    return { kind: 'validation_error', field: 'company', message: ERROR_LARGO }
   }
   if (!EMAIL_RE.test(email.trim())) {
     return {
@@ -162,8 +185,12 @@ async function attempt(fn: () => Promise<void>): Promise<'ok' | 'failed'> {
  * Único punto de entrada de un envío. NUNCA lanza hacia el cliente.
  *
  * El despacho es best-effort e independiente por vía: el fallo de una no cancela las otras, y
- * ninguna puede impedir que el lead vea su resultado (CA-17). Sin almacén duradero, un fallo
- * simultáneo de correo y registro pierde el lead: riesgo aceptado y escrito (C-01 / S-0006).
+ * ninguna puede impedir que el lead vea su resultado (CA-17).
+ *
+ * El registro va PRIMERO desde la spec `leads-en-supabase`: es la única forma de que el aviso
+ * interno pueda declarar si el lead quedó guardado (CA-S3). El riesgo `C-01`/`S-0006` —«sin almacén
+ * duradero, un fallo simultáneo de correo y registro pierde el lead»— deja de aplicar en cuanto hay
+ * base de datos configurada; mientras no la haya, sigue vigente tal cual.
  */
 export async function submitLead(
   answers: Answers,
@@ -171,6 +198,12 @@ export async function submitLead(
   deps: SubmitDeps,
   cache: DedupCache,
 ): Promise<SubmitResult> {
+  // El identificador lo genera el navegador, así que quien llame a la acción lo controla — y viaja
+  // a la base de datos como clave única. Se acota igual que los demás campos libres.
+  if (typeof submissionId !== 'string' || !submissionId.trim() || submissionId.length > MAX.submissionId) {
+    return { kind: 'validation_error', field: 'submissionId', message: ERROR_OPCIONES }
+  }
+
   const invalidAnswers = validateAnswers(answers)
   if (invalidAnswers) return invalidAnswers
 
@@ -191,6 +224,7 @@ export async function submitLead(
   const proposal = composeProposal(answers.contact, service, price, outcome.kind)
 
   const lead: LeadRecord = {
+    submissionId,
     submittedAt: deps.now().toISOString(),
     contact: answers.contact,
     answers,
@@ -200,7 +234,12 @@ export async function submitLead(
     blockers: answers.blockers,
   }
 
+  // El guardado va PRIMERO, y no por gusto: el aviso interno tiene que poder declarar si este lead
+  // ha quedado registrado (CA-S3), y con el orden anterior el correo se redactaba antes de saberlo.
+  const registry = await attempt(() => deps.registryPort.append(lead))
+
   const report: DispatchReport = {
+    registry,
     clientEmail: await attempt(() =>
       deps.emailPort.send({
         to: answers.contact.email,
@@ -212,10 +251,9 @@ export async function submitLead(
       deps.emailPort.send({
         to: deps.internalMailbox,
         subject: `Nuevo lead · ${answers.contact.company} · ${score.total}/10`,
-        body: buildInternalNotice(lead),
+        body: buildInternalNotice(lead, registry),
       }),
     ),
-    registry: await attempt(() => deps.registryPort.append(lead)),
   }
 
   deps.onDispatch?.(report)
@@ -233,10 +271,25 @@ function frenosLegibles(blockers: readonly Blocker[]): string {
   return blockers.map((b) => BLOCKER_LABEL[b]).join(' · ')
 }
 
+/**
+ * El aviso de que este lead no está guardado en ninguna parte.
+ *
+ * Va ARRIBA DEL TODO y sólo cuando falla. Las dos cosas son la decisión: al final se lee tarde, y un
+ * aviso que apareciera siempre dejaría de leerse a la tercera vez (`CA-S2`/`CA-S3`, riesgo R-S2).
+ */
+function avisoDeNoGuardado(): readonly string[] {
+  return [
+    '⚠️  ESTE LEAD NO ha quedado guardado en el registro. Este correo es la ÚNICA copia:',
+    '    guárdalo o pásalo al CRM a mano antes de archivarlo.',
+    '',
+  ]
+}
+
 /** El aviso interno sin desglose es inservible (CA-16). */
-export function buildInternalNotice(lead: LeadRecord): string {
+export function buildInternalNotice(lead: LeadRecord, registry: 'ok' | 'failed'): string {
   const líneas = lead.score.breakdown.map((b) => `  - ${b.signal}: ${b.answer} → ${b.points > 0 ? '+' : ''}${b.points}`)
   return [
+    ...(registry === 'failed' ? avisoDeNoGuardado() : []),
     `Contacto: ${lead.contact.name} <${lead.contact.email}> — ${lead.contact.company}`,
     `Recibido: ${lead.submittedAt}`,
     `Consentimiento: sí (${lead.submittedAt})`,

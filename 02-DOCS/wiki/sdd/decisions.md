@@ -558,3 +558,127 @@ status: stable
   compilación con `ERR_INVALID_URL`. Está fuera del alcance de esta spec y en producción la variable
   está definida; queda anotado.
 - supersedes: none
+
+## S-0025 — El registro de leads pasa a una base de datos, y el fallo de guardado deja de ser mudo
+
+- fecha: 2026-09-14
+- fase: `specify` de [leads-en-supabase](./specs/leads-en-supabase.md)
+- context: comprobado el 2026-09-14 que el entorno de producción tiene cuatro variables
+  (`NEXT_PUBLIC_SITE_URL`, `NEXUS_INTERNAL_MAILBOX`, `RESEND_FROM`, `RESEND_API_KEY`) y **ninguna
+  credencial de Google**. Es decir: `selectRegistry` devuelve el puerto «mal configurado» y el
+  registro de respaldo nunca ha escrito una fila real. Cada lead vive en un solo correo, y el fallo
+  no produce ningún síntoma visible.
+- options considered:
+  1. **Sustituir la hoja de cálculo por Supabase** (elegida por Jose): registro consultable, apto para
+     preguntas agregadas y para ejecutar de verdad la supresión a los doce meses que el aviso de
+     privacidad ya promete en público.
+  2. Rellenar las dos credenciales de Google y quedarse en la hoja — la alternativa barata, planteada
+     explícitamente como objeción antes de escribir la spec: minutos y cero código. Descartada por
+     Jose, no por inviable. Queda escrita en la spec como parche válido si el ciclo se retrasa.
+  3. Escribir en los dos sitios a la vez — descartada: dos proveedores que mantener y dos registros
+     que pueden desincronizarse.
+- decision: el lead se guarda en Supabase; la hoja de cálculo deja de usarse. Si el guardado falla o
+  el registro no está configurado, **el visitante no se entera** (ve su rango con normalidad) y el
+  **correo interno lleva un aviso explícito de que ese lead no ha quedado guardado**.
+- why: el silencio es el defecto real, no el proveedor. Cambiar de hoja a base de datos sin tocar el
+  silencio habría dejado el mismo agujero con mejor decorado.
+- alcance retirado en la propia conversación: Jose pidió primero «guardar + panel propio en la web» y
+  a los pocos minutos lo retiró («No hagas ningún panel de momento»). El panel queda como spec futura,
+  con su autenticación y sus permisos, y **no** como parte de este ciclo.
+- consecuencia asumida: el adaptador de Google Sheets queda sin uso. Si se borra o se deja dormido es
+  una pregunta abierta de la spec, no algo que este ciclo decida por su cuenta.
+- lo que NO cambia: el formulario, el motor de rango, la puntuación de cualificación, los correos al
+  visitante y el aviso de privacidad (su texto no nombra proveedores, así que sigue siendo cierto).
+- supersedes: none
+
+## S-0026 — La hoja de cálculo se deja dormida, y la base de datos se cierra con dos cerraduras
+
+- fecha: 2026-09-14
+- fase: `plan` de [leads-en-supabase](./specs/leads-en-supabase.md)
+- context: la spec dejó abierta una pregunta —¿el adaptador de Google Sheets se borra o se deja
+  dormido?— y Jose añadió durante la implementación un requisito explícito y repetido: «que no quede
+  expuesta la BBDD a fuera, quiero que sea completamente seguro».
+- decision 1 — **el adaptador de hoja de cálculo se deja dormido, no se borra.** Queda por debajo de
+  Supabase en la precedencia de `selectRegistryPort`, así que en cuanto Supabase está configurado no
+  se usa. Borrarlo eliminaría código probado y en verde a cambio de nada, y es exactamente el parche
+  barato que la spec deja escrito por si el ciclo se retrasa.
+- decision 2 — **la seguridad del registro no se sostiene con disciplina, se sostiene con puertas
+  que fallan solas.** Cuatro, deliberadamente de naturalezas distintas para que no fallen a la vez:
+  1. `import 'server-only'` en `src/ports/registry.ts` — barrera de **compilación**: si un componente
+     de cliente importara el registro, el build de producción falla en vez de empaquetar la clave.
+  2. `src/ports/registry-security.test.ts` — invariantes sobre el **fuente**: ninguna credencial
+     marcada `NEXT_PUBLIC_`, ningún componente de cliente importando el registro, ningún mensaje de
+     error que incluya la clave.
+  3. `scripts/secret-gate.mjs` — inspección del **paquete ya compilado**: busca los valores reales de
+     las variables sensibles, los nombres prohibidos y la huella de un JWT con rol distinto de `anon`.
+     Integrada en `verify.sh`. **Probada en los dos sentidos**: sale 1 con un secreto expuesto y 0 sin
+     él (una puerta que nunca se ha visto fallar no está probada).
+  4. `01-TOOLS/SUPABASE/schema.sql` — en la **base de datos**: `enable row level security` sin ninguna
+     policy, más `revoke all` explícito a `anon`, `authenticated` y `public`. Redundante a propósito:
+     si alguien añadiera mañana una policy sin pensarlo, el revoke sigue negando.
+- decision 3 — **el guardado pasa a ser el primer paso del despacho**, antes de los correos. Es la
+  única forma de que el aviso interno pueda declarar si el lead quedó guardado (`CA-S3`); con el
+  orden anterior el correo se redactaba antes de saberlo.
+- decision 4 — **sin dependencias nuevas.** Supabase se habla por su API REST con `fetch`, igual que
+  ya se hablaba con Google Sheets. Añadir `@supabase/supabase-js` metería un árbol de dependencias
+  para hacer un `POST`.
+- consecuencia asumida: `LeadRecord` gana `submissionId`, y `buildInternalNotice` gana un segundo
+  argumento **obligatorio**. Obligatorio y no opcional a propósito: un valor por defecto `'ok'`
+  haría que un argumento olvidado afirmara en silencio que el lead está guardado (misma lógica que
+  `S-0024`: el criterio lo sostiene el sistema de tipos, no la disciplina).
+- supersedes: none
+
+## S-0027 — El límite de frecuencia del formulario no entra en este ciclo, y se deja escrito como riesgo abierto
+
+- fecha: 2026-09-14
+- fase: `review` de [leads-en-supabase](./specs/leads-en-supabase.md)
+- context: la revisión adversarial de seguridad señaló que, al pasar el registro a una base de datos
+  real, la acción de servidor —que es un endpoint HTTP público, y el formulario no es su única vía de
+  entrada— pasa a escribir filas de verdad, con coste, sin ningún límite de frecuencia ni de tamaño.
+  Antes del cambio ese mismo abuso sólo engordaba un correo, porque el registro nunca escribía.
+- decision 1 — **los topes de tamaño SÍ entran**: nombre 120, correo 254 (el máximo de la norma),
+  organización 160, identificador de envío 100. Son validación de servidor en una función que ya
+  existía, reducen el daño por petición y no cambian nada para un lead real.
+- decision 2 — **el límite de frecuencia NO entra en este ciclo.** Es una función nueva: hay que
+  elegir entre límite por IP, prueba anti-bot o cuota en el borde, cada una con su almacenamiento y
+  con sus falsos positivos sobre leads legítimos, que es justo lo que este producto no se puede
+  permitir. Merece su propia spec, no un añadido al final de otro ciclo.
+- why: la alternativa era decidir a solas, en la última hora de un ciclo ajeno, algo que puede
+  rechazar leads buenos. El riesgo escrito es mejor que la mitigación improvisada.
+- riesgo aceptado y abierto: un atacante puede inundar la tabla de leads. Coste, no fuga: la revisión
+  descartó explícitamente cualquier vía de exposición de la credencial o de los datos.
+- decision 3 — **la puerta de secretos declara lo que no ha podido comprobar.** Se descubrió que la
+  búsqueda por valor se saltaba en silencio en local, porque `next build` carga `.env.local` dentro
+  de su propio proceso y no lo exporta al shell. Ahora la puerta carga el entorno ella misma y
+  enumera qué variables buscó y cuáles no. Una puerta que calla lo que no ha mirado miente por
+  omisión, y es peor que no tener puerta porque da confianza falsa.
+- supersedes: none
+
+## S-0028 — El borrado a los doce meses vive dentro de la base de datos, no en la aplicación
+
+- fecha: 2026-09-14
+- fase: `plan` de [retencion-doce-meses](./specs/retencion-doce-meses.md)
+- context: con el registro en base de datos, la promesa pública de conservar doce meses pasa a ser
+  ejecutable por primera vez. Hasta ahora era cierta como intención y falsa como práctica.
+- options considered:
+  1. **Tarea programada dentro de Postgres** (`pg_cron`) — elegida.
+  2. Tarea programada de Vercel llamando a una ruta del sitio — descartada: sería un endpoint HTTP
+     público **capaz de borrar datos**, con su propio secreto que proteger y rotar. Contradice el
+     requisito que Jose repitió dos veces en este ciclo: no exponer nada nuevo.
+  3. Recordatorio en el calendario y borrado anual a mano — queda como plan B escrito en la spec.
+- decision: el borrado se programa en la propia base de datos. **Este ciclo no toca ni una línea de
+  la aplicación**: sin adaptador, sin ruta, sin puerto y sin pruebas de Vitest, porque no hay código
+  de aplicación que probar. El artefacto es SQL y su evidencia es SQL — dicho en voz alta, porque un
+  ciclo cuya evidencia no es la batería de pruebas tiene que declarar dónde está.
+- decision 2 — **la excepción del aviso se implementa, no se ignora.** El aviso dice que una
+  solicitud que da lugar a relación comercial pasa a regirse por el contrato; un borrado a secas la
+  incumpliría al revés, destruyendo datos que debían conservarse. Columna `retention_hold`, por
+  defecto `false`: sin intervención humana el comportamiento es **borrar**, que es lo que se promete.
+- riesgo vivo y declarado (R-R1): si nadie marca `retention_hold` en los leads que se convierten en
+  cliente, a los doce meses se borran. Es humano y no tiene mitigación técnica — el sistema no sabe
+  quién es cliente, esa información vive fuera.
+- decision 3 — **la supresión anticipada no se automatiza.** Automatizar un borrado identificado por
+  correo electrónico sería dar a cualquiera una vía para borrar los datos de otro. Queda como
+  sentencia documentada que ejecuta una persona.
+- supersedes: deja sin efecto la «decisión diferida — la supresión automática a los doce meses» de
+  la spec `leads-en-supabase`, que era diferida precisamente hasta que existiera la base de datos.

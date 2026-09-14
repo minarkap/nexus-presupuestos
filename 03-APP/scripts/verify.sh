@@ -23,6 +23,7 @@ paso "Comprobador de tipos (constitution 13)"        npm run typecheck
 paso "Pruebas + cobertura ≥95% en src/core (14, 15)" npm run test:coverage
 paso "Compilación de producción"                     npm run build
 paso "Puerta SEO/GEO (constitution 32-33)"           bash scripts/seo-gate.sh
+paso "Puerta de secretos (constitution 8, 21 · CA-S5)" node scripts/secret-gate.mjs
 
 echo ""
 if [ "$fallo" -eq 0 ]; then
