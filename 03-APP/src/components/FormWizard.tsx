@@ -68,6 +68,8 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
   const [contact, setContact] = useState<Contact>({ name: '', email: '', company: '', consent: false })
   const [index, setIndex] = useState(seeded ? 1 : 0)
   const [fieldError, setFieldError] = useState<{ field: string; message: string } | null>(null)
+  /** Bloqueo por exceso de envíos. No es el error de un campo: no ha escrito nada mal. */
+  const [blocked, setBlocked] = useState<{ message: string; contactEmail: string } | null>(null)
   const [sending, setSending] = useState(false)
 
   /** La pregunta 2 sólo existe en la línea de IA (CA-07, CA-08 del antecesor). */
@@ -112,6 +114,10 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
     const result = await onSubmit(answers, submissionId)
     setSending(false)
     if ('field' in result) { setFieldError({ field: result.field, message: result.message }); return }
+    if (result.kind === 'rate_limited') {
+      setBlocked({ message: result.message, contactEmail: result.contactEmail })
+      return
+    }
     onDone(result)
   }
 
@@ -145,6 +151,14 @@ export function FormWizard({ submissionId, onSubmit, onDone, initialChallenge }:
                 {consentInvalid && <p className="field__error" id="consent-error" role="alert">{fieldError?.message}</p>}
               </div>
             </div>
+            {blocked && (
+              <div className="field__error" role="alert" style={{ marginTop: 'var(--space-4)' }}>
+                <p>{blocked.message}</p>
+                <p style={{ marginTop: 'var(--space-2)' }}>
+                  <a href={`mailto:${blocked.contactEmail}`}>{blocked.contactEmail}</a>
+                </p>
+              </div>
+            )}
             <div className="wizard__nav">
               <Button variant="ghost" onClick={() => setIndex((i) => i - 1)}>Atrás</Button>
               <Button onClick={send} disabled={sending || !contact.consent} iconRight={<Icon name="arrow-right" size={16} />}>

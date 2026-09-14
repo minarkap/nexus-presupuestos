@@ -63,3 +63,40 @@ case "$publico_code" in
     echo "✗ Respuesta inesperada con la clave pública: HTTP $publico_code"; exit 1
     ;;
 esac
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 3. La SEGUNDA tabla, la de intentos del límite de frecuencia. El plan prometía
+#    comprobarla igual que `leads` y se había quedado sin comprobar.
+# ─────────────────────────────────────────────────────────────────────────────
+url2="${BASE}/rest/v1/submission_attempts?select=fingerprint&limit=1"
+
+code2=$(curl -s -o /dev/null -w '%{http_code}' \
+  -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" "$url2")
+case "$code2" in
+  200) echo "✓ La tabla «submission_attempts» existe." ;;
+  404) echo "· La tabla «submission_attempts» no existe todavía: ejecuta rate-limit.sql." ;;
+  *)   echo "✗ Respuesta inesperada en submission_attempts: HTTP $code2"; exit 1 ;;
+esac
+
+if [ "$code2" = "200" ]; then
+  pub2=$(curl -s -w '\n%{http_code}' \
+    -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" "$url2")
+  pub2_code=$(echo "$pub2" | tail -1)
+  pub2_body=$(echo "$pub2" | sed '$d')
+  if [ "$pub2_code" = "200" ] && [ "$pub2_body" != "[]" ]; then
+    echo "✗ PELIGRO: submission_attempts DEVUELVE DATOS con la clave pública."
+    exit 1
+  fi
+  echo "✓ Con la clave pública, submission_attempts tampoco responde (HTTP $pub2_code)."
+
+  # Y que la función atómica esté cerrada a quien no tenga la llave del servidor.
+  rpc_pub=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+    -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+    -H "Content-Type: application/json" -d '{"huella":"prueba"}' \
+    "${BASE}/rest/v1/rpc/registrar_intento")
+  if [ "$rpc_pub" = "200" ]; then
+    echo "✗ PELIGRO: cualquiera puede llamar a registrar_intento y escribir en la tabla."
+    exit 1
+  fi
+  echo "✓ La función registrar_intento está cerrada al público (HTTP $rpc_pub)."
+fi
