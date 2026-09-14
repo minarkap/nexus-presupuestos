@@ -44,9 +44,11 @@ status: verde
 
 Todas las casillas automáticas ✓. Pendientes las humanas, que ningún agente puede cubrir:
 
-1. **Firmar la superficie S13 del acta de tono** (principios 28 y 36). El acta sigue sin firmar en su
-   conjunto desde el ciclo anterior; esta spec añade una fila más, no arregla esa deuda.
-2. **Recorrido manual a 360 px** de la pantalla nueva.
+1. ~~Firmar la superficie S13 del acta de tono~~ — **firmada** por Jose Sanchis el 2026-09-14. El
+   texto es de su propia redacción, y las comprobaciones automáticas (24 patrones de léxico prohibido,
+   ausencia de cifras y de promesas) salieron limpias. **S1–S12 siguen sin firmar** desde el ciclo
+   anterior: es deuda heredada, no de esta spec.
+2. **Recorrido manual a 360 px** de la pantalla nueva. Pendiente.
 
 ## Nota sobre el alcance
 

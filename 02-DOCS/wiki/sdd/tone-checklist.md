@@ -65,9 +65,14 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
 | S10 | ☐ | | | |
 | S11 | ☐ | | | |
 | S12 | ☐ | | | |
-| S13 | ☐ | | | Nueva (`pregunta-frenos-lead`, 2026-09-14). Ojo: el lead declara una debilidad — el tono no puede sonar a interrogatorio ni a juicio |
+| S13 | ☑ | Jose Sanchis | 2026-09-14 | Texto de su propia redacción (encargo del 2026-09-14): enunciado, ayuda y las cuatro opciones. Léxico prohibido comprobado contra los 24 patrones — limpio. El juicio de voz es suyo |
 
-**Firma de la revisión:** ______________________  **Fecha:** ____________
+**Firma de la revisión (las trece superficies):** ______________________  **Fecha:** ____________
+
+> **Estado a 2026-09-14.** Sólo **S13** está firmada. Las doce anteriores siguen pendientes desde el
+> ciclo `sitio-nexus-consulting` (2026-09-02), y el sitio lleva publicado desde entonces: el principio
+> 28 se está incumpliendo de hecho, no por descuido de esta spec. La firma global de arriba se deja en
+> blanco a propósito — cubriría las trece, y doce no se han revisado.
 
 ## Deuda de demostración a retirar antes de publicar
 
