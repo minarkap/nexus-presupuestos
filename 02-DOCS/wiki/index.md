@@ -131,6 +131,7 @@ Actas de la puerta de evidencia. Una por ejecución, fechadas y append-only.
 | [Verification — Sitio web — 2026-09-02](sdd/verifications/sitio-nexus-consulting-2026-09-02.md) | VERDE en cinco capas: lint, tipos, 202 pruebas (99 % core), build, puerta SEO/GEO. Pendiente la puerta humana: acta de tono, 360 px, commits. | 2026-09-02 | — |
 | [Verification — Pregunta de frenos — 2026-09-14](sdd/verifications/pregunta-frenos-lead-2026-09-14.md) | VERDE: 230 pruebas (99,41 % core), lint, tipos, build y puerta SEO. Los ocho criterios cubiertos. Review adversarial sin hallazgos bloqueantes; dos de severidad baja corregidos antes de publicar. Pendiente la firma humana de la superficie S13. | 2026-09-14 | — |
 | [Verification — Límite de frecuencia — 2026-09-14](sdd/verifications/limite-de-frecuencia-2026-09-14.md) | VERDE: 315 pruebas, cero avisos de linter. Ráfaga de 3×30 peticiones contra Postgres real, las dos puertas vistas fallar y pasar, y primer envío real en producción con la huella guardada antes que el lead. Sin probar: la pantalla de bloqueo. | 2026-09-14 | — |
+| [Verification — El catálogo en la base de datos — 2026-09-14](sdd/verifications/catalogo-en-supabase-2026-09-14.md) | Seis de siete puertas verdes; la séptima roja porque aún no hay llave de lectura, que es lo que CA-15 exige. 364 pruebas, 96,2 % de cobertura. El fichero dorado de 6.480 combinaciones da cero divergencias: la mudanza no cambió ninguna cifra. | 2026-09-14 | — |
 
 ## sdd/checklists
 
