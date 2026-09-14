@@ -496,3 +496,35 @@ status: stable
   selectores malformados. Suite: **206 pruebas**, `verify.sh` verde.
 - lección: al revivir una hoja de estilos global junto a otra, el riesgo no es el valor que copias,
   es **lo que el original no declaraba**. La herencia no viaja con el snapshot.
+
+---
+
+## S-0023 — La pregunta de frenos entra como dato informativo, no como señal de cualificación
+
+- fecha: 2026-09-14
+- fase: `specify` (spec [pregunta-frenos-lead](./specs/pregunta-frenos-lead.md), en borrador)
+- context: el usuario pide añadir al formulario una octava pregunta de negocio, de respuesta múltiple
+  —«¿Qué os está frenando ahora mismo?»— con seis opciones. Sería el primer campo multi-valor del
+  recorrido: las siete preguntas actuales son todas de respuesta única.
+- objeción levantada en `specify`: dos de las seis opciones repetían preguntas que el formulario ya
+  hace y que **sí puntúan** —«El presupuesto no está aprobado» contra la pregunta 7, y «Resistencia
+  interna al cambio» contra la 6—, de modo que un mismo lead podía afirmar y negar el mismo hecho en
+  dos pantallas, con una de las dos alimentando la puntuación que decide la cualificación.
+- options considered:
+  1. **Informativa, sin puntuar** (elegida): viaja al aviso interno y a ningún sitio más.
+  2. Que puntúe — descartada: hoy cinco señales suman 10 puntos y el umbral es 6; meter una sexta
+     obliga a recalibrar la escala entera y cambia retroactivamente quién se cualifica.
+  3. No construirla — enumerada y descartada: el freno sale igual en la llamada de alcance, pero
+     treinta minutos tarde y con la conversación ya encarrilada.
+- decision: se añade **informativa**, **saltable**, como **última pregunta antes de los datos de
+  contacto**, y con **cuatro opciones**: el usuario retiró las dos que solapaban.
+- why: el valor está en preparar la primera llamada, no en afinar la cualificación. Separar las dos
+  cosas mantiene intacto el significado del umbral, que es la pieza que más caro sale mover.
+- qué NO decide esto: la redacción final del texto, que entra en el acta de tono todavía sin firmar.
+- evaluado y descartado de paso: **acortar el formulario** quitando alguna pregunta existente. Las dos
+  únicas que no afectan al precio —sponsor y presupuesto— suman 6 puntos, exactamente el umbral, así
+  que sin ellas nadie podría cualificarse nunca; y la única otra candidata, madurez, aparece en el
+  caso de regresión permanente del principio 16.
+- diferido: la segunda pregunta propuesta, «¿Qué sistemas usáis?». Es la que de verdad cambiaría el
+  dimensionado de un proyecto, pero es técnica y un perfil de dirección la sufre: fuera de este ciclo.
+- supersedes: none

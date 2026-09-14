@@ -97,6 +97,7 @@ Especificaciones del chain SDD: qué se construye y por qué, antes de decidir c
 |---------|---------|---------|-------|
 | [Spec — Landing y estimador de presupuesto de Nexus](sdd/specs/landing-presupuestos-nexus.md) | Landing + formulario de 7 preguntas, rango orientativo del catálogo 2026, tres salidas según cualificación y dos emails. | 2026-08-26 | — |
 | [Spec — Sitio web de Nexus Consulting](sdd/specs/sitio-nexus-consulting.md) | Marca del design system, cinco páginas con URL propia (seis aprobadas; el artículo retirado en S-0020), copy con la voz de Nexus Consulting y capa SEO/GEO indexable y citable; el motor de cálculo no cambia. Aprobada en autopilot. | 2026-09-02 | — |
+| [Spec — Pregunta de frenos del lead](sdd/specs/pregunta-frenos-lead.md) | Octava pregunta de negocio en el formulario, de respuesta múltiple, saltable y con cuatro opciones; informativa para el aviso interno, no toca ni la cifra ni la puntuación de cualificación. Borrador pendiente de aprobación. | 2026-09-14 | — |
 
 ## sdd/plans
 
