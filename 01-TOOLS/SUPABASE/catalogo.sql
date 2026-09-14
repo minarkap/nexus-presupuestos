@@ -175,6 +175,53 @@ create constraint trigger catalogo_puntos_completo
   deferrable initially deferred
   for each row execute function public.catalogo_completo();
 
+-- `catalogo_ajustes` necesita el suyo. Encontrado por la revisión adversarial del 2026-09-14: la
+-- comprobación de «exactamente una fila» vivía DENTRO de `catalogo_completo()`, pero esa función no
+-- estaba enganchada a esta tabla. `delete from catalogo_ajustes` se ejecutaba sin una sola queja y
+-- el catálogo se quedaba sin umbral, sin margen y sin paso de redondeo.
+drop trigger if exists catalogo_ajustes_completo on public.catalogo_ajustes;
+create constraint trigger catalogo_ajustes_completo
+  after insert or update or delete on public.catalogo_ajustes
+  deferrable initially deferred
+  for each row execute function public.catalogo_completo();
+
+-- ───────────────────────────────────────────────────────────────────────────────────────────────
+-- 2b. EL AGUJERO QUE TODO LO ANTERIOR NO TAPABA: `TRUNCATE`
+--
+-- Un disparador POR FILA no se ejecuta NUNCA en un truncado: Postgres no genera filas que mirar.
+-- Así que `truncate public.catalogo_servicios` vaciaba los seis servicios sin una sola excepción,
+-- justo debajo de un comentario que presumía de ser «la guarda que ningún CHECK puede dar». Lo
+-- encontró la revisión adversarial del 2026-09-14 atacando precisamente la guarda más ufana.
+--
+-- Hace falta un disparador POR SENTENCIA, y no puede ser `constraint trigger`: Postgres no admite
+-- `deferrable` junto a `truncate`. Salta inmediatamente, que aquí es lo correcto — después de un
+-- truncado la tabla ya está vacía y no hay nada que esperar a ver.
+--
+-- Sí: quien puede truncar también puede borrar la tabla, y de su dueño no se defiende una tabla.
+-- Pero truncar es un accidente PLAUSIBLE —«vacío esto y lo vuelvo a sembrar»— de una forma en que
+-- `drop table` no lo es. Se tapa porque cuesta cuatro líneas, no porque cierre a un atacante.
+-- ───────────────────────────────────────────────────────────────────────────────────────────────
+
+drop trigger if exists catalogo_servicios_truncado on public.catalogo_servicios;
+create trigger catalogo_servicios_truncado
+  after truncate on public.catalogo_servicios
+  for each statement execute function public.catalogo_completo();
+
+drop trigger if exists catalogo_factores_truncado on public.catalogo_factores;
+create trigger catalogo_factores_truncado
+  after truncate on public.catalogo_factores
+  for each statement execute function public.catalogo_completo();
+
+drop trigger if exists catalogo_puntos_truncado on public.catalogo_puntos;
+create trigger catalogo_puntos_truncado
+  after truncate on public.catalogo_puntos
+  for each statement execute function public.catalogo_completo();
+
+drop trigger if exists catalogo_ajustes_truncado on public.catalogo_ajustes;
+create trigger catalogo_ajustes_truncado
+  after truncate on public.catalogo_ajustes
+  for each statement execute function public.catalogo_completo();
+
 -- ───────────────────────────────────────────────────────────────────────────────────────────────
 -- 3. UN VIAJE, UNA INSTANTÁNEA
 --
@@ -293,6 +340,12 @@ commit;
 --
 -- 6) C-2 — debe FALLAR con «multiplicador_posible»:
 --      update public.catalogo_factores set valor = 50 where bloque = 'size' and clave = '<50';
+--
+-- 6b) CA-12 por la vía del truncado — debe FALLAR igual que el borrado del punto 5:
+--      begin; truncate public.catalogo_servicios; commit;
+--
+-- 6c) La fila única de ajustes — debe FALLAR con «exactamente una fila»:
+--      begin; delete from public.catalogo_ajustes; commit;
 --
 -- 7) CA-14 — con la llave de lectura, esto debe denegarse:
 --      curl -s -X POST "$SUPABASE_URL/rest/v1/catalogo_servicios" \

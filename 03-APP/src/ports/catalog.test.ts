@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { SupabaseCatalogPort, SnapshotOnlyCatalogPort, selectCatalogPort } from './catalog'
+import { SupabaseCatalogPort, SnapshotOnlyCatalogPort, selectCatalogPort, catalogOrSeed } from './catalog'
 import { SEED_CATALOG } from '@/core/catalog-seed'
 
 const config = { url: 'https://proyecto.supabase.co', readKey: 'sb_publishable_x' }
@@ -148,5 +148,41 @@ describe('selectCatalogPort — qué puerto sale de cada entorno', () => {
       SUPABASE_SERVICE_ROLE_KEY: 'sb_secret_peligrosa',
     })
     expect(p).toBeInstanceOf(SnapshotOnlyCatalogPort)
+  })
+})
+
+describe('catalogOrSeed — la página pública nunca se queda sin renderizar', () => {
+  it('con catálogo, devuelve ese', async () => {
+    const otro = JSON.parse(JSON.stringify(SEED_CATALOG)) as typeof SEED_CATALOG
+    ;(otro.services.ai_opportunity_assessment as { officialMin: number }).officialMin = 19000
+    const c = await catalogOrSeed(async () => ({ catalog: otro, source: 'live' }))
+    expect(c.services.ai_opportunity_assessment.officialMin).toBe(19000)
+  })
+
+  it('si no hay ninguno, cae a la semilla en vez de romper la página', async () => {
+    const callado = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      const c = await catalogOrSeed(async () => {
+        throw new Error('ni catálogo vivo ni foto utilizable')
+      })
+      // Un 500 en la portada de un sitio de captación es peor desenlace que enseñar los rangos
+      // oficiales del código, que es lo que la semilla es.
+      expect(c).toEqual(SEED_CATALOG)
+    } finally {
+      callado.mockRestore()
+    }
+  })
+
+  it('el repliegue NO es silencioso: lo grita en el log del servidor', async () => {
+    const espía = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      await catalogOrSeed(async () => {
+        throw new Error('sin nada')
+      })
+      expect(espía).toHaveBeenCalledTimes(1)
+      expect(String(espía.mock.calls[0]?.[0])).toMatch(/semilla del código/)
+    } finally {
+      espía.mockRestore()
+    }
   })
 })

@@ -4,7 +4,8 @@
 // multiplicadores, tabla de puntos y umbral (constitution 8).
 import 'server-only'
 import { validateCatalog } from '@/core/catalog-validation'
-import type { LoadedCatalog } from '@/core/catalog-types'
+import { SEED_CATALOG } from '@/core/catalog-seed'
+import type { Catalog, LoadedCatalog } from '@/core/catalog-types'
 import { normalizeSupabaseUrl } from './registry'
 import { CATALOG_SNAPSHOT } from '@/core/catalog.snapshot'
 
@@ -178,4 +179,39 @@ export function selectCatalogPort(
  */
 export async function loadCatalog(fetchImpl: typeof fetch = fetch): Promise<LoadedCatalog> {
   return selectCatalogPort(process.env, CATALOG_SNAPSHOT, fetchImpl).load()
+}
+
+/**
+ * El catálogo para una PÁGINA PÚBLICA, que nunca puede quedarse sin renderizar.
+ *
+ * Es deliberadamente más indulgente que el camino del formulario, y la asimetría tiene razón de ser:
+ *
+ *  · El formulario entrega una cifra PERSONAL a alguien concreto. Ahí, entre no dar cifra y dar una
+ *    que no sea la vigente, no se da cifra (CA-09).
+ *  · Esta página publica la LISTA DE PRECIOS oficial. Si se llega hasta aquí —ni catálogo vivo ni
+ *    foto utilizable, un estado que CA-08 hace inalcanzable en una publicación correcta— la semilla
+ *    del código sigue siendo el catálogo oficial 2026. Enseñarlo es mejor que un error 500 en la
+ *    portada de un sitio cuyo trabajo entero es captar visitas.
+ *
+ * No se repliega en silencio: lo grita en el log del servidor. Y llegar aquí significa que alguien
+ * publicó saltándose la puerta de la foto, que es lo que hay que ir a arreglar.
+ *
+ * Lo encontró la revisión adversarial del 2026-09-14: las dos páginas llamaban a `loadCatalog()`
+ * a pelo, mientras la acción del formulario sí envolvía la suya.
+ */
+export async function catalogOrSeed(cargar: () => Promise<LoadedCatalog>): Promise<Catalog> {
+  try {
+    return (await cargar()).catalog
+  } catch (e) {
+    console.error(
+      '[nexus] la página pública no alcanzó ningún catálogo — cae a la semilla del código.',
+      'Esto no debería poder pasar: la publicación falla antes que quedarse sin foto (CA-08).',
+      e instanceof Error ? e.message : e,
+    )
+    return SEED_CATALOG
+  }
+}
+
+export async function loadCatalogForPublicPage(): Promise<Catalog> {
+  return catalogOrSeed(() => loadCatalog())
 }

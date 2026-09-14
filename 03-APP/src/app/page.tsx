@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { publicLines } from '@/content/services.public'
-import { loadCatalog } from '@/ports/catalog'
+import { loadCatalogForPublicPage } from '@/ports/catalog'
 import { pageMetadata } from '@/seo/metadata'
 import { organization, webSite } from '@/seo/jsonld'
 import { JsonLd } from '@/seo/json-ld'
@@ -24,7 +24,7 @@ export const metadata: Metadata = pageMetadata('home')
 export const revalidate = 300
 
 export default async function Home() {
-  const { catalog } = await loadCatalog()
+  const catalog = await loadCatalogForPublicPage()
   const lines = publicLines(catalog)
   return (
     <>

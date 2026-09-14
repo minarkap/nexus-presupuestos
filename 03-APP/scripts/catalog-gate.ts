@@ -168,6 +168,33 @@ if (violaciones.length > 0) {
   )
 }
 
+/**
+ * Cuántas combinaciones TIENEN que haberse recorrido.
+ *
+ * 14 pares (reto, necesidad) que producen cifra × 4 tamaños × 3 madureces × 3 plazos. Son 14 y no 6
+ * porque ciberseguridad y ESG resuelven también con la necesidad sin declarar.
+ *
+ * Sin esta comprobación, el bucle de arriba `continue`-aba en cada par que no resolviera a un
+ * servicio y podía terminar habiendo mirado CERO combinaciones — y aun así imprimir VERDE. Lo
+ * encontró la revisión adversarial del 2026-09-14. Es exactamente el fallo de `S-0032`: una puerta
+ * que da luz verde por no haber mirado.
+ *
+ * Su hermana `src/core/exhaustive.test.ts` ya afirmaba este número, y corre antes en `verify.sh`,
+ * así que dentro de la puerta completa esto quedaba tapado. Pero esta puerta se anuncia como
+ * ejecutable por su cuenta —`npm run catalog-gate` contra la base real—, y por su cuenta no lo
+ * estaba.
+ */
+const COMBINACIONES_ESPERADAS = 504
+
+if (combinaciones !== COMBINACIONES_ESPERADAS) {
+  morir(`Se recorrieron ${combinaciones} combinaciones y se esperaban ${COMBINACIONES_ESPERADAS}.`, [
+    'Esto NO es un problema de precios: es que el mapa de respuestas a servicios ha cambiado,',
+    'o el catálogo vivo no tiene los servicios a los que el formulario apunta.',
+    '',
+    'Declarar verde habiendo mirado menos combinaciones de las debidas sería peor que fallar.',
+  ])
+}
+
 console.log('')
 console.log('═══ PUERTA DEL CATÁLOGO: VERDE ═══')
 console.log(`  · Caso de referencia: ${precio.low} – ${precio.high} € (constitution 16)`)

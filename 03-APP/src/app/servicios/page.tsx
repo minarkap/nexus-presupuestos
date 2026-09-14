@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { servicios } from '@/content/servicios'
 import { publicLines, publicServices } from '@/content/services.public'
-import { loadCatalog } from '@/ports/catalog'
+import { loadCatalogForPublicPage } from '@/ports/catalog'
 import { PAGES, pageMetadata } from '@/seo/metadata'
 import { breadcrumbs, organization, services, webSite } from '@/seo/jsonld'
 import { JsonLd } from '@/seo/json-ld'
@@ -30,7 +30,7 @@ export const metadata: Metadata = pageMetadata('servicios')
 export const revalidate = 300
 
 export default async function Servicios() {
-  const { catalog } = await loadCatalog()
+  const catalog = await loadCatalogForPublicPage()
   const lines = publicLines(catalog)
   const all = publicServices(catalog)
   return (
