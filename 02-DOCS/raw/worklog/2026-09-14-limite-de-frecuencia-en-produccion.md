@@ -1,7 +1,9 @@
 ---
-fecha: 2026-09-14
-tipo: worklog
-rama: feat/limite-de-frecuencia → main
+type: worklog
+title: El tope de envíos llega a producción
+topic: seguridad
+timestamp: 2026-09-14T17:20:00Z
+status: processed
 ---
 
 # El tope de envíos llega a producción

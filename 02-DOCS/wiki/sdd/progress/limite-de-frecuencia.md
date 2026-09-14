@@ -103,3 +103,20 @@ legal» la había puesto el agente sin nadie detrás que pudiera cruzarla.
 - [x] Filas de prueba borradas (120 → 0). El lead real intacto.
 - [x] `RATE_LIMIT_SALT` en Vercel (production + preview), 2026-09-14. Es **distinta** de la local a
       propósito: una huella de desarrollo no debe coincidir con una de producción.
+
+## Publicado y comprobado en producción — 2026-09-14
+
+Fusionado a `main`, despliegue `600f0df` (READY). Primer envío real desde el formulario público:
+
+```
+submission_attempts  id=122  fingerprint=26d4daa3…e04abf  attempted_at=17:17:39.272Z
+leads                submission_id=579b6517-…            created_at   =17:17:39.766Z
+```
+
+El intento se anota **medio segundo antes** que el lead, que es el orden diseñado: el tope puede
+cortar sin haber escrito nada. La huella son 32 hexadecimales y ninguna columna de la fila contiene
+una dirección (`CA-L5`). Acta completa en
+[verifications/limite-de-frecuencia-2026-09-14.md](../verifications/limite-de-frecuencia-2026-09-14.md).
+
+Queda **sin ver en la web** el mensaje que aparece al cruzar el tope: verlo exige seis envíos reales
+seguidos y cada uno manda dos correos. El corte está demostrado contra la base de datos real.
