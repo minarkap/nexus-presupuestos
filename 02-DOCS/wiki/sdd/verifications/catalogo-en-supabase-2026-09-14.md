@@ -94,3 +94,16 @@ Es la lección de `S-0032`: una puerta que nunca se ha visto fallar no se sabe s
   la puesta en marcha del registro de leads enseñó que los dobles no enseñan todo (`S-0026`).
 - La prueba de extremo a extremo: cambiar un precio en la base y ver el formulario usarlo sin
   publicar (CA-02). Es la que demuestra que todo esto sirve para algo.
+
+## Revisión adversarial (fase `review`, mismo día)
+
+Dos refutadores con contexto fresco. Resultado: **cero hallazgos de seguridad, tres de corrección
+reales, todos arreglados**. Detalle y lección en [`S-0036`](../decisions.md).
+
+Los tres reales estaban **en las guardas, no en la lógica**. El motor de cálculo, el fichero dorado y
+el repliegue a la foto aguantaron todo lo que se les echó. Lo que no aguantó fue lo escrito para
+vigilar: un disparador que no se dispara con `truncate`, una tabla sin disparador, y una puerta que
+podía dar verde habiendo comprobado cero combinaciones.
+
+Tras los arreglos: **367 pruebas** (3 más), cobertura **96,2 %**, mismas seis puertas verdes y la
+séptima roja por la misma razón de siempre.

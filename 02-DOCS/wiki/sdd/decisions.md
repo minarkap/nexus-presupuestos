@@ -886,3 +886,40 @@ status: stable
   hay. Este decía «copy de marca, no precio» sobre un fichero que publicaba seis rangos en euros.
   Lo encontró la implementación al seguir los imports, no ninguna de las tres lecturas anteriores.
 - supersedes: none
+
+## S-0036 — La revisión adversarial encontró que la guarda más ufana no se disparaba
+
+- fecha: 2026-09-14
+- fase: `review` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: dos refutadores con contexto fresco sobre el diff completo, lentes de corrección y de
+  seguridad.
+- **seguridad: cero hallazgos**, y con trabajo detrás, no por mirar de lejos. Compiló de producción y
+  buscó cada multiplicador y el umbral en `.next/static`; comprobó el payload RSC de las dos páginas
+  públicas —la hipótesis más seria, porque ahí es donde el catálogo entero podría haber viajado—; y
+  **construyó una página cliente que importa la foto del catálogo** para ver si `import 'server-only'`
+  es una barrera o un adorno. La compilación falla en seco. Es una barrera.
+- **corrección: cuatro hallazgos, tres reales.**
+  1. **`truncate` atravesaba la guarda de completitud.** Un disparador por fila no se ejecuta nunca
+     en un vaciado —Postgres no genera filas que mirar— así que vaciar `catalogo_servicios` se
+     llevaba los seis servicios **sin una sola excepción**, justo debajo de un comentario que
+     presumía de ser «la guarda que ningún CHECK puede dar». Arreglado con cuatro disparadores por
+     sentencia. No cierra a un atacante —quien vacía también borra la tabla— pero sí el accidente
+     plausible: «vacío esto y lo vuelvo a sembrar».
+  2. **`catalogo_ajustes` no tenía disparador.** La comprobación de «exactamente una fila» vivía
+     dentro de la función, pero la función no estaba enganchada a esa tabla. Borrar la fila pasaba
+     sin queja y el catálogo se quedaba sin umbral, sin margen y sin paso de redondeo.
+  3. **`catalog-gate` podía decir VERDE habiendo mirado cero combinaciones.** El bucle seguía de
+     largo en cada par que no resolviera a un servicio y sólo comprobaba que no hubiera violaciones.
+     Ahora afirma las 504.
+  4. *(menor)* las páginas públicas llamaban a `loadCatalog()` a pelo mientras la acción del
+     formulario sí envolvía la suya.
+- el refutador también **se retractó de un hallazgo** al releer la spec: propuso poner techo a los
+  rangos en euros y comprobó que `clarify` C-2 había decidido expresamente no ponerlo. Que se
+  retracte solo vale tanto como que encuentre.
+- lo que enseña, y es lo que hay que llevarse: **los tres hallazgos reales estaban en las guardas,
+  no en la lógica**. El motor de cálculo, el fichero dorado y el repliegue aguantaron todos los
+  ataques. Lo que no aguantó fue lo escrito para vigilar — y el tercero es literalmente el fallo de
+  `S-0032` («una puerta que da luz verde por no haber mirado») repetido **dentro de una puerta
+  escrita para arreglar ese problema**. Escribir la guarda no es haberla probado, y la tentación de
+  no probar es mayor justo donde el comentario suena más seguro de sí mismo.
+- supersedes: none
