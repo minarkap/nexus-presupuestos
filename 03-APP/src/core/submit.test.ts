@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { SEED_CATALOG } from './catalog-seed'
+import type { LoadedCatalog } from './catalog-types'
 import { submitLead, DedupCache, validateContact, buildInternalNotice, type SubmitDeps } from './submit'
 import { FakeEmailPort } from '@/ports/email'
 import { FakeRegistryPort } from '@/ports/registry'
@@ -17,7 +19,13 @@ let email: FakeEmailPort
 let registry: FakeRegistryPort
 let cache: DedupCache
 
+/** En las pruebas del núcleo el catálogo es la semilla y se da por vivo: lo que se mide
+ *  aquí es la lógica de envío, no de dónde salieron los precios. El repliegue a la foto
+ *  tiene sus propias pruebas en `ports/catalog.test.ts`. */
+const catálogoVivo: LoadedCatalog = { catalog: SEED_CATALOG, source: 'live' }
+
 const deps = () => ({
+  catalog: catálogoVivo,
   emailPort: email,
   registryPort: registry,
   // Sin huella por defecto: el tope no se aplica y las pruebas anteriores a esta función siguen
@@ -78,7 +86,7 @@ describe('SubmitAction — el aviso interno lleva el desglose (CA-16)', () => {
         { signal: 'madurez', answer: 'd', points: 0 },
         { signal: 'tamaño', answer: 'e', points: 1 },
       ] },
-    }, 'ok')
+    }, 'ok', catálogoVivo)
     expect(notice.split('\n').filter((l) => l.trim().startsWith('- ') && l.includes('→'))).toHaveLength(5)
   })
 })
@@ -407,5 +415,73 @@ describe('Límite de frecuencia (spec limite-de-frecuencia)', () => {
     await agotarCupo()
     const r = await submitLead(answers, 's1', conTope({ fingerprint: 'b'.repeat(32) }), cache)
     expect(r).not.toMatchObject({ kind: 'rate_limited' })
+  })
+})
+
+describe('El catálogo que se usó se declara al equipo, nunca al lead (CA-06, CA-09)', () => {
+  const fotoVieja: LoadedCatalog = {
+    catalog: SEED_CATALOG,
+    source: 'snapshot',
+    takenAt: '2026-09-01T00:00:00.000Z',
+    reason: 'Supabase respondió 500',
+  }
+
+  it('CA-06 — con la foto, el aviso interno lo dice y da la fecha', async () => {
+    await submitLead(answers, 'foto-1', { ...deps(), catalog: fotoVieja }, cache)
+    const interno = email.sent.find((m) => m.to.includes('oportunidades'))
+    expect(interno?.body).toContain('FOTO DEL CATÁLOGO')
+    expect(interno?.body).toContain('2026-09-01')
+  })
+
+  it('CA-06 — el lead recibe su rango con normalidad y no se entera de nada', async () => {
+    const r = await submitLead(answers, 'foto-2', { ...deps(), catalog: fotoVieja }, cache)
+    expect(r.kind).toBe('qualified')
+    const serializado = JSON.stringify(r)
+    expect(serializado).toContain('28.000')
+    for (const filtración of ['foto', 'FOTO', 'snapshot', '2026-09-01', 'Supabase', '500']) {
+      expect(serializado).not.toContain(filtración)
+    }
+  })
+
+  it('con el catálogo vivo, el aviso interno NO menciona ninguna foto', async () => {
+    await submitLead(answers, 'vivo-1', deps(), cache)
+    const interno = email.sent.find((m) => m.to.includes('oportunidades'))
+    expect(interno?.body).not.toContain('FOTO DEL CATÁLOGO')
+  })
+
+  it('CA-09 — sin catálogo ninguno, el lead SE GUARDA con todas sus respuestas', async () => {
+    await submitLead(answers, 'sin-cat-1', { ...deps(), catalog: null }, cache)
+
+    expect(registry.rows).toHaveLength(1)
+    const fila = registry.rows[0]
+    expect(fila?.contact.email).toBe('marta@acme.ad')
+    expect(fila?.answers.challenge).toBe('ia')
+    expect(fila?.answers.size).toBe('250-999')
+    expect(fila?.serviceLabel).toBeNull()
+    expect(fila?.rangeText).toBeNull()
+  })
+
+  it('CA-09 — sin catálogo no se entrega ninguna cifra y se le dice que se le llama', async () => {
+    const r = await submitLead(answers, 'sin-cat-2', { ...deps(), catalog: null }, cache)
+    expect(r.kind).toBe('uncatalogued')
+    if (r.kind === 'uncatalogued') {
+      expect(r.rangeText).toBeNull()
+      expect(r.bodyText).toMatch(/llamamos/i)
+      expect(r.showCalendar).toBe(false)
+    }
+  })
+
+  it('CA-09 — la puntuación no se falsea a cero: dice que no se pudo calcular', async () => {
+    await submitLead(answers, 'sin-cat-3', { ...deps(), catalog: null }, cache)
+    const fila = registry.rows[0]
+    // Un 0 raso sería indistinguible de un lead flojo de verdad. El desglose lo desambigua.
+    expect(fila?.score.breakdown.map((b) => b.answer).join(' ')).toMatch(/NO DISPONIBLE/)
+  })
+
+  it('CA-09 — el aviso interno grita que hay que calcularlo a mano', async () => {
+    await submitLead(answers, 'sin-cat-4', { ...deps(), catalog: null }, cache)
+    const interno = email.sent.find((m) => m.to.includes('oportunidades'))
+    expect(interno?.body).toContain('NO SE PUDO CALCULAR')
+    expect(interno?.body).toMatch(/a mano/)
   })
 })

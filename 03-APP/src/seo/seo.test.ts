@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { SEED_CATALOG } from '@/core/catalog-seed'
 import { PAGES, fullTitle, pageMetadata, type PageKey } from './metadata'
 import { breadcrumbs, faqPage, organization, services, webSite } from './jsonld'
 import robots from '@/app/robots'
@@ -52,9 +53,9 @@ describe('JSON-LD coherente con lo visible (CA-18)', () => {
     expect(f.mainEntity.map((q) => q.name)).toEqual(faq.map((q) => q.q))
   })
   it('Service solo lleva oferta si el rango está cerrado por arriba', () => {
-    for (const s of services(publicServices())) {
+    for (const s of services(publicServices(SEED_CATALOG))) {
       const has = 'offers' in s
-      const src = publicServices().find((p) => p.label === s.name)!
+      const src = publicServices(SEED_CATALOG).find((p) => p.label === s.name)!
       expect(has).toBe(!src.openEnded)
     }
   })

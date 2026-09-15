@@ -8,7 +8,8 @@ import type { RegistryPort } from '@/ports/registry'
 import type { RateLimitPort } from '@/ports/rate-limit'
 import { excedeElTope } from './rate-limit'
 import { BLOCKER_LABEL, BLOCKER_OPTIONS } from './options'
-import type { Answers, Blocker, LeadRecord, RedactedOutcome } from './types'
+import type { Answers, Blocker, LeadRecord, RedactedOutcome, Score } from './types'
+import type { LoadedCatalog } from './catalog-types'
 
 export type ValidationField =
   | 'name' | 'email' | 'company' | 'consent'
@@ -42,6 +43,18 @@ export interface DispatchReport {
 }
 
 export interface SubmitDeps {
+  /**
+   * El catálogo con su procedencia, cargado UNA sola vez por envío en la frontera de servidor.
+   *
+   * Que llegue aquí como dependencia y no se busque solo es lo que garantiza CA-10: las cuatro
+   * funciones del núcleo reciben el mismo objeto, así que es imposible que dos partes del mismo
+   * cálculo usen catálogos distintos. No es una convención que recordar, es una imposibilidad.
+   *
+   * **`null` significa «no hay catálogo, ni vivo ni en foto»** (CA-09). No debería ocurrir nunca —la
+   * publicación falla antes que quedarse sin foto— pero si ocurre, el lead se registra igual y sin
+   * cifra. Perder un lead porque la base de datos tuvo un mal día sería el peor desenlace posible.
+   */
+  readonly catalog: LoadedCatalog | null
   readonly emailPort: EmailPort
   readonly registryPort: RegistryPort
   readonly rateLimitPort: RateLimitPort
@@ -50,6 +63,36 @@ export interface SubmitDeps {
   readonly fingerprint: string | null
   readonly now: () => Date
   readonly onDispatch?: (report: DispatchReport) => void
+}
+
+/**
+ * La puntuación cuando no hubo catálogo con el que calcularla.
+ *
+ * No es un cero: un cero significa «lead flojo» y aquí significa «no lo sabemos». Guardar un 0 raso
+ * en la base de datos convertiría una avería en un juicio comercial sobre alguien, y nadie que leyera
+ * la fila mañana podría distinguirlos. El desglose lo dice con todas las letras.
+ */
+const SIN_PUNTUACIÓN: Score = {
+  total: 0,
+  breakdown: [
+    {
+      signal: 'catálogo',
+      answer: 'NO DISPONIBLE — ni catálogo vivo ni foto utilizable en el momento del envío',
+      points: 0,
+    },
+  ],
+}
+
+/** Sin catálogo no se da cifra. Es el mismo desenlace que un reto sin catalogar (CA-09). */
+const DESENLACE_SIN_CATÁLOGO: RedactedOutcome = {
+  kind: 'uncatalogued',
+  rangeText: null,
+  disclaimer:
+    'Preferimos no dar un número antes de entender el problema. Es criterio de la casa, no una evasiva.',
+  bodyText:
+    'Hemos recibido tu solicitud y la tenemos guardada. En este momento no podemos calcularte un ' +
+    'rango orientativo, así que te llamamos para verlo contigo — sin coste y sin compromiso.',
+  showCalendar: false,
 }
 
 /** Buzón público al que se manda a quien cruza el tope. No es el interno de oportunidades. */
@@ -269,14 +312,29 @@ export async function submitLead(
     return { kind: 'rate_limited', message: MENSAJE_TOPE, contactEmail: BUZÓN_PÚBLICO }
   }
 
-  const resolution = resolveService(answers.challenge, answers.need)
-  const service = resolution.kind === 'service' ? resolution.service : null
-  const price = service
-    ? priceService(service, answers.size, answers.maturity, answers.timing)
-    : null
+  // UN solo catálogo de principio a fin de este cálculo (CA-10).
+  const cargado = deps.catalog
+  const catalog = cargado?.catalog ?? null
 
-  const score = scoreLead(answers)
-  const outcome = mapOutcome(service, price, score)
+  // Sin catálogo no hay servicio, no hay precio y no hay puntuación que calcular. Lo que sí hay es
+  // un lead con sus respuestas, y eso se guarda (CA-09). El desenlace es el mismo que el de un reto
+  // sin catalogar: ninguna cifra y una llamada de alcance — desde fuera no se distingue, y no tiene
+  // por qué: al visitante no se le cuenta que nuestra base de datos se cayó.
+  const service = catalog
+    ? (() => {
+        const r = resolveService(catalog, answers.challenge, answers.need)
+        return r.kind === 'service' ? r.service : null
+      })()
+    : null
+  const price =
+    catalog && service
+      ? priceService(catalog, service, answers.size, answers.maturity, answers.timing)
+      : null
+
+  const score = catalog ? scoreLead(catalog, answers) : SIN_PUNTUACIÓN
+  const outcome = catalog
+    ? mapOutcome(catalog, service, price, score)
+    : DESENLACE_SIN_CATÁLOGO
   const proposal = composeProposal(answers.contact, service, price, outcome.kind)
 
   const lead: LeadRecord = {
@@ -307,7 +365,7 @@ export async function submitLead(
       deps.emailPort.send({
         to: deps.internalMailbox,
         subject: `Nuevo lead · ${answers.contact.company} · ${score.total}/10`,
-        body: buildInternalNotice(lead, registry),
+        body: buildInternalNotice(lead, registry, deps.catalog),
       }),
     ),
   }
@@ -341,10 +399,44 @@ function avisoDeNoGuardado(): readonly string[] {
   ]
 }
 
+/**
+ * Aviso al equipo de que esta cifra NO se calculó con el catálogo vivo.
+ *
+ * Va arriba del todo y sin rodeos. La lección es la misma que dejó el registro de leads: un
+ * repliegue que no se nota no existe hasta que cuesta caro, y aquí lo que está en juego es una
+ * cifra con el membrete de Nexus calculada con precios que pueden tener meses (CA-06).
+ *
+ * El lead NUNCA ve nada de esto (constitution 11): recibe su rango con normalidad.
+ */
+function avisoDeSinCatálogo(): string[] {
+  return [
+    '🛑 NO SE PUDO CALCULAR: no había catálogo vivo NI foto utilizable en el momento del envío.',
+    '    Este lead está guardado con todas sus respuestas, pero SIN servicio, SIN rango y SIN',
+    '    puntuación. Hay que calcularlo a mano y llamar. Y hay que mirar por qué falló la foto:',
+    '    la publicación debería haber fallado antes de dejar el sitio sin respaldo (CA-08).',
+    '',
+  ]
+}
+
+function avisoDeFoto(takenAt: string): string[] {
+  return [
+    '⚠️  ESTA CIFRA SE CALCULÓ CON LA FOTO DEL CATÁLOGO, NO CON EL CATÁLOGO VIVO.',
+    `    Procedencia de la foto: ${takenAt}. Si desde entonces se ha cambiado algún precio, esta`,
+    '    estimación NO lo refleja. Contrástala antes de usarla en una conversación comercial.',
+    '',
+  ]
+}
+
 /** El aviso interno sin desglose es inservible (CA-16). */
-export function buildInternalNotice(lead: LeadRecord, registry: 'ok' | 'failed'): string {
+export function buildInternalNotice(
+  lead: LeadRecord,
+  registry: 'ok' | 'failed',
+  catalog: LoadedCatalog | null,
+): string {
   const líneas = lead.score.breakdown.map((b) => `  - ${b.signal}: ${b.answer} → ${b.points > 0 ? '+' : ''}${b.points}`)
   return [
+    ...(catalog === null ? avisoDeSinCatálogo() : []),
+    ...(catalog?.source === 'snapshot' ? avisoDeFoto(catalog.takenAt) : []),
     ...(registry === 'failed' ? avisoDeNoGuardado() : []),
     `Contacto: ${lead.contact.name} <${lead.contact.email}> — ${lead.contact.company}`,
     `Recibido: ${lead.submittedAt}`,

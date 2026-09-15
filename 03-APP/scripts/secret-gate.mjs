@@ -44,6 +44,12 @@ const VALORES_PROHIBIDOS = [
   // HMAC existe para impedir, así que filtrarla anula la medida entera (`CA-L5`).
   'RATE_LIMIT_SALT',
   'SUPABASE_URL',
+  // La llave de lectura del catálogo es SECRETA, aunque solo pueda leer. Va bien decirlo porque es
+  // contraintuitivo: no es una `sb_publishable_`, que sí puede viajar al navegador, sino una
+  // `sb_secret_` atada a un rol que únicamente puede ejecutar `catalogo_vigente()`. Filtrarla
+  // expondría multiplicadores, tabla de puntos y umbral — lo que el principio 8 prohíbe — aunque
+  // nadie pudiera escribir con ella (spec `catalogo-en-supabase`, CA-14, CA-17).
+  'SUPABASE_CATALOG_READ_KEY',
   'RESEND_API_KEY',
   'GOOGLE_SERVICE_ACCOUNT_JSON',
   'GOOGLE_SHEET_ID',

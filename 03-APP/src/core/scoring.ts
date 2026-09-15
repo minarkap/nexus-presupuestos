@@ -1,11 +1,4 @@
-import {
-  BUDGET_POINTS,
-  MATURITY_POINTS,
-  MAX_SCORE,
-  SIZE_POINTS,
-  SPONSOR_POINTS,
-  TIMING_POINTS,
-} from './catalog'
+import type { Catalog } from './catalog-types'
 import type { BusinessAnswers, Score, SignalContribution } from './types'
 
 /** Etiquetas legibles del desglose. Van al aviso interno, nunca al lead. */
@@ -49,37 +42,37 @@ const SIZE_LABEL: Record<BusinessAnswers['size'], string> = {
  * La urgencia resta un punto a propósito. Es la única señal contraintuitiva del sistema
  * y no se «arregla»: encarece la estimación y baja la puntuación a la vez.
  */
-export function scoreLead(answers: BusinessAnswers): Score {
+export function scoreLead(catalog: Catalog, answers: BusinessAnswers): Score {
   const breakdown: SignalContribution[] = [
     {
       signal: 'sponsor',
       answer: SPONSOR_LABEL[answers.sponsor],
-      points: SPONSOR_POINTS[answers.sponsor],
+      points: catalog.sponsorPoints[answers.sponsor],
     },
     {
       signal: 'presupuesto',
       answer: BUDGET_LABEL[answers.budget],
-      points: BUDGET_POINTS[answers.budget],
+      points: catalog.budgetPoints[answers.budget],
     },
     {
       signal: 'plazo',
       answer: TIMING_LABEL[answers.timing],
-      points: TIMING_POINTS[answers.timing],
+      points: catalog.timingPoints[answers.timing],
     },
     {
       signal: 'madurez',
       answer: MATURITY_LABEL[answers.maturity],
-      points: MATURITY_POINTS[answers.maturity],
+      points: catalog.maturityPoints[answers.maturity],
     },
     {
       signal: 'tamaño',
       answer: SIZE_LABEL[answers.size],
-      points: SIZE_POINTS[answers.size],
+      points: catalog.sizePoints[answers.size],
     },
   ]
 
   const raw = breakdown.reduce((acc, b) => acc + b.points, 0)
-  const total = Math.min(MAX_SCORE, Math.max(0, raw))
+  const total = Math.min(catalog.maxScore, Math.max(0, raw))
 
   return { total, breakdown }
 }

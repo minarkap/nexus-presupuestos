@@ -6,6 +6,7 @@ import { fingerprintFor } from '@/core/rate-limit'
 import { selectEmailPort } from '@/ports/email'
 import { selectRegistryPort } from '@/ports/registry'
 import { selectRateLimitPort } from '@/ports/rate-limit'
+import { loadCatalog } from '@/ports/catalog'
 import type { Answers } from '@/core/types'
 
 /**
@@ -39,11 +40,33 @@ async function huellaDelOrigen(): Promise<string | null> {
   return fingerprintFor(ip, sal)
 }
 
+/**
+ * Carga el catálogo sin dejar que un fallo escape hacia el visitante.
+ *
+ * `loadCatalog` lanza cuando no hay ni catálogo vivo ni foto utilizable, y eso está bien: quien
+ * llama tiene que poder distinguir «no hay catálogo» de «hay uno vacío». Lo que no puede pasar es
+ * que esa excepción suba hasta la acción de servidor, porque entonces el visitante vería un error y
+ * **su lead se perdería**. Aquí se convierte en `null`, y `submitLead` sabe qué hacer con eso.
+ */
+async function catálogoParaEsteEnvío(): Promise<Awaited<ReturnType<typeof loadCatalog>> | null> {
+  try {
+    return await loadCatalog()
+  } catch (e) {
+    console.error('[nexus] sin catálogo: ni vivo ni en foto —', e instanceof Error ? e.message : e)
+    return null
+  }
+}
+
 export async function submitAction(answers: Answers, submissionId: string): Promise<SubmitResult> {
+  // El catálogo se carga UNA vez por envío, aquí, y se pasa hacia abajo. Todo lo que hay debajo
+  // de esta línea calcula con el mismo catálogo de principio a fin (CA-10). Si la base no responde,
+  // `loadCatalog` se repliega a la foto y lo declara; sólo lanza cuando no queda nada que entregar,
+  // y entonces el lead se registra igual pero sin cifra (CA-09).
   return submitLead(
     answers,
     submissionId,
     {
+      catalog: await catálogoParaEsteEnvío(),
       emailPort: selectEmailPort(process.env),
       registryPort: selectRegistryPort(process.env),
       rateLimitPort: selectRateLimitPort(process.env),

@@ -1,17 +1,30 @@
 import { describe, it, expect } from 'vitest'
-import {
-  EXPIRES_ON,
-  QUALIFICATION_THRESHOLD,
-  SERVICES,
-  SIZE_FACTOR,
-  MATURITY_FACTOR,
-  TIMING_FACTOR,
-  SPONSOR_POINTS,
-  BUDGET_POINTS,
-  TIMING_POINTS,
-} from './catalog'
+import { SEED_CATALOG } from './catalog-seed'
 
-describe('CatalogConfig — los seis rangos oficiales 2026', () => {
+/**
+ * Los invariantes del catálogo 2026, ahora sobre la SEMILLA.
+ *
+ * Antes vigilaban las constantes de `catalog.ts`, que desapareció con la spec
+ * `catalogo-en-supabase`. Siguen valiendo por dos motivos: la semilla es lo que se siembra en la
+ * base de datos —un dígito mal puesto aquí se propaga allí— y es el respaldo que se publica en la
+ * foto cuando no hay credenciales.
+ *
+ * Lo que estas pruebas NO vigilan es el catálogo vivo: eso lo hace `scripts/catalog-gate.ts`
+ * contra la base de datos real, porque un valor cambiado allí no se ve desde aquí.
+ */
+const {
+  services: SERVICES,
+  sizeFactor: SIZE_FACTOR,
+  maturityFactor: MATURITY_FACTOR,
+  timingFactor: TIMING_FACTOR,
+  sponsorPoints: SPONSOR_POINTS,
+  budgetPoints: BUDGET_POINTS,
+  timingPoints: TIMING_POINTS,
+  threshold: QUALIFICATION_THRESHOLD,
+  expiresOn: EXPIRES_ON,
+} = SEED_CATALOG
+
+describe('Catálogo semilla — los seis rangos oficiales 2026', () => {
   it('tiene exactamente seis servicios catalogados', () => {
     expect(Object.keys(SERVICES)).toHaveLength(6)
   })
@@ -42,7 +55,7 @@ describe('CatalogConfig — los seis rangos oficiales 2026', () => {
   })
 })
 
-describe('CatalogConfig — umbral y caducidad', () => {
+describe('Catálogo semilla — umbral y caducidad', () => {
   it('el umbral vigente es 6', () => {
     expect(QUALIFICATION_THRESHOLD).toBe(6)
   })
@@ -52,7 +65,7 @@ describe('CatalogConfig — umbral y caducidad', () => {
   })
 })
 
-describe('CatalogConfig — factores y puntos', () => {
+describe('Catálogo semilla — factores y puntos', () => {
   it('los factores de tamaño son los del método', () => {
     expect(SIZE_FACTOR).toEqual({ '<50': 0.8, '50-249': 0.9, '250-999': 1.05, '>=1000': 1.25 })
   })

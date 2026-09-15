@@ -784,3 +784,172 @@ status: stable
 - why: una puerta que nunca se ha visto fallar no se sabe si funciona. Las dos llevaban meses en
   verde sin que eso significara nada.
 - supersedes: none
+
+## S-0033 — El catálogo comercial se muda a la base de datos, con la objeción registrada
+
+- fecha: 2026-09-14
+- fase: `specify` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: la petición —«guardar también el catálogo de servicios en la base de datos»— admitía dos
+  lecturas muy distintas: guardar junto a cada lead **la foto** del catálogo con el que se calculó
+  (trazabilidad histórica, motor intacto), o que el catálogo **viva** en la base y el motor lea de
+  ahí (fuente de verdad, dependencia de red nueva).
+- objeción planteada: el catálogo lo leen ocho módulos del núcleo, entre ellos los dos motores de
+  cálculo, con una lectura inmediata que hoy no puede fallar. Mudarlo mete red en el camino que
+  produce la cifra que sale con el membrete de Nexus, y sin panel de edición —descartado— cambiar un
+  precio sigue siendo manual: SQL en vez de fichero, con menos red de seguridad debajo.
+- decision: **fuente de verdad en la base de datos**. Jose la tomó con la objeción delante. Apoyos:
+  el principio 10 de la constitución («rangos y factores son configuración, no constantes en el
+  código») está hoy incumplido, y la edición 2027 del catálogo llega en meses y no debe depender de
+  un despliegue.
+- alcance decidido: **todo lo que hoy vive en el fichero del catálogo** —seis servicios con sus
+  rangos, multiplicadores de tamaño/madurez/urgencia, tabla de puntos y umbral de cualificación—
+  frente a mudar solo los rangos. Razón: partirlo deja dos sitios donde mirar y mañana nadie recuerda
+  qué mitad está dónde.
+- ante un fallo: **consulta a la base en cada cálculo, más una foto del catálogo tomada en cada
+  publicación del sitio** como respaldo. Si la base no responde, se calcula con la foto y el aviso
+  interno de ese lead declara que se usó y de cuándo es.
+- **corrección durante la propia fase `specify`:** la primera decisión fue «copia en memoria cargada
+  al arranque». La revisión en frío de la spec la tumbó: descansaba en una premisa falsa —que existe
+  un servidor encendido— cuando el sitio se publica en Vercel, donde hay copias efímeras que arrancan
+  por su cuenta. Con el tráfico esperado la mayoría de visitas son arranques en frío, así que esa
+  copia apenas habría protegido de un corte; y al refrescar cada copia por su cuenta, dos visitantes
+  simultáneos podrían haber recibido precios distintos. Se le devolvió a Jose con la premisa
+  corregida y eligió la opción de arriba.
+- lo que se descartó y por qué: el respaldo a una copia del catálogo **mantenida a mano en el
+  código** entregaría un precio viejo con el membrete de Nexus sin que nadie se entere — principio 7,
+  «un fallo, no una tolerancia». La foto de la publicación es distinta: es la base de datos misma,
+  fotografiada, con fecha conocida y aviso ruidoso al usarse.
+- red de seguridad: **doble**. La base rechaza lo imposible en la escritura, y el caso de referencia
+  del principio 16 se comprueba contra el catálogo vivo. Razón: hoy un precio pasa por el linter, los
+  tipos y 230 pruebas; mañana pasaría por una sentencia SQL, y como el motor **ancla** al rango
+  oficial, un 1.800 tecleado donde iba 18.000 se anclaría perfectamente contra el número equivocado.
+- caducidad: la fecha del 31-12-2026 **viaja con el catálogo y sigue sin hacer nada**. Que tenga
+  consecuencias es función nueva y merece su propio ciclo.
+- why: el principio 10 describía una separación que no existía. Un principio escrito que nadie
+  cumple rebaja el listón de los otros 35.
+- lo que enseña: una petición de una línea puede esconder dos funciones distintas con perfiles de
+  riesgo opuestos. Preguntar «¿para qué?» antes que «¿cómo?» costó un turno y evitó construir la que
+  no era.
+- supersedes: none
+
+## S-0034 — El catálogo se inyecta: el núcleo sigue síncrono y puro
+
+- fecha: 2026-09-14
+- fase: `plan` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: el catálogo lo leen ocho módulos de `src/core`, todos síncronos y puros. Sacarlo a la base
+  de datos admitía dos formas: convertir esas funciones en asíncronas para que se buscasen el
+  catálogo solas, o **pasárselo como parámetro** y dejar el viaje de red en la frontera de servidor.
+- decision: **inyección**. `app/actions.ts` carga el catálogo una vez por envío y lo pasa hacia
+  abajo; `priceService`, `scoreLead`, `resolveService` y `mapOutcome` siguen siendo síncronas, puras
+  y sin `any`.
+- why: con el núcleo asíncrono, `priceService` y `scoreLead` podrían leer el catálogo en instantes
+  distintos y **usar dos catálogos dentro del mismo cálculo**. La inyección lo hace imposible por
+  construcción, en vez de por vigilancia. Además conserva la cobertura ≥ 95 % del principio 14 sin
+  llenar el motor de caminos de fallo de red.
+- decisión asociada: **cuatro tablas editables celda a celda**, no un documento JSON en una fila. Un
+  blob habría dado atomicidad gratis, pero convertiría «cambiar un precio sin publicar» en «editar
+  JSON a mano», que es apenas mejor que editar el fichero. La atomicidad se recupera con una función
+  de Postgres que lee las cuatro tablas en una sentencia — una instantánea, un viaje, nunca medio
+  catálogo. Es el mismo camino que `registrar_intento` del tope.
+- decisión asociada: **llave de solo lectura** distinta de la de servicio. Es la única credencial
+  nueva del plan, y existe para que CA-14 —«el sitio nunca escribe precios»— sea una imposibilidad y
+  no una promesa.
+- riesgo principal identificado: **R-1, que la mudanza cambie una cifra sin que nadie lo note**. Se
+  retira con un fichero dorado generado desde el código actual ANTES de tocar nada, y sembrando la
+  base desde la semilla en vez de tecleando a mano.
+- supersedes: none
+
+## S-0035 — Los rangos publicados salen del mismo catálogo que los estimados
+
+- fecha: 2026-09-14
+- fase: `implement` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: la spec declaraba como **non-goal** que «no se mudan los textos públicos de los
+  servicios: lo que el visitante lee sobre cada servicio es copy de marca, no precio». Al
+  implementar apareció que eso era falso: `src/content/services.public.ts` publica `officialMin`,
+  `officialMax` y el rango formateado en `/servicios` y en la portada, leyendo el mismo catálogo que
+  el estimador. **Sí es precio.**
+- el fallo que habría causado: mudar el estimador y no la página habría dejado, tras cualquier
+  cambio de precio, **dos cifras distintas para el mismo servicio en el mismo sitio** — la página
+  anunciando la vieja y el formulario estimando con la nueva, hasta la siguiente publicación. Es
+  exactamente la incoherencia que la mudanza existe para evitar.
+- decision: `publicServices` y `publicLines` reciben el catálogo, y las dos páginas públicas lo
+  cargan con `revalidate = 300`. Siguen siendo **HTML estático prerenderizado** —el principio 32
+  exige que todo el contenido viaje en el HTML inicial— y se rehacen solas cada cinco minutos. Si la
+  base no responde durante una revalidación, el puerto se repliega a la foto y la página se rehace
+  igual: nunca se queda sin renderizar.
+- por qué cinco minutos y no al instante: la página pública no necesita ser inmediata, y hacerla
+  dinámica habría cambiado su naturaleza y puesto en riesgo la puerta SEO. El formulario, que sí
+  entrega una cifra personal, lee el catálogo en cada cálculo.
+- el non-goal de la spec queda **corregido**, no ignorado: lo que no se muda es el *copy editorial*
+  —para quién es, qué incluye, cuándo aplica—, que sigue en el código. Los rangos, no.
+- lo que enseña: un non-goal escrito de memoria describe lo que el autor **cree** que hay, no lo que
+  hay. Este decía «copy de marca, no precio» sobre un fichero que publicaba seis rangos en euros.
+  Lo encontró la implementación al seguir los imports, no ninguna de las tres lecturas anteriores.
+- supersedes: none
+
+## S-0036 — La revisión adversarial encontró que la guarda más ufana no se disparaba
+
+- fecha: 2026-09-14
+- fase: `review` de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: dos refutadores con contexto fresco sobre el diff completo, lentes de corrección y de
+  seguridad.
+- **seguridad: cero hallazgos**, y con trabajo detrás, no por mirar de lejos. Compiló de producción y
+  buscó cada multiplicador y el umbral en `.next/static`; comprobó el payload RSC de las dos páginas
+  públicas —la hipótesis más seria, porque ahí es donde el catálogo entero podría haber viajado—; y
+  **construyó una página cliente que importa la foto del catálogo** para ver si `import 'server-only'`
+  es una barrera o un adorno. La compilación falla en seco. Es una barrera.
+- **corrección: cuatro hallazgos, tres reales.**
+  1. **`truncate` atravesaba la guarda de completitud.** Un disparador por fila no se ejecuta nunca
+     en un vaciado —Postgres no genera filas que mirar— así que vaciar `catalogo_servicios` se
+     llevaba los seis servicios **sin una sola excepción**, justo debajo de un comentario que
+     presumía de ser «la guarda que ningún CHECK puede dar». Arreglado con cuatro disparadores por
+     sentencia. No cierra a un atacante —quien vacía también borra la tabla— pero sí el accidente
+     plausible: «vacío esto y lo vuelvo a sembrar».
+  2. **`catalogo_ajustes` no tenía disparador.** La comprobación de «exactamente una fila» vivía
+     dentro de la función, pero la función no estaba enganchada a esa tabla. Borrar la fila pasaba
+     sin queja y el catálogo se quedaba sin umbral, sin margen y sin paso de redondeo.
+  3. **`catalog-gate` podía decir VERDE habiendo mirado cero combinaciones.** El bucle seguía de
+     largo en cada par que no resolviera a un servicio y sólo comprobaba que no hubiera violaciones.
+     Ahora afirma las 504.
+  4. *(menor)* las páginas públicas llamaban a `loadCatalog()` a pelo mientras la acción del
+     formulario sí envolvía la suya.
+- el refutador también **se retractó de un hallazgo** al releer la spec: propuso poner techo a los
+  rangos en euros y comprobó que `clarify` C-2 había decidido expresamente no ponerlo. Que se
+  retracte solo vale tanto como que encuentre.
+- lo que enseña, y es lo que hay que llevarse: **los tres hallazgos reales estaban en las guardas,
+  no en la lógica**. El motor de cálculo, el fichero dorado y el repliegue aguantaron todos los
+  ataques. Lo que no aguantó fue lo escrito para vigilar — y el tercero es literalmente el fallo de
+  `S-0032` («una puerta que da luz verde por no haber mirado») repetido **dentro de una puerta
+  escrita para arreglar ese problema**. Escribir la guarda no es haberla probado, y la tentación de
+  no probar es mayor justo donde el comentario suena más seguro de sí mismo.
+- supersedes: none
+
+## S-0037 — El plan gratuito no deja atar una llave a un rol; la garantía baja a los permisos
+
+- fecha: 2026-09-15
+- fase: puesta en marcha de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: el plan ataba CA-14 —«el sitio publicado nunca escribe precios»— al **tipo de llave**: un
+  rol propio `catalogo_lector` y una clave secreta emitida contra él. Al crearla, la API de gestión
+  respondió **HTTP 402**: «las plantillas JWT a medida para claves secretas exigen plan Pro».
+- decision: no gastar dinero, y mover la garantía a donde es **más fuerte**: retirarle a
+  `service_role` todo permiso sobre las cuatro tablas del catálogo. El sitio llega con una clave
+  secreta cualquiera y aun así no puede escribir un precio.
+- por qué funciona: `service_role` **se salta la seguridad de fila por diseño, pero no se salta los
+  permisos de tabla**. Son dos mecanismos distintos de Postgres, y esa diferencia es exactamente lo
+  que aquí hace el trabajo. La función sigue siendo `security definer`, así que leer el catálogo no
+  necesita ningún permiso sobre las tablas.
+- por qué es **mejor** que el diseño original: aquél dependía de que quien creara la llave eligiera
+  bien el rol — una decisión humana, en un panel, meses después, sin nada que la comprobara. Éste no
+  depende de ninguna elección: el permiso no existe.
+- quién sí puede editar precios: `postgres`, que es el rol con el que actúan el editor de tablas y
+  el editor SQL del panel. Es literalmente el flujo que la spec pedía — cambiar un precio es editar
+  una celda— y el sitio publicado no puede hacerlo ni por accidente.
+- evidencia contra la base real (2026-09-15): con la llave del catálogo,
+  `select`/`insert`/`update`/`delete` sobre `catalogo_servicios` → **403 permission denied**;
+  `rpc/catalogo_vigente` → **200**. Con la llave pública → **401** en todo, incluida la función.
+- el rol `catalogo_lector` se conserva creado: no concede nada de más y el día que el proyecto pase
+  a Pro basta con emitir la clave contra él para recuperar el diseño original.
+- lo que enseña: una restricción de facturación obligó a buscar la garantía un nivel más abajo, y el
+  nivel de abajo resultó ser el bueno. La primera solución dependía de que alguien acertara; la
+  segunda no depende de nadie.
+- supersedes: none

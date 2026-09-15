@@ -7,7 +7,10 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/snapshot-catalog.ts",
     "build": "next build",
+    "snapshot-catalog": "node scripts/snapshot-catalog.ts",
+    "catalog-gate": "node scripts/catalog-gate.ts",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",

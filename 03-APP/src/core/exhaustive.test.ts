@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
+import { SEED_CATALOG } from './catalog-seed'
 import { priceService } from './pricing'
 import { resolveService } from './service-resolver'
-import { SERVICES } from './catalog'
 import type { Challenge, Maturity, Need, Size, Timing } from './types'
 
 const CHALLENGES: Challenge[] = ['ia', 'ciberseguridad', 'esg', 'estrategia_operaciones']
@@ -21,7 +21,7 @@ describe('Prueba exhaustiva — ninguna combinación se sale del rango oficial (
 
     for (const challenge of CHALLENGES) {
       for (const need of NEEDS) {
-        const resolution = resolveService(challenge, need)
+        const resolution = resolveService(SEED_CATALOG, challenge, need)
         if (resolution.kind !== 'service') continue
         const service = resolution.service
 
@@ -29,7 +29,7 @@ describe('Prueba exhaustiva — ninguna combinación se sale del rango oficial (
           for (const maturity of MATURITIES) {
             for (const timing of TIMINGS) {
               combinacionesConCifra += 1
-              const r = priceService(service, size, maturity, timing)
+              const r = priceService(SEED_CATALOG, service, size, maturity, timing)
               const donde = `${service.id}/${size}/${maturity}/${timing}`
 
               if (r.low < service.officialMin) {
@@ -59,7 +59,7 @@ describe('Prueba exhaustiva — ninguna combinación se sale del rango oficial (
 
   it('la rama sin catalogar no produce ninguna cifra, en ninguna combinación', () => {
     for (const need of NEEDS) {
-      expect(resolveService('estrategia_operaciones', need).kind).toBe('uncatalogued')
+      expect(resolveService(SEED_CATALOG, 'estrategia_operaciones', need).kind).toBe('uncatalogued')
     }
   })
 
@@ -67,10 +67,10 @@ describe('Prueba exhaustiva — ninguna combinación se sale del rango oficial (
     const alcanzables = new Set<string>()
     for (const challenge of CHALLENGES) {
       for (const need of NEEDS) {
-        const r = resolveService(challenge, need)
+        const r = resolveService(SEED_CATALOG, challenge, need)
         if (r.kind === 'service') alcanzables.add(r.service.id)
       }
     }
-    expect(alcanzables.size).toBe(Object.keys(SERVICES).length)
+    expect(alcanzables.size).toBe(Object.keys(SEED_CATALOG.services).length)
   })
 })
