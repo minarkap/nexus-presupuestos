@@ -16,7 +16,10 @@ import type { Answers } from '@/core/types'
 
 const cache = new DedupCache()
 
-const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'oportunidades@nexus.ad'
+// El defecto apunta a un buzón que RECIBE correo de verdad. El anterior
+// (`oportunidades@nexus.ad`) era un dominio sin correo: cualquier despliegue que olvidara la
+// variable perdía todos los leads en silencio, que es el único fallo de este sistema que nadie ve.
+const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'jose.sanchis@executivelab.ai'
 
 /**
  * La huella del origen, calculada AQUÍ y sólo aquí.
