@@ -63,7 +63,10 @@ score: 3.0
   [Método de Estimación Económica](../comercial/Metodo%20de%20Estimacion%20Economica.md).
 - ~~¿Qué campos pide el formulario?~~ **RESUELTO**: derivados de los dos motores de cálculo, en
   [Landing de Captación de Leads](../producto/Landing%20de%20Captacion%20de%20Leads.md).
-- ~~¿Qué buzón recibe los avisos?~~ **RESUELTO**: oportunidades@nexus-st.com.
+- ~~¿Qué buzón recibe los avisos?~~ **RESUELTO 2026-09-15**: `jose.sanchis@executivelab.ai`, tanto
+  en el panel de Vercel como en el valor por defecto del código. El `oportunidades@nexus-st.com` de
+  la respuesta original nunca llegó a existir, y su heredero `oportunidades@nexus.ad` era un dominio
+  sin correo — ver [S-0038](../sdd/decisions.md).
 - ~~¿git en esta carpeta?~~ **RESUELTO**: no (D-0008).
 - **Con qué se agenda la llamada del lead cualificado.** Integración externa sin elegir; es la única
   pieza funcional del flujo que no tiene fuente.

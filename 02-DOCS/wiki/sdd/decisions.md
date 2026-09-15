@@ -953,3 +953,58 @@ status: stable
   nivel de abajo resultó ser el bueno. La primera solución dependía de que alguien acertara; la
   segunda no depende de nadie.
 - supersedes: none
+
+## S-0038 — El buzón por defecto pasa a uno que existe
+
+- fecha: 2026-09-15
+- fase: puesta en marcha de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: `src/app/actions.ts` resolvía el destino del aviso interno como
+  `process.env.NEXUS_INTERNAL_MAILBOX ?? 'oportunidades@nexus.ad'`. La variable está puesta en Vercel
+  en los tres entornos, así que en producción el defecto nunca se usaba. Apareció al documentar las
+  variables del panel, no al fallar nada.
+- el fallo que habría causado: `nexus.ad` **no recibe correo**. Un despliegue que olvidara la
+  variable —un entorno nuevo, una previsualización de otra rama, una restauración del proyecto—
+  habría entregado al visitante su estimación con toda normalidad y habría mandado el aviso interno
+  a un dominio muerto. **El lead se pierde y nadie se entera**: el visitante ve éxito, el servidor no
+  registra ningún error, y el correo simplemente no llega. Es el único fallo de este sistema que no
+  se ve desde ningún sitio.
+- decision: el defecto pasa a `jose.sanchis@executivelab.ai`, que es el buzón real y el mismo que ya
+  tiene el panel. La variable se conserva y sigue siendo lo recomendable —permite cambiar de buzón
+  sin tocar código ni volver a publicar— pero olvidarla ya no cuesta leads.
+- por qué no quitar el defecto y fallar ruidosamente: se consideró, y pierde. Hacer que el envío
+  explote sin la variable convierte un aviso mal dirigido en **un lead que ni siquiera se guarda**, y
+  la casa ya decidió en CA-09 que ante cualquier duda el lead se registra igual. Un buzón que existe
+  es mejor red que una excepción.
+- lo que enseña: un valor por defecto es una decisión de diseño disfrazada de detalle. Éste llevaba
+  desde el primer día diciendo, en silencio, «si alguien se olvida, que se pierdan los leads».
+- supersedes: none
+
+## S-0039 — Lo que sólo se puede probar contra producción, se prueba contra producción
+
+- fecha: 2026-09-15
+- fase: `verify` / T19 de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: CA-02 —«un cambio de precio escrito en la base lo usa el siguiente formulario **sin que se
+  haya publicado ninguna versión del sitio y sin ninguna espera**»— es la razón de ser de toda la
+  mudanza, y es la única afirmación del ciclo que no se puede sostener ni con dobles ni en local: lo
+  que afirma es sobre el sitio publicado.
+- decision: ejecutarla de verdad. Se subió el mínimo del *AI Opportunity Assessment* de 18.000 a
+  21.000 en la base, se envió el caso de referencia contra `presupuestos.barcovalencia.com`
+  —**30.000 – 35.000 €**—, se restauró el valor y se volvió a enviar —**28.000 – 35.000 €**—, sin un
+  solo despliegue entre medias. Evidencia en el
+  [acta del 2026-09-15](./verifications/catalogo-en-supabase-2026-09-15.md).
+- cómo se envió, porque no era obvio: el proyecto no tiene navegador automatizado y no se instaló uno
+  para esto. Se invocó **la acción de servidor real** por HTTP contra `/presupuesto`, con el
+  identificador de la acción leído del propio paquete JavaScript que sirve producción. Mismo
+  servidor, mismo catálogo, mismo correo que un visitante; lo único que se salta son los clics del
+  asistente, que ya cubren las pruebas de componente. Queda como el camino de la casa para probar de
+  extremo a extremo sin montar una torre de herramientas.
+- la sonda primero: antes del envío bueno se mandó uno **sin consentimiento**, que el servidor
+  rechaza antes de guardar nada y antes de gastar cupo del tope de frecuencia. Confirma el transporte
+  sin ensuciar la base. Probar el instrumento antes de fiarse de la medida es la misma lección de
+  `S-0032`, aplicada a una prueba manual.
+- lo que enseña, y no estaba previsto: **la evidencia se guardó sola**. Los dos envíos son leads
+  reales y están en la tabla, con diez segundos de diferencia, las mismas respuestas y cifras
+  distintas. Un sistema que registra lo que hace no necesita que nadie tome nota de sus propias
+  pruebas — pero deja datos de prueba en la tabla de producción, y eso hay que limpiarlo antes de que
+  lleguen leads de verdad.
+- supersedes: none

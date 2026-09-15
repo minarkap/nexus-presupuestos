@@ -344,3 +344,19 @@ rangos oficiales leyendo el mismo catálogo (`S-0035`), así que también se cab
 **Apareció una tarea que el plan no tenía:** cerrar el camino en que `loadCatalog()` lanza y la
 excepción sube hasta la acción de servidor, que habría perdido el lead. `submitLead` acepta ahora
 `catalog: null` y guarda el lead sin cifra (CA-09).
+
+### Estado al 2026-09-15 — cerrado
+
+Las diecinueve tareas están hechas. Lo que faltaba el día 14 no era código: era la base de datos, que
+sólo podía crear Jose.
+
+| Tareas | Estado |
+|---|---|
+| T01–T17 | ✅ **hechas y verificadas.** Las seis tablas creadas y sembradas, la función de un viaje respondiendo, las dos puertas nuevas vistas fallar y pasar |
+| T18 | ✅ **la puerta completa, VERDE.** Las siete, incluida la del catálogo vivo contra la base real: caso de referencia 28.000 – 35.000 €, 504 combinaciones sin ninguna fuera de rango |
+| T19 | ✅ **prueba de extremo a extremo contra producción, hecha.** Detalle y evidencia en el [acta del 2026-09-15](../verifications/catalogo-en-supabase-2026-09-15.md) y en [`S-0039`](../decisions.md) |
+
+**T11 no se hizo como estaba escrita, y eso es una buena noticia.** El plan pedía una llave de solo
+lectura emitida contra el rol `catalogo_lector`; el plan gratuito de Supabase no la deja emitir. La
+garantía bajó a los permisos de tabla, que es un sitio más fuerte: no depende de que nadie elija bien
+el rol meses después. Está contado en [`S-0037`](../decisions.md).

@@ -33,27 +33,62 @@ opciones no negociables al crear el proyecto en Vercel:
 
 ## Variables de entorno del proyecto en Vercel
 
-Las mismas que `03-APP/.env.local`. Se cargan en el panel (Settings → Environment Variables), no
-viajan en el repositorio.
+Casi las mismas que `03-APP/.env.local` — con dos salvedades: `USE_FAKE_ADAPTERS` se queda en local,
+y `NEXT_PUBLIC_SITE_URL` sólo existe aquí (en local va comentada a propósito, porque vacía no es lo
+mismo que ausente y rompe la compilación). Se cargan en el panel (Settings → Environment Variables),
+no viajan en el repositorio.
 
 | Variable | Obligatoria | Qué pasa si falta |
 |----------|-------------|-------------------|
+| `SUPABASE_URL` | sí | **La compilación se detiene.** El `prebuild` no puede tomar la foto del catálogo (CA-08). |
+| `SUPABASE_CATALOG_READ_KEY` | sí | Igual que la anterior — las dos las lee `scripts/snapshot-catalog.ts`. |
+| `SUPABASE_SERVICE_ROLE_KEY` | sí | El lead no se guarda: `RegistryPort` queda sin configurar y protesta. |
+| `SUPABASE_LEADS_TABLE` | sí | Se escribe contra la tabla por defecto del código en vez de `leads`. |
+| `RATE_LIMIT_SALT` | sí | El límite de frecuencia queda **desactivado** y el servidor lo avisa en el log. |
 | `RESEND_API_KEY` | sí | El envío falla ruidosamente a propósito: ningún lead recibe su estimación. |
 | `RESEND_FROM` | sí | Igual que la anterior — las dos van juntas. |
-| `NEXUS_INTERNAL_MAILBOX` | sí | El aviso interno cae en el buzón por defecto del código, que no consta activo. |
-| `NEXT_PUBLIC_CALENDAR_URL` | sí | La pantalla de agendar llamada se queda sin destino. |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | no | Sin registro de respaldo en la hoja de cálculo; el correo sigue saliendo. |
-| `GOOGLE_SHEET_ID` | no | Idem — las dos de Google van juntas. |
+| `NEXUS_INTERNAL_MAILBOX` | recomendada | Cae en el defecto del código, `jose.sanchis@executivelab.ai`, que **sí** recibe correo. Ningún lead se pierde; sólo deja de poder redirigirse sin tocar código. |
+| `NEXT_PUBLIC_SITE_URL` | sí | El sitio se anuncia como `https://nexus.ad`: `canonical` y `og:url` mienten. |
+| `NEXT_PUBLIC_CALENDAR_URL` | no | Nada roto: la pantalla se repliega a «te escribimos con la disponibilidad». |
 
-> **Regla de producto.** Sólo `NEXT_PUBLIC_CALENDAR_URL` puede llevar el prefijo `NEXT_PUBLIC_`: es
-> la única que puede llegar al navegador. Los multiplicadores, la tabla de puntuación y el umbral de
-> cualificación son internos y se calculan en servidor — ninguna variable que los toque lleva ese
-> prefijo jamás.
+Las nueve primeras están cargadas en `production`, `preview` y `development`.
+`NEXT_PUBLIC_CALENDAR_URL` **nunca se ha llegado a poner**, y no pasa nada: el resultado trae
+`showCalendar: true`, pero `ResultScreen` se repliega solo y muestra «Te escribimos con la
+disponibilidad del equipo» en vez del calendario. No hay botón muerto. Ponerla es opcional.
+
+> **Resuelto el 2026-09-15.** El valor por defecto de `NEXUS_INTERNAL_MAILBOX` en
+> `src/app/actions.ts` apuntaba a `oportunidades@nexus.ad`, un dominio que no recibe correo: un
+> despliegue que olvidara la variable perdía todos los leads **en silencio**, que es el único fallo de
+> este sistema que nadie ve. El defecto pasa a ser `jose.sanchis@executivelab.ai`. La variable sigue
+> puesta en el panel y sigue siendo lo recomendable —permite cambiar de buzón sin tocar código— pero
+> olvidarla ya no cuesta leads.
+
+**No van al panel:**
+
+- `USE_FAKE_ADAPTERS` — sólo desarrollo. En producción se ignora, así que allí no pinta nada.
+- `GOOGLE_SERVICE_ACCOUNT_JSON` y `GOOGLE_SHEET_ID` — el registro de respaldo en Google quedó
+  desplazado por Supabase (`S-0025`). `src/ports/registry.ts` comprueba Supabase antes, así que
+  aunque estuvieran nunca se usarían.
+- `NEXUS_REQUIRE_LIVE_CATALOG` — innecesaria: Vercel ya define `VERCEL=1`, que activa lo mismo.
+
+> **De dónde sale esta lista.** Del código, que es la única fuente que no envejece:
+> ```bash
+> cd 03-APP && grep -rnoE 'process\.env\.[A-Z0-9_]+' src/ scripts/ | sed -E 's/.*process\.env\.//' | sort -u
+> ```
+> Incluye `scripts/`: el `prebuild` lee variables y **detiene la publicación** si le faltan.
+
+> **Regla de producto.** Sólo `NEXT_PUBLIC_SITE_URL` y `NEXT_PUBLIC_CALENDAR_URL` pueden llevar el
+> prefijo `NEXT_PUBLIC_`: son las únicas que pueden llegar al navegador. Los multiplicadores, la
+> tabla de puntuación y el umbral de cualificación son internos y se calculan en servidor — ninguna
+> variable que los toque lleva ese prefijo jamás.
 
 ## Antes de publicar
 
-- **Dominio.** Sin dominio propio, la landing queda en una URL `*.vercel.app`. Está sin decidir
-  (pregunta abierta del perfil de usuario).
+- **Dominio.** La landing se publica en **`presupuestos.barcovalencia.com`** (fijado el 2026-09-15).
+  El proyecto tiene además `barcovalencia.com` → `www.barcovalencia.com` y el alias
+  `nexus-presupuestos-sigma.vercel.app`. `NEXT_PUBLIC_SITE_URL` debe coincidir con el dominio real:
+  se **incrusta en tiempo de compilación**, así que cambiarla en el panel no surte efecto hasta que
+  hay una reconstrucción.
 - **Protección de despliegue.** Vercel protege por defecto las URLs de previsualización. Si la
   landing debe verse sin iniciar sesión, revisa Settings → Deployment Protection.
 - **Correo real.** El dominio de envío `executivelab.ai` ya está verificado en Resend (`D-0013`),

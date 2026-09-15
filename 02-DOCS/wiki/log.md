@@ -58,3 +58,10 @@ ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni 
 - Updated: 01-TOOLS/README.md (catálogo con RESEND, GOOGLE y VERCEL; flujos comunes), CLAUDE.md raíz (tabla de tooling).
 - Updated: harness/decisions.md (`D-0018` — publicación en Vercel desde el repositorio, Root Directory `03-APP`), harness/user-profile.md (pregunta abierta "¿dónde se publica?" resuelta; dominio sigue abierto).
 - Updated: [Arsenal Operativo](operations/Arsenal%20Operativo.md) — decía "vacío a propósito" y ya había tres tools.
+
+## 2026-09-15 — cierre de `catalogo-en-supabase` y puesta en marcha
+- La base de datos, creada y sembrada por Jose: seis tablas, catálogo completo, las dos tareas programadas activas (`nexus-retencion-leads`, `nexus-limpieza-intentos`).
+- `verify` completo **VERDE**, las siete puertas — la del catálogo vivo ya contra la base real: caso de referencia 28.000 – 35.000 €, 504 combinaciones.
+- **T19 hecha contra producción** (CA-02): precio cambiado en la base → el formulario real devolvió 30.000 – 35.000 €; restaurado → 28.000 – 35.000 €. Cero despliegues entre medias. Los dos envíos quedaron como leads en la tabla, marcados `Executive Lab (prueba T19)`.
+- Corregido el defecto del buzón interno: `oportunidades@nexus.ad` (dominio sin correo) → `jose.sanchis@executivelab.ai`.
+- Nuevos: `sdd/verifications/catalogo-en-supabase-2026-09-15.md`, `S-0038`, `S-0039`. Updated: plan del catálogo (estado final), acta del 14 (marcada como superada), `harness/user-profile.md` (buzón), `01-TOOLS/VERCEL/README.md` (variables del panel, aviso del buzón resuelto).

@@ -6,13 +6,19 @@ tags: [sdd, verify, catalogo, evidencia]
 timestamp: 2026-09-14T20:40:00Z
 topic: sdd
 slug: catalogo-en-supabase
-status: parcial — bloqueada en pasos que requieren a Jose
+status: superada por el acta del 2026-09-15
 ---
 
 # Verification — El catálogo comercial en la base de datos
 
 > Fecha: 2026-09-14 · Rama: `feat/catalogo-en-supabase` · Spec: [catalogo-en-supabase](../specs/catalogo-en-supabase.md)
 > Veredicto: **VERDE en todo lo que no necesita la base de datos. ROJO, a propósito, en lo que sí.**
+
+> [!note] Superada el 2026-09-15
+> Esta acta describe un estado que ya pasó: la base de datos no existía todavía. Se conserva porque
+> explica **por qué** la séptima puerta estaba roja, que es lo contrario de un fallo. El cierre —las
+> siete en verde y la prueba contra producción— está en el
+> [acta del 2026-09-15](./catalogo-en-supabase-2026-09-15.md).
 
 ## La puerta completa
 
