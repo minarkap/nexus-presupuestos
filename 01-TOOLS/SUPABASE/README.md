@@ -35,8 +35,11 @@ Base de datos donde se guarda cada lead del estimador. Sustituye a la hoja de c�
    igual, pero no hacen falta. **No pulses «Disable JWT-based API keys».**
 5. **Comprueba.** `bash test_connection.sh`. Verifica tres cosas: que la clave vale, que la tabla
    existe, y que **la tabla no responde a quien no tiene la llave**.
-5b. **Llave del catálogo.** *Settings* → *API Keys* → *Create secret key*, con **Role:
-   `catalogo_lector`** (no `service_role`). Va a `SUPABASE_CATALOG_READ_KEY`. Luego:
+5b. **Llave del catálogo.** *Settings* → *API Keys* → *Create secret key*, nombre
+   `catalogo_lector` (sólo minúsculas y guiones bajos). **No hace falta elegir rol**: la garantía
+   de que el sitio no puede escribir precios no vive en la llave sino en los permisos de la base —
+   `catalogo.sql` se los retira a `service_role` (`S-0037`). Va a `SUPABASE_CATALOG_READ_KEY`.
+   Luego:
 
    ```
    cd 03-APP && node scripts/catalog-gate.ts

@@ -6,15 +6,19 @@
 // no valida o tarda más de la cuenta. El aviso interno de cada lead declara que se usó y de
 // cuándo es (spec `catalogo-en-supabase`, CA-06).
 //
-// Procedencia de esta foto: semilla del código (sin credenciales)
+// Procedencia de esta foto: catálogo vivo de Supabase
+//
+// `takenAt` es cuándo se vio cambiar estos precios por última vez, no cuándo se compiló: la foto
+// sólo se reescribe si el contenido difiere de la anterior.
 // ─────────────────────────────────────────────────────────────────────────────
+// catalogo-huella: 484051701f6811fe
 
 // Lleva multiplicadores, tabla de puntos y umbral: no puede cruzar al navegador (constitution 8).
 import 'server-only'
 import type { CatalogSnapshot } from '@/ports/catalog'
 
 export const CATALOG_SNAPSHOT: CatalogSnapshot = {
-  takenAt: "semilla del código (sin fecha de toma)",
+  takenAt: "2026-09-15T07:29:28.886Z",
   catalog: {
     "services": {
       "ai_opportunity_assessment": {

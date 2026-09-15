@@ -288,15 +288,38 @@ revoke all on public.catalogo_servicios, public.catalogo_factores,
 revoke all on function public.catalogo_vigente() from anon, authenticated, public;
 
 -- ───────────────────────────────────────────────────────────────────────────────────────────────
--- 5. LA LLAVE QUE SÓLO PUEDE LEER  (CA-14)
+-- 5. EL SITIO PUBLICADO NO PUEDE ESCRIBIR PRECIOS  (CA-14)
 --
--- El sitio publicado NUNCA escribe precios. La forma de que no pueda no es prometerlo: es no darle
--- con qué. Este rol puede ejecutar la función y NADA más — ni un `select` sobre las tablas, ni un
--- `insert`, ni un `update`. Que la función sea `security definer` es lo que lo hace posible.
+-- El diseño original ataba la garantía al TIPO DE LLAVE: un rol propio, `catalogo_lector`, y una
+-- clave de API emitida contra él. Al ponerlo en marcha el 2026-09-15 la API respondió que las
+-- plantillas JWT a medida para claves secretas **exigen plan Pro**, y este proyecto está en el
+-- gratuito. Ver `S-0037`.
 --
--- Después de ejecutar esto: Supabase → Project Settings → API Keys → Create secret key,
--- y elegir el rol `catalogo_lector`. Esa clave va a SUPABASE_CATALOG_READ_KEY.
+-- La garantía se movió entonces a donde es más fuerte: los PERMISOS DE LA BASE. Se le retira a
+-- `service_role` todo permiso sobre las cuatro tablas del catálogo. Da igual con qué clave llegue
+-- el sitio — no puede escribir un precio, porque el rol con el que la API atiende no tiene con qué.
+-- Es una garantía mejor que la original: no depende de que alguien haya elegido bien la llave.
+--
+-- Comprobado contra la base real: con la clave del catálogo, `insert`/`update`/`delete`/`select`
+-- sobre `catalogo_servicios` devuelven **403 permission denied**, y la función devuelve **200**.
+--
+-- Quien SÍ puede editar precios es `postgres`, que es el rol con el que actúan el editor de tablas
+-- y el editor SQL del panel. Es exactamente el flujo que la spec quería: cambiar un precio es editar
+-- una celda en el panel, y el sitio publicado no puede hacerlo ni por accidente.
+--
+-- El rol `catalogo_lector` se sigue creando abajo: no cuesta nada, no concede nada de más, y el día
+-- que el proyecto pase a Pro basta con emitir la clave contra él para recuperar el diseño original.
 -- ───────────────────────────────────────────────────────────────────────────────────────────────
+
+-- LA LÍNEA QUE SOSTIENE CA-14 HOY.
+-- `service_role` se salta la seguridad de fila por diseño, pero NO se salta los permisos de tabla:
+-- son dos mecanismos distintos, y es esa diferencia la que aquí hace el trabajo.
+revoke all on public.catalogo_servicios, public.catalogo_factores,
+              public.catalogo_puntos,    public.catalogo_ajustes
+  from service_role;
+
+-- Leer el catálogo es lo único que el sitio necesita, y lo hace por la función.
+grant execute on function public.catalogo_vigente() to service_role;
 
 do $$
 begin

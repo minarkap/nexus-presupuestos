@@ -923,3 +923,33 @@ status: stable
   escrita para arreglar ese problema**. Escribir la guarda no es haberla probado, y la tentación de
   no probar es mayor justo donde el comentario suena más seguro de sí mismo.
 - supersedes: none
+
+## S-0037 — El plan gratuito no deja atar una llave a un rol; la garantía baja a los permisos
+
+- fecha: 2026-09-15
+- fase: puesta en marcha de [catalogo-en-supabase](./specs/catalogo-en-supabase.md)
+- context: el plan ataba CA-14 —«el sitio publicado nunca escribe precios»— al **tipo de llave**: un
+  rol propio `catalogo_lector` y una clave secreta emitida contra él. Al crearla, la API de gestión
+  respondió **HTTP 402**: «las plantillas JWT a medida para claves secretas exigen plan Pro».
+- decision: no gastar dinero, y mover la garantía a donde es **más fuerte**: retirarle a
+  `service_role` todo permiso sobre las cuatro tablas del catálogo. El sitio llega con una clave
+  secreta cualquiera y aun así no puede escribir un precio.
+- por qué funciona: `service_role` **se salta la seguridad de fila por diseño, pero no se salta los
+  permisos de tabla**. Son dos mecanismos distintos de Postgres, y esa diferencia es exactamente lo
+  que aquí hace el trabajo. La función sigue siendo `security definer`, así que leer el catálogo no
+  necesita ningún permiso sobre las tablas.
+- por qué es **mejor** que el diseño original: aquél dependía de que quien creara la llave eligiera
+  bien el rol — una decisión humana, en un panel, meses después, sin nada que la comprobara. Éste no
+  depende de ninguna elección: el permiso no existe.
+- quién sí puede editar precios: `postgres`, que es el rol con el que actúan el editor de tablas y
+  el editor SQL del panel. Es literalmente el flujo que la spec pedía — cambiar un precio es editar
+  una celda— y el sitio publicado no puede hacerlo ni por accidente.
+- evidencia contra la base real (2026-09-15): con la llave del catálogo,
+  `select`/`insert`/`update`/`delete` sobre `catalogo_servicios` → **403 permission denied**;
+  `rpc/catalogo_vigente` → **200**. Con la llave pública → **401** en todo, incluida la función.
+- el rol `catalogo_lector` se conserva creado: no concede nada de más y el día que el proyecto pase
+  a Pro basta con emitir la clave contra él para recuperar el diseño original.
+- lo que enseña: una restricción de facturación obligó a buscar la garantía un nivel más abajo, y el
+  nivel de abajo resultó ser el bueno. La primera solución dependía de que alguien acertara; la
+  segunda no depende de nadie.
+- supersedes: none

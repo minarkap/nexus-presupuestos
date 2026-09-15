@@ -11,7 +11,8 @@
  *
  * Uso:  node scripts/snapshot-catalog.ts
  */
-import { writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { validateCatalog } from '../src/core/catalog-validation.ts'
@@ -56,7 +57,36 @@ function morir(mensaje: string): never {
   process.exit(1)
 }
 
-function escribir(catalogo: unknown, takenAt: string, procedencia: string): void {
+/**
+ * Huella del CONTENIDO del catálogo, sin la fecha.
+ *
+ * Sirve para no reescribir la foto cuando los precios no han cambiado. Sin esto, `prebuild` ponía
+ * una marca de tiempo nueva en cada compilación y dejaba el árbol sucio siempre — y un fichero que
+ * sale sucio siempre acaba commiteado sin mirar.
+ *
+ * Efecto secundario que resulta ser una mejora: `takenAt` pasa a significar «cuándo se vio cambiar
+ * estos precios por última vez» en lugar de «cuándo se compiló». Para quien lea el aviso interno de
+ * un lead calculado con la foto, lo primero es la pregunta que de verdad tiene.
+ */
+function huella(catalogo: unknown): string {
+  return createHash('sha256').update(JSON.stringify(catalogo)).digest('hex').slice(0, 16)
+}
+
+/** La huella que lleva la foto que ya hay en disco, si la hay. */
+function huellaActual(): string | null {
+  try {
+    const m = /\/\/ catalogo-huella: ([0-9a-f]{16})/.exec(readFileSync(DESTINO, 'utf8'))
+    return m?.[1] ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Devuelve `true` si escribió, `false` si la foto ya estaba al día. */
+function escribir(catalogo: unknown, takenAt: string, procedencia: string): boolean {
+  const h = huella(catalogo)
+  if (h === huellaActual()) return false
+
   const cuerpo = `// ─────────────────────────────────────────────────────────────────────────────
 // FICHERO GENERADO — no editar a mano.
 // Lo escribe \`scripts/snapshot-catalog.ts\` en cada publicación (\`prebuild\`).
@@ -66,7 +96,11 @@ function escribir(catalogo: unknown, takenAt: string, procedencia: string): void
 // cuándo es (spec \`catalogo-en-supabase\`, CA-06).
 //
 // Procedencia de esta foto: ${procedencia}
+//
+// \`takenAt\` es cuándo se vio cambiar estos precios por última vez, no cuándo se compiló: la foto
+// sólo se reescribe si el contenido difiere de la anterior.
 // ─────────────────────────────────────────────────────────────────────────────
+// catalogo-huella: ${h}
 
 // Lleva multiplicadores, tabla de puntos y umbral: no puede cruzar al navegador (constitution 8).
 import 'server-only'
@@ -78,6 +112,7 @@ export const CATALOG_SNAPSHOT: CatalogSnapshot = {
 }
 `
   writeFileSync(DESTINO, cuerpo, 'utf8')
+  return true
 }
 
 async function leerVivo(url: string, readKey: string): Promise<unknown> {
@@ -122,5 +157,9 @@ const v = validateCatalog(crudo)
 if (!v.ok) morir(`El catálogo vivo no es válido: ${v.reason}`)
 
 const takenAt = new Date().toISOString()
-escribir(v.catalog, takenAt, 'catálogo vivo de Supabase')
-console.log(`✓ Foto del catálogo tomada del catálogo vivo — ${takenAt}`)
+if (escribir(v.catalog, takenAt, 'catálogo vivo de Supabase')) {
+  console.log(`✓ Foto del catálogo ACTUALIZADA desde el catálogo vivo — ${takenAt}`)
+  console.log('  Los precios han cambiado desde la foto anterior.')
+} else {
+  console.log('✓ Catálogo vivo leído y validado. La foto ya estaba al día; no se reescribe.')
+}
