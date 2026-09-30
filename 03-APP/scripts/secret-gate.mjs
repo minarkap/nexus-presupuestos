@@ -53,6 +53,10 @@ const VALORES_PROHIBIDOS = [
   'RESEND_API_KEY',
   'GOOGLE_SERVICE_ACCOUNT_JSON',
   'GOOGLE_SHEET_ID',
+  // El aviso a n8n W1 (spec `agenda-y-preparacion-de-llamadas`). Con la URL y el secreto, cualquiera
+  // publicaría en el canal del equipo en nombre de la web.
+  'N8N_LEAD_WEBHOOK_URL',
+  'N8N_LEAD_WEBHOOK_SECRET',
 ]
 
 /**
@@ -73,6 +77,9 @@ const CADENAS_PROHIBIDAS = [
   'SUPABASE_SERVICE_ROLE_KEY',
   'service_role',
   'sb_secret_',
+  'NEXT_PUBLIC_N8N_LEAD_WEBHOOK_URL',
+  'NEXT_PUBLIC_N8N_LEAD_WEBHOOK_SECRET',
+  'N8N_LEAD_WEBHOOK_SECRET',
 ]
 
 function ficheros(dir) {
