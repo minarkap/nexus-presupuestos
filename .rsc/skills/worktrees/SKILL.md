@@ -75,7 +75,11 @@ Run this in order. Each check prevents a class of "lost work" you can't easily u
    local HEAD. Stale base = predictable merge pain later. Default: fresh from `origin/<default>`.
 6. **Choose a name** tied to the feature slug — the same `<slug>` the spec and plan use
    (`feat/<slug>`), so the branch, the spec at `02-DOCS/wiki/sdd/specs/<slug>.md`, and the plan at
-   `02-DOCS/wiki/sdd/plans/<slug>.md` all line up and are trivially traceable.
+   `02-DOCS/wiki/sdd/plans/<slug>.md` all line up and are trivially traceable. A change that is not
+   a feature takes the type that fits — `fix/<slug>`, `docs/<slug>`, `chore/<slug>` — from the same
+   Conventional Commits vocabulary the commit guard already enforces here. **The prefix is load
+   bearing**: the automatic cleanup uses it, with the location, as the two signals that say a
+   worktree is ours to remove. A name outside that vocabulary is never swept for you.
 
 Only once the tree state is understood and the user's WIP is accounted for do you create anything.
 
@@ -90,18 +94,30 @@ universal fallback and is exactly what the native tool does under the hood.
 | You have… | Create | Leave intact | Discard |
 | --- | --- | --- | --- |
 | A native worktree tool (`EnterWorktree`-style) | enter, named for the feature slug; the session's working directory moves into the isolated checkout | exit with `keep` — worktree and branch stay on disk for later | exit with `remove` — deletes both when the work is done or abandoned |
-| Plain git only | `git worktree add -b feat/<slug> …` | leave the dir; it persists | `git worktree remove` + `git branch -d` |
+| Plain git only | `git worktree add -b feat/<slug> .worktrees/<slug>` | leave the dir; it persists until its work lands | `git worktree remove` + `git branch -d` |
 
 Removing a worktree that holds uncommitted or unmerged work must be an explicit, confirmed choice,
 never a silent cleanup: refuse the silent path and confirm the discard with the user, quoting what
 would be lost.
 
+**You do not have to remember to clean up.** Once the work lands on the trunk, a `post-merge` hook
+retires the worktree and its branch on its own — it removes only what the reaper already classifies
+as safe, and anything holding unsaved work is refused exactly as it is above. Nothing to run, and
+nothing to remember: the previous version of this skill asked an agent to remember, and it was
+skipped on both features that reached that point.
+
 ```bash
 # from the repo root, default branch up to date
 git fetch origin
-git worktree add -b feat/<slug> ../<repo>-<slug> origin/<default-branch>
-# work happens in ../<repo>-<slug>; the main checkout is untouched
+git worktree add -b feat/<slug> .worktrees/<slug> origin/<default-branch>
+# work happens in .worktrees/<slug>; the main checkout is untouched
 ```
+
+**Inside the repo, always — never a sibling.** `.worktrees/` is already gitignored by the harness,
+the reaper already recognises it as its own, and the difference matters after the work lands: a
+sibling directory sits outside the tree, so it survives every cleanup of the repository and stops
+being visible to whoever would retire it. Two of them accumulated here before this was written down.
+Deleting the repo should delete its worktrees with it.
 
 ```bash
 # branch-only path (the degenerate case: no separate directory needed)
@@ -177,7 +193,7 @@ the dial controls verbosity, never whether you check before risking someone's WI
 | "There's uncommitted WIP, I'll stash it and switch" | A worktree avoids the stash entirely and can't drop it. Use a worktree; if you must stash, confirm with the user and name the stash. |
 | "I'll branch off local HEAD, fetching is slow" | Stale base = merge conflicts you pay for later. Branch off an up-to-date `origin/<default>` unless the user wants HEAD. |
 | "The worktree's dirty but I'll `remove --force` to clean up" | Force-removing a dirty/unmerged worktree throws away work irreversibly. Resolve or confirm explicitly first; never silent-force. |
-| "I'll name it `wip` / `temp` / `branch2`" | An untraceable name divorces the branch from its spec/plan. Name it `feat/<slug>` to match the SDD artifacts. |
+| "I'll name it `wip` / `temp` / `branch2`" | An untraceable name divorces the branch from its spec/plan, and the automatic cleanup will not claim it. Use `<type>/<slug>` — `feat/` for a feature, `fix/`, `docs/`, `chore/` for the rest. |
 | "I'll create the worktree AND start writing code right here" | This skill only isolates. Hand a clean isolated workspace to `implement`; don't blur the two steps. |
 | "Already on a feature branch, I'll make a worktree anyway" | Redundant isolation is just clutter. If the current branch is already isolated and clean, say so and proceed. |
 | "I'll record the worktree path into 02-DOCS so it's tracked" | Isolation is plumbing, not knowledge. No artifact; the branch name traces it. Don't pollute the wiki. |

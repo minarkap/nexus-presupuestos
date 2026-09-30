@@ -2,201 +2,213 @@
   "skills": {
     "orient": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/orient"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/orient"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/orient"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/orient"
     },
     "suggest": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/suggest"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/suggest"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/suggest"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/suggest"
     },
     "bro": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/bro"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/bro"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/bro"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/bro"
     },
     "analyze": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/analyze"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/analyze"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/analyze"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/analyze"
     },
     "automation-strategy": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/automation-strategy"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/automation-strategy"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/automation-strategy"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/automation-strategy"
     },
     "clarify": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/clarify"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/clarify"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/clarify"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/clarify"
     },
     "constitution": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/constitution"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/constitution"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/constitution"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/constitution"
     },
     "debug": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/debug"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/debug"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/debug"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/debug"
     },
     "decision-challenge": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/decision-challenge"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/decision-challenge"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/decision-challenge"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/decision-challenge"
     },
     "deprecation": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/deprecation"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/deprecation"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/deprecation"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/deprecation"
     },
     "fable-operator": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/fable-operator"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/fable-operator"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/fable-operator"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/fable-operator"
     },
     "harness": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/harness"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/harness"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/harness"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/harness"
     },
     "idea-refinement": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/idea-refinement"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/idea-refinement"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/idea-refinement"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/idea-refinement"
     },
     "implement": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/implement"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/implement"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/implement"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/implement"
     },
     "init": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/init"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/init"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/init"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/init"
     },
     "parallel": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/parallel"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/parallel"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/parallel"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/parallel"
     },
     "plan": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/plan"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/plan"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/plan"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/plan"
     },
     "review": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/review"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/review"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/review"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/review"
     },
     "sdd": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/sdd"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/sdd"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/sdd"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/sdd"
     },
     "sdd-init": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/sdd-init"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/sdd-init"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/sdd-init"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/sdd-init"
     },
     "ship": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/ship"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/ship"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/ship"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/ship"
     },
     "simplify-code": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/simplify-code"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/simplify-code"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/simplify-code"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/simplify-code"
     },
     "source-grounded-development": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/source-grounded-development"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/source-grounded-development"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/source-grounded-development"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/source-grounded-development"
     },
     "specify": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/specify"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/specify"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/specify"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/specify"
     },
     "tasks": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/tasks"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/tasks"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/tasks"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/tasks"
     },
     "verify": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/verify"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/verify"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/verify"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/verify"
     },
     "worktrees": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/worktrees"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/worktrees"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/worktrees"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/worktrees"
     },
     "nextjs": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/nextjs"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/nextjs"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/nextjs"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/nextjs"
     },
     "design": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/design"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/design"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/design"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/design"
     },
     "email-connector": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/email-connector"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/email-connector"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/email-connector"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/email-connector"
     },
     "landing-copy": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/landing-copy"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/landing-copy"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/landing-copy"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/landing-copy"
     },
     "deployment": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/deployment"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/deployment"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/deployment"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/deployment"
     },
     "gdpr-privacy": {
       "files": [
-        "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/skills/gdpr-privacy"
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/gdpr-privacy"
       ],
-      "base": "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/skills/gdpr-privacy"
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/gdpr-privacy"
+    },
+    "n8n": {
+      "files": [
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/n8n"
+      ],
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/n8n"
+    },
+    "ftd": {
+      "files": [
+        "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/skills/ftd"
+      ],
+      "base": "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/skills/ftd"
     }
   },
   "agents": [
@@ -207,17 +219,17 @@
     "react-build-resolver",
     "react-reviewer"
   ],
-  "version": "1.3.6",
+  "version": "2.0.18",
   "agentCollisions": [],
   "explicitAgents": [],
   "memory": {
     "mode": "full",
     "reason": "wired",
     "paths": [
-      "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/session-memory-core.mjs",
-      "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/session-memory-adapter.mjs",
-      "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.rsc/session-memory.mjs",
-      "/Users/JoseSanchis/Projects/claude-code/nexus-presupuestos/.claude/settings.local.json"
+      "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/session-memory-core.mjs",
+      "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/session-memory-adapter.mjs",
+      "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.rsc/session-memory.mjs",
+      "/Users/JoseSanchis/Projects/claude-code/executive-lab/casos-ejemplo/nexus-presupuestos/.claude/settings.local.json"
     ]
   },
   "commands": [
@@ -257,12 +269,14 @@
     ".claude/skills/design",
     ".claude/skills/email-connector",
     ".claude/skills/fable-operator",
+    ".claude/skills/ftd",
     ".claude/skills/gdpr-privacy",
     ".claude/skills/harness",
     ".claude/skills/idea-refinement",
     ".claude/skills/implement",
     ".claude/skills/init",
     ".claude/skills/landing-copy",
+    ".claude/skills/n8n",
     ".claude/skills/nextjs",
     ".claude/skills/orient",
     ".claude/skills/parallel",

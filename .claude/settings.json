@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/session-start.mjs\" \"${CLAUDE_PROJECT_DIR}/.claude/skills/suggest/SKILL.md\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"announce\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/session-start.mjs\" \"${CLAUDE_PROJECT_DIR}/.claude/skills/suggest/SKILL.md\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/worklog-checkpoint.mjs\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"quiet\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/worklog-checkpoint.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/worklog-checkpoint.mjs\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"quiet\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/worklog-checkpoint.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/ship-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"guard\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/ship-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       },
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/danger-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"guard\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/gitmoji-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       },
@@ -54,7 +54,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/gitmoji-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"guard\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/danger-guard.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.rsc/userprompt-gate.mjs\" \"${CLAUDE_PROJECT_DIR}\""
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/rsc-bootstrap.mjs\" \"quiet\" \"${CLAUDE_PROJECT_DIR}\" \"${CLAUDE_PROJECT_DIR}/.rsc/userprompt-gate.mjs\" \"${CLAUDE_PROJECT_DIR}\""
           }
         ]
       }

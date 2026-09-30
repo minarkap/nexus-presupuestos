@@ -16,12 +16,14 @@
     "design",
     "email-connector",
     "fable-operator",
+    "ftd",
     "gdpr-privacy",
     "harness",
     "idea-refinement",
     "implement",
     "init",
     "landing-copy",
+    "n8n",
     "nextjs",
     "orient",
     "parallel",
@@ -42,7 +44,7 @@
   "ownSkills": [
     "nexus-consulting-design"
   ],
-  "catalogVersion": "1.3.6",
+  "catalogVersion": "2.0.18",
   "tier": "balanced",
   "optOuts": [],
   "memory": {
