@@ -56,3 +56,32 @@ describe('Inicio (CA-07, CA-08)', () => {
     expect(home.before.p).toMatch(/rango orientativo, no un presupuesto/)
   })
 })
+
+/**
+ * La fase A de `agenda-y-preparacion-de-llamadas` da datos del lead a dos encargados nuevos: la
+ * mensajería interna del equipo (Slack) y la herramienta de automatización (n8n). El aviso tiene que
+ * decirlo ANTES de publicar esa fase (principio 23, CA-24). Y todavía NO cuenta la investigación de la
+ * fase B: mientras no la cuente, nadie queda autorizado a ser investigado (CA-23).
+ */
+describe('Aviso de privacidad — lo que cambia con la agenda (CA-24, CA-23)', () => {
+  const texto = (id: string) => privacidad.sections.find((s) => s.id === id)?.paragraphs.join(' ') ?? ''
+
+  it('CA-24 · «Quién los recibe» nombra la mensajería interna y la automatización', () => {
+    expect(texto('destinatarios')).toMatch(/mensajer[ií]a interna/i)
+    expect(texto('destinatarios')).toMatch(/automatizaci[oó]n/i)
+  })
+
+  it('CA-24 · «Transferencias» las incluye entre los proveedores que pueden tratar fuera del EEE', () => {
+    expect(texto('transferencias')).toMatch(/mensajer[ií]a interna/i)
+    expect(texto('transferencias')).toMatch(/automatizaci[oó]n/i)
+  })
+
+  it('el enlace de reserva también llega por correo, y el aviso lo dice', () => {
+    expect(texto('destinatarios')).toMatch(/recibir[aá]s en tu correo/i)
+  })
+
+  it('CA-23 · el aviso vigente NO cuenta la investigación de la fase B', () => {
+    expect(privacidad.coversResearch).toBe(false)
+    expect(JSON.stringify(privacidad.sections)).not.toMatch(/fuentes (abiertas|p[uú]blicas)/i)
+  })
+})
