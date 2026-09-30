@@ -48,6 +48,9 @@ para operar un servicio externo vive bajo `01-TOOLS/<SERVICIO>/`.
 | `RESEND` | correo transaccional | Activa. Credencial real y dominio verificado (`D-0013`). |
 | `GOOGLE` | hoja de registro + citas | Activa. Registro de respaldo de cada lead. |
 | `VERCEL` | publicación | Activa. Token de operación y prueba de humo del proyecto (`D-0018`). |
+| `N8N` | automatización | **Sin activar.** Esperando la instancia del proyecto (B3). Contrato del aviso en `contracts/`; diseño en `02-DOCS/wiki/stack/n8n-agenda.md`. |
+| `SLACK` | mensajería interna | **Sin activar.** Esperando espacio, canal y app (B4). |
+| `PERPLEXITY` | investigación pública (fase B) | **Sin activar.** Esperando cuenta con API (B6) y el aviso de privacidad de la fase B (B8). |
 
 La regla es **no tools especulativas**: un proveedor entra aquí cuando está integrado en el runtime
 o cuando hay una operación manual recurrente que duele.
