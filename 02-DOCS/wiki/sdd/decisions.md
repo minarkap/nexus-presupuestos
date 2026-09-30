@@ -1088,3 +1088,48 @@ status: stable
   falla lo hace en el peor sitio, que es la publicación. El sitio en producción nunca dejó de
   funcionar; lo que se había roto era poder cambiarlo.
 - supersedes: none
+
+## S-0043 — El enlace de reservas es la versión para incrustar, y una sola variable basta
+
+- fecha: 2026-09-30
+- fase: `implement` de [agenda-y-preparacion-de-llamadas](./specs/agenda-y-preparacion-de-llamadas.md) (B1)
+- context: Jose creó la agenda de citas y compartió su enlace corto (`calendar.app.google/…`). Tanto
+  ese enlace como la página pública a la que redirige responden `X-Frame-Options: SAMEORIGIN`: el
+  navegador se niega a mostrarlas dentro de otra web, y la pantalla de resultado habría incrustado
+  un recuadro en blanco. La versión `…/calendar/appointments/schedules/<id>?gv=true` responde sin esa
+  cabecera y además funciona abierta sola en una pestaña.
+- opciones:
+  1. dos variables: la de incrustar para la pantalla y el enlace corto para el correo;
+  2. una sola, la de incrustar, para todo.
+- decision: la opción 2. El enlace del correo es más largo y menos bonito, pero funciona. Además
+  mantiene lo que la revisión del PR #3 dejó establecido: pantalla y correo leen **un solo** criterio
+  de «hay enlace» (`normalizeBookingUrl`). Con dos variables podrían volver a divergir.
+- comprobado: cabeceras de las tres formas del enlace con `curl`. En local, `/presupuesto` recibe el
+  valor (esta mañana, en producción, llegaba vacío).
+- lo que enseña: «¿acepta incrustarse?» estaba en la deuda de la lista de tono desde el 2026-09-02, y
+  la respuesta era «no, con el enlace que da Google por defecto».
+- supersedes: none
+
+## S-0044 — Base legal de la fase B: interés legítimo, y el tono de los textos nuevos por delegación
+
+- fecha: 2026-09-30
+- fase: `implement` de [agenda-y-preparacion-de-llamadas](./specs/agenda-y-preparacion-de-llamadas.md)
+- context: la spec dejaba abierta la base legal para investigar a la persona, y el principio 28 pide
+  que una persona revise los textos nuevos. Jose, literal: «sobre el tono de los textos nuevos me voy
+  a fiar de ti quiero que pongas textos que sean coherentes y que sean aceptables» y «como de momento
+  esto es una demo no hace falta que hagas nada, pero si quieres haz de nuevo una base legal
+  coherente».
+- decision:
+  - **base legal: interés legítimo** (art. 6.1.f), la recomendación razonada del borrador. La casilla
+    de consentimiento actual no sirve sin una segunda casilla (sería un consentimiento agrupado), y
+    añadirla cambia el formulario. La evaluación de interés legítimo queda **fechada el 2026-09-30 y
+    sin firma de una persona**, porque es una demo.
+  - **el aviso de la fase B NO se publica todavía.** Publicarlo ahora describiría un tratamiento que
+    aún no existe (W2 sin construir), que es justo la inexactitud que el aviso intenta evitar. Se
+    publica en el mismo paso que activa W2, con `coversResearch: true`.
+  - **tono:** las actas de S5, S9, S10 y S15 se cierran **por delegación**, revisadas por el agente
+    contra las ocho comprobaciones. El acta dice expresamente que no es una lectura humana.
+- consecuencia asumida: no hay asesoría ni firma humana, ni en la evaluación ni en el tono. Es
+  aceptable en una demo y **no lo es para publicar con leads reales**. Queda escrito para que nadie lo
+  herede sin saberlo.
+- supersedes: none

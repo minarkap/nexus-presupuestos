@@ -49,12 +49,23 @@ no viajan en el repositorio.
 | `RESEND_FROM` | sí | Igual que la anterior — las dos van juntas. |
 | `NEXUS_INTERNAL_MAILBOX` | recomendada | Cae en el defecto del código, `jose.sanchis@executivelab.ai`, que **sí** recibe correo. Ningún lead se pierde; sólo deja de poder redirigirse sin tocar código. |
 | `NEXT_PUBLIC_SITE_URL` | sí | El sitio se anuncia como `https://nexus.ad`: `canonical` y `og:url` mienten. |
-| `NEXT_PUBLIC_CALENDAR_URL` | no | Nada roto: la pantalla se repliega a «te escribimos con la disponibilidad». |
+| `NEXT_PUBLIC_CALENDAR_URL` | sí, desde la agenda | Nada roto: pantalla y correo dicen «te escribimos con la disponibilidad». Con valor: calendario en pantalla y enlace en el correo del cualificado. **Tiene que ser la versión para incrustar** (ver abajo) |
+| `N8N_LEAD_WEBHOOK_URL` / `N8N_LEAD_WEBHOOK_SECRET` | sí, cuando exista W1 | El aviso al canal queda apagado y **cada correo interno lo dice** (CA-09). Van SIN `NEXT_PUBLIC_` |
 
 Las nueve primeras están cargadas en `production`, `preview` y `development`.
-`NEXT_PUBLIC_CALENDAR_URL` **nunca se ha llegado a poner**, y no pasa nada: el resultado trae
-`showCalendar: true`, pero `ResultScreen` se repliega solo y muestra «Te escribimos con la
-disponibilidad del equipo» en vez del calendario. No hay botón muerto. Ponerla es opcional.
+`NEXT_PUBLIC_CALENDAR_URL` **no se había llegado a poner** hasta el 2026-09-30, y mientras tanto el
+correo del cualificado afirmaba «cita confirmada» (corregido en `agenda-y-preparacion-de-llamadas`).
+**Valor (2026-09-30): la versión para incrustar de la agenda de Jose.**
+
+```
+https://calendar.google.com/calendar/appointments/schedules/AcZssZ2-ymA152nQd7-WkiZoXgpCGHyqgI4jRfoyLLOS88a8aJMvjFFwy3gQxpUd_FzScUfbZFu5UCED?gv=true
+```
+
+**No vale el enlace corto** (`calendar.app.google/…`) **ni la página pública**: las dos responden
+`X-Frame-Options: SAMEORIGIN` y la pantalla mostraría un recuadro en blanco. La versión `?gv=true` sí
+se deja incrustar y se abre bien sola, así que la misma variable sirve para el calendario, para
+«ábrelo en una pestaña nueva» y para el correo (`S-0043`). Va en `production` y `preview`, y después
+hay que volver a publicar: al ser `NEXT_PUBLIC_`, se lee al compilar.
 
 > **Resuelto el 2026-09-15.** El valor por defecto de `NEXUS_INTERNAL_MAILBOX` en
 > `src/app/actions.ts` apuntaba a `oportunidades@nexus.ad`, un dominio que no recibe correo: un

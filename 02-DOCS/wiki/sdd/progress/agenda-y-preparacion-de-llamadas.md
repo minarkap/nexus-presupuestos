@@ -166,3 +166,18 @@ status: active
   - Minor (anotado): la puerta prohíbe por nombre `N8N_LEAD_WEBHOOK_SECRET` pero no
     `N8N_LEAD_WEBHOOK_URL` a secas. Es la misma asimetría que `SUPABASE_URL`, y la guarda real es
     `server-only`
+
+## Tras la respuesta de Jose — 2026-09-30
+- **Tono:** Jose delega («me voy a fiar de ti»). El agente revisa S5, S9, S10 y S15 contra las ocho
+  comprobaciones y encuentra una incoherencia: sin enlace, la tarjeta se titulaba «Reserva un hueco»
+  encima de «Te escribimos». Corregida con prueba, primero roja y luego verde, en el PR #3
+  (`f2dc444`). Acta cerrada por delegación; el acta dice que no es una lectura humana
+- **B1, hecho por Jose:** agenda de citas creada. Su enlace corto y su página pública prohíben
+  incrustarse (`X-Frame-Options: SAMEORIGIN`); la versión `?gv=true` sí lo permite (`S-0043`).
+  Puesta en `03-APP/.env.local` y `01-TOOLS/GOOGLE/.env`; en local `/presupuesto` ya la recibe.
+  **Falta en Vercel** (B2)
+- **Base legal:** interés legítimo, por delegación (`S-0044`). El aviso de la fase B no se publica
+  hasta que W2 exista
+- la protección del proyecto no deja fusionar ramas mientras haya cambios del arnés sin guardar (no
+  son de esta tarea), y reacciona incluso a esa palabra dentro de un texto. El commit se trajo con
+  `cherry-pick` en vez de desactivarla

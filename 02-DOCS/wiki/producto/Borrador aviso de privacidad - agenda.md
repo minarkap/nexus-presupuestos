@@ -75,8 +75,12 @@ buscador los excluyen expresamente y los tres primeros informes pasan revisión 
 | **Interés legítimo** (art. 6.1.f), con evaluación escrita | Encaja con lo que pasa: la persona **ha pedido** la llamada y espera que quien la atiende sepa con quién habla. Se informa antes y se puede oponer con un correo | Exige la evaluación de interés legítimo (abajo), fechada y guardada, **antes** de empezar |
 
 **Recomendación del borrador: interés legítimo**, con la evaluación del apartado 3.2 y el derecho de
-oposición bien visible. **Es una recomendación, no una conclusión.** La decide Jose, y la revisa una
-asesoría si la hay (pregunta abierta de la spec).
+oposición bien visible.
+
+> **Decidido el 2026-09-30 (`S-0044`): interés legítimo.** Jose delegó: «como de momento esto es una
+> demo no hace falta que hagas nada, pero si quieres haz de nuevo una base legal coherente». Se
+> adopta la recomendación. **Sin asesoría y sin firma de una persona**: vale para la demo, no para
+> publicar con leads reales sin revisarlo antes.
 
 ### 3.2 Evaluación de interés legítimo (borrador, para fechar y firmar)
 
@@ -98,7 +102,7 @@ asesoría si la hay (pregunta abierta de la spec).
      aviso; revisión humana de los primeros informes; los homónimos van marcados.
    - Resultado propuesto: **la ponderación se supera**, siempre que se mantengan estas salvaguardas.
 
-Fecha: ________ · Firma: ________ (Jose Sanchis)
+Fecha: 2026-09-30 · Firma: **sin firma de una persona** (demo; delegación de Jose, `S-0044`)
 
 ### 3.3 Texto propuesto
 
@@ -146,7 +150,7 @@ vigente y valen también para esta finalidad.
 
 ## 4. Antes de publicar la fase B
 
-- [ ] Jose elige la base legal (3.1). Si es interés legítimo, fecha y firma la evaluación (3.2).
+- [x] Base legal elegida: interés legítimo (`S-0044`). Evaluación fechada, **sin firma humana** (demo).
 - [ ] Asesoría o DPO, si la hay, revisa el texto.
 - [ ] Contrato de encargado (art. 28) o cláusulas equivalentes con cada proveedor nuevo, y mecanismo
       de transferencia verificado:

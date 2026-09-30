@@ -302,7 +302,7 @@ automatizaciones. Es un *cómo*, así que el plan la recoge; la spec solo exige 
 - **suposición tomada** — La entrada interna de la agenda **no ocupa hueco**: no quita disponibilidad
   a la página de reservas. *Base:* si ocupara, cada reserva bloquearía también el hueco anterior.
   *Riesgo:* ninguno visible para el lead.
-- **pregunta abierta** — ¿Con qué base legal se investiga a la persona: la misma casilla de
+- ~~**pregunta abierta**~~ **resuelta el 2026-09-30 (`S-0044`): interés legítimo**, por delegación de Jose y sin asesoría (demo). Pregunta original: ¿Con qué base legal se investiga a la persona: la misma casilla de
   consentimiento, ampliada a esta finalidad, o el interés legítimo en preparar una reunión que el
   propio lead ha pedido? Es para la revisión del aviso (skill `gdpr-privacy`) y bloquea la activación
   de la fase B, no su construcción.
@@ -337,3 +337,4 @@ automatizaciones. Es un *cómo*, así que el plan la recoge; la spec solo exige 
   5. CA-17 no era binario: se parte en una comprobación automática (17a) y un acta humana (17b).
   6. CA-12 no cubría los textos de la página de reservas, y CA-13 estaba en la fase equivocada.
 - 2026-09-30 — **Aprobada**: «Dale! Haz todo lo que puedas hacer ya, y si, instala la skill de n8n» (Jose, 2026-09-30), en respuesta a «¿apruebas la spec y el plan?».
+- 2026-09-30 — Base legal resuelta (`S-0044`). Jose creó la página de reservas; solo sirve su versión para incrustar (`S-0043`).
