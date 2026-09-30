@@ -65,7 +65,25 @@ no viajan en el repositorio.
 | `NEXT_PUBLIC_SITE_URL` | sí | El sitio se anuncia como `https://nexus.ad`: `canonical` y `og:url` mienten. |
 | `NEXT_PUBLIC_CALENDAR_URL` | no | Nada roto: la pantalla se repliega a «te escribimos con la disponibilidad». |
 
-Las nueve primeras están cargadas en `production`, `preview` y `development`.
+Las nueve primeras están cargadas. Los **cuatro secretos** —`RESEND_API_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_CATALOG_READ_KEY` y `RATE_LIMIT_SALT`— son de tipo
+**`sensitive`** y sólo existen en `production` y `preview`. Las otras cinco son `plain` y están
+también en `development`.
+
+> **Por qué `sensitive` (2026-09-30).** El tipo `encrypted` está cifrado en reposo, pero cualquiera
+> con acceso al equipo puede leer el valor en el panel. `sensitive` no: una vez guardado, nadie lo
+> vuelve a ver, ni siquiera por la API. Dos consecuencias:
+> - **No se puede comprobar leyendo.** Para saber si un secreto es correcto se prueba en su origen
+>   (Resend, Supabase), no en Vercel.
+> - **Vercel no admite `sensitive` en `development`.** No hace falta, porque el desarrollo local lee
+>   `03-APP/.env.local`, no Vercel.
+>
+> Cambiar una variable de tipo sin borrarla se hace con `PATCH /v9/projects/<proyecto>/env/<id>`
+> pasando `type`, `value` y `target`. Así no queda ni un instante sin ella.
+>
+> Cualquier cambio de variables **sólo surte efecto en la siguiente publicación**: los despliegues
+> ya hechos conservan los valores con los que se construyeron.
+
 `NEXT_PUBLIC_CALENDAR_URL` **nunca se ha llegado a poner**, y no pasa nada: el resultado trae
 `showCalendar: true`, pero `ResultScreen` se repliega solo y muestra «Te escribimos con la
 disponibilidad del equipo» en vez del calendario. No hay botón muerto. Ponerla es opcional.

@@ -72,3 +72,8 @@ ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni 
 - Probado en siete casos contra la API real (token bueno con y sin equipo, token falso, equipo equivocado, proyecto inexistente, sin proyecto, raíz nula).
 - `VERCEL_TEAM_ID` rellenado en el `.env` local (fuera del repositorio).
 - Updated: `01-TOOLS/VERCEL/{test_connection.sh,README.md,.env.example}`.
+
+## 2026-09-30 — secretos sensibles en Vercel; la clave de Resend de producción estaba muerta
+- Aviso de Vercel: `RESEND_API_KEY` visible para cualquiera con acceso. Al revisarlo, esa clave **ya no existía en Resend** (401 «API key is invalid»). Se borró con toda probabilidad el 29/09 al crear `presupuestos nexus jose`, que sólo se llevó a `01-TOOLS/RESEND/.env`. Desde entonces la web no podía enviar correos. Sin leads perdidos: la base no registra ninguno desde el 28/09, y `submit` guarda antes de enviar.
+- Clave nueva `nexus-presupuestos · web (Vercel)`, sólo envío y limitada a `executivelab.ai`, en Vercel y en `03-APP/.env.local`. `RESEND_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_CATALOG_READ_KEY` y `RATE_LIMIT_SALT` pasan a `sensitive` (production + preview), con el tipo cambiado en sitio y los mismos valores.
+- Nuevos: `ftd/secretos-sensibles-en-vercel.md` (primer documento del carril FTD). Updated: `index.md` (sección ftd), `01-TOOLS/VERCEL/README.md` (tipos de variable), `01-TOOLS/RESEND/README.md` (qué clave vive dónde e incidente).

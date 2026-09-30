@@ -147,6 +147,14 @@ Listas que bloquean la publicación y que ninguna prueba automática puede cerra
 | [Plan — El catálogo comercial vive en la base de datos](sdd/plans/catalogo-en-supabase.md) | El catálogo se inyecta para que el núcleo siga síncrono y puro; cuatro tablas editables celda a celda leídas de una vez por una función de Postgres; foto cocida en cada publicación como respaldo; y un fichero dorado que demuestra que la mudanza no cambió ni una cifra. | 2026-09-14 | — |
 | [Plan — La conservación de doce meses se ejecuta sola](sdd/plans/retencion-doce-meses.md) | Tarea programada dentro de Postgres en vez de una ruta del sitio, para no exponer ningún endpoint capaz de borrar datos; más la columna que protege a los leads convertidos en cliente. | 2026-09-14 | — |
 
+## ftd
+
+Documentos del carril FTD: uno por cambio ordinario, con intención, alcance, lista y pruebas observadas.
+
+| Article | Summary | Updated | Score |
+|---------|---------|---------|-------|
+| [Secretos sensibles en Vercel y clave de Resend nueva](ftd/secretos-sensibles-en-vercel.md) | La clave de Resend de producción llevaba muerta desde el 29/09; clave nueva sólo-envío y los cuatro secretos pasan a `sensitive`. | 2026-09-30 | — |
+
 > **Score**: puntuación compuesta de calidad (enlaces entrantes, número de fuentes, citas, frescura;
 > menos conflictos y penalización por orfandad). Se regenera en cada Maintenance Pass. Los artículos
 > por debajo del umbral de reescritura los recoge Micro-Improve y Deep Improve.
