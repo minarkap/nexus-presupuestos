@@ -79,3 +79,15 @@ ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni 
 - Sin aplicar: `01-TOOLS/SUPABASE/agenda.sql` (probado en un Postgres local efímero).
 - Nuevos: `01-TOOLS/{N8N,SLACK,PERPLEXITY}/`, `stack/n8n-agenda.md`, `producto/Borrador aviso de privacidad - agenda.md`, `sdd/progress/agenda-y-preparacion-de-llamadas.md`, `sdd/analysis/agenda-y-preparacion-de-llamadas.md`.
 - Pendiente de Jose: B1–B10 del plan, actas de tono S5, S9, S10 y S15, y la base legal de la fase B.
+
+## 2026-09-30 — la prueba de humo de Vercel daba por roto un token sano
+- El token de Vercel es de equipo (`vcp_…`): no tiene usuario, así que `/v2/user` responde 404 aunque el token lea el proyecto y sus despliegues sin problema. `test_connection.sh` validaba justo con `/v2/user` y marcaba el fallo. Era un falso negativo: el token nunca estuvo roto y no hay que renovarlo.
+- Arreglo: el token se valida leyendo proyectos, y el 403 distingue token inválido (`invalidToken`) de equipo equivocado. De paso, dos fallos latentes que el primer paso tapaba: `«$VERCEL_PROJECT»` sin llaves hacía que el bash de macOS leyera `»` como parte del nombre de la variable, y un `rootDirectory` nulo abortaba el script.
+- Probado en siete casos contra la API real (token bueno con y sin equipo, token falso, equipo equivocado, proyecto inexistente, sin proyecto, raíz nula).
+- `VERCEL_TEAM_ID` rellenado en el `.env` local (fuera del repositorio).
+- Updated: `01-TOOLS/VERCEL/{test_connection.sh,README.md,.env.example}`.
+
+## 2026-09-30 — secretos sensibles en Vercel; la clave de Resend de producción estaba muerta
+- Aviso de Vercel: `RESEND_API_KEY` visible para cualquiera con acceso. Al revisarlo, esa clave **ya no existía en Resend** (401 «API key is invalid»). Se borró con toda probabilidad el 29/09 al crear `presupuestos nexus jose`, que sólo se llevó a `01-TOOLS/RESEND/.env`. Desde entonces la web no podía enviar correos. Sin leads perdidos: la base no registra ninguno desde el 28/09, y `submit` guarda antes de enviar.
+- Clave nueva `nexus-presupuestos · web (Vercel)`, sólo envío y limitada a `executivelab.ai`, en Vercel y en `03-APP/.env.local`. `RESEND_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_CATALOG_READ_KEY` y `RATE_LIMIT_SALT` pasan a `sensitive` (production + preview), con el tipo cambiado en sitio y los mismos valores.
+- Nuevos: `ftd/secretos-sensibles-en-vercel.md` (primer documento del carril FTD). Updated: `index.md` (sección ftd), `01-TOOLS/VERCEL/README.md` (tipos de variable), `01-TOOLS/RESEND/README.md` (qué clave vive dónde e incidente).

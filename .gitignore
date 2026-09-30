@@ -105,3 +105,9 @@ Desktop.ini
 .claude/commands/nextjs-review.md
 .claude/commands/resume-session.md
 .claude/commands/save-session.md
+
+# rsc local state (hooks, seals, logs) and managed skill links — machine-local
+.claude/skills/n8n
+
+# rsc local state (hooks, seals, logs) and managed skill links — machine-local
+.claude/skills/ftd
