@@ -34,7 +34,7 @@ Fuera:
 - [x] `03-APP/.env.local` lleva la clave nueva — *prueba:* la huella coincide con la creada.
 - [x] `RESEND_API_KEY` en Vercel es `sensitive` con la clave nueva — *prueba:* el listado de Vercel dice `sensitive`.
 - [x] Los otros tres secretos son `sensitive` con el mismo valor — *prueba:* huella del valor leído = huella del enviado; listado dice `sensitive`.
-- [ ] Producción publicada con las variables nuevas — *prueba:* despliegue READY del commit y dominio 200.
+- [x] Producción publicada con las variables nuevas — *prueba:* despliegue READY del commit y dominio 200.
 - [x] Documentación al día — *prueba:* el diff de los README, el índice y el log.
 - [ ] Envío real de extremo a extremo — *prueba:* un envío del formulario llega. **Pendiente de Jose**: crea un lead en la base y manda correo.
 
@@ -54,11 +54,14 @@ Fuera:
   → HTTP 200 en los cuatro. Huellas del valor leído y del enviado: `3588ec2a40` (service role),
   `1fb9bd0278` (catálogo) y `1ccba07aa6` (sal), iguales. El listado final da los cuatro `sensitive`,
   sólo en `production,preview`, y las otras cinco `plain` sin tocar.
+- **Publicación.** El commit `10a79c0` publicó en producción: despliegue READY a las 11:46 UTC.
+  `presupuestos.barcovalencia.com` y `/presupuesto` responden 200. La compilación pasa por el
+  `prebuild`, que lee `SUPABASE_CATALOG_READ_KEY`, así que el tipo `sensitive` también funciona al
+  compilar.
 - **Por error** se mostró en el registro de la sesión el valor de la clave vieja. No tiene efecto:
   ya estaba revocada en Resend.
 
 ## Next
 
-Publicar en `main` (Vercel sólo aplica las variables nuevas en la siguiente publicación) y comprobar
-READY y 200. Después, que Jose decida si hace un envío real del formulario como prueba de extremo a
-extremo.
+Sólo queda la prueba de extremo a extremo: un envío real del formulario, que Jose decide si se
+hace. Crea un lead en la base y manda la estimación y el aviso interno.
