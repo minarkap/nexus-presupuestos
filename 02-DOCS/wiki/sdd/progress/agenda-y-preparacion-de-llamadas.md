@@ -69,3 +69,14 @@ status: active
 - status: complete
 - `SEO_GATE_PORT=3199 bash scripts/verify.sh` → **VERDE**, 397 pruebas, cobertura de core 96,22 %
 - nota: el puerto 3100 lo ocupa un servidor de otro proyecto. No se ha tocado; se usa otro puerto
+
+## Revisión en frío del PR 1 — 2026-09-30
+- revisor: subagente `refuter-correctness`, sin contexto de la sesión
+- veredicto: aprobado, con 1 hallazgo **Important** y 1 **Minor**
+- Important (corregido): pantalla y correo leían `NEXT_PUBLIC_CALENDAR_URL` cada uno a su manera. Con
+  un espacio en el panel, el correo decía «te escribimos» y la pantalla incrustaba un calendario roto
+  → `src/app/booking-url.ts` es el único criterio, y lo usan los dos. Prueba: roja por aserción
+  (4/5) y luego verde. La prueba estática exige que ninguno lea la variable a pelo
+- Minor (pendiente, anotado): `BookingOffer.url` admite `''` a nivel de tipo; hoy el único
+  constructor ya normaliza
+- `verify.sh` → VERDE, 402 pruebas

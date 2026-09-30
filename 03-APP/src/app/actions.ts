@@ -8,6 +8,7 @@ import { selectRegistryPort } from '@/ports/registry'
 import { selectRateLimitPort } from '@/ports/rate-limit'
 import { loadCatalog } from '@/ports/catalog'
 import type { Answers } from '@/core/types'
+import { normalizeBookingUrl } from './booking-url'
 
 /**
  * Frontera de confianza. Todo lo que hay debajo de esta función corre en servidor:
@@ -21,9 +22,9 @@ const cache = new DedupCache()
 // variable perdía todos los leads en silencio, que es el único fallo de este sistema que nadie ve.
 const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'jose.sanchis@executivelab.ai'
 
-// La MISMA variable que incrusta el calendario en `/presupuesto`: pantalla y correo leen un único
-// punto, así que no pueden decir cosas distintas. Vacía → `null` → nadie promete una reserva.
-const BOOKING_URL = process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() || null
+// La MISMA variable, por la MISMA función, que el calendario de `/presupuesto`: pantalla y correo no
+// pueden decir cosas distintas. Vacía o solo espacios → `null` → nadie promete una reserva.
+const BOOKING_URL = normalizeBookingUrl(process.env.NEXT_PUBLIC_CALENDAR_URL)
 
 /**
  * La huella del origen, calculada AQUÍ y sólo aquí.
