@@ -105,6 +105,17 @@ export interface LeadRecord {
   readonly rangeText: string | null
   readonly score: Score
   readonly blockers: readonly Blocker[]
+  /**
+   * El desenlace que decidió `mapOutcome` y si se le ofreció reservar (= `showCalendar`). Viajan con el
+   * lead para que n8n LEA el veredicto en vez de volver a compararlo con el umbral (constitution 9,
+   * S-0041).
+   */
+  readonly outcomeKind: RedactedOutcome['kind']
+  readonly bookingOffered: boolean
+  /** Versión del aviso de privacidad vigente al enviar (CA-25). */
+  readonly privacyVersion: string
+  /** Si ese aviso ya contaba la investigación de la fase B. Sin eso no se investiga a nadie (CA-23). */
+  readonly researchAllowed: boolean
 }
 
 export interface EmailMessage {

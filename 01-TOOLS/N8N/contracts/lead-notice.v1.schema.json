@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nexus-presupuestos/lead-notice.v1",
+  "title": "LeadNoticeV1",
+  "description": "El aviso de un lead que la web manda a n8n W1 tras guardarlo y enviar su correo (plan agenda-y-preparacion-de-llamadas §3). Lo produce buildLeadNotice (03-APP/src/core/team-notice.ts); una prueba de la web comprueba que cumple este esquema. Cambiar un campo es cambiar de versión.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "submission_id",
+    "submitted_at",
+    "contact",
+    "service_label",
+    "range_text",
+    "score",
+    "outcome_kind",
+    "booking_offered",
+    "client_email",
+    "registry"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "submission_id": { "type": "string" },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "email", "company"],
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "company": { "type": "string" }
+      }
+    },
+    "service_label": {
+      "type": ["string", "null"],
+      "description": "null = línea sin catalogar o sin catálogo: no hay cifra."
+    },
+    "range_text": { "type": ["string", "null"] },
+    "score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "breakdown"],
+      "properties": {
+        "total": { "type": "integer" },
+        "breakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["signal", "answer", "points"],
+            "properties": {
+              "signal": { "type": "string" },
+              "answer": { "type": "string" },
+              "points": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "outcome_kind": { "enum": ["qualified", "not_qualified", "uncatalogued"] },
+    "booking_offered": {
+      "type": "boolean",
+      "description": "= showCalendar. Es la marca de cualificado del mensaje de Slack. n8n NUNCA vuelve a comparar la puntuación con el umbral (constitución 9)."
+    },
+    "client_email": { "enum": ["ok", "failed"] },
+    "registry": { "enum": ["ok", "failed"] }
+  }
+}

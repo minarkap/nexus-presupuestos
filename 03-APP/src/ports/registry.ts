@@ -66,6 +66,10 @@ export interface LeadRow {
   readonly range_text: string | null
   readonly score_total: number
   readonly score_breakdown: readonly SignalContribution[]
+  readonly outcome_kind: LeadRecord['outcomeKind']
+  readonly booking_offered: boolean
+  readonly privacy_version: string
+  readonly research_allowed: boolean
 }
 
 /**
@@ -94,6 +98,10 @@ export function toLeadRow(row: LeadRecord): LeadRow {
     range_text: row.rangeText,
     score_total: row.score.total,
     score_breakdown: row.score.breakdown,
+    outcome_kind: row.outcomeKind,
+    booking_offered: row.bookingOffered,
+    privacy_version: row.privacyVersion,
+    research_allowed: row.researchAllowed,
   }
 }
 

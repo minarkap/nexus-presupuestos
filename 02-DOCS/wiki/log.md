@@ -71,3 +71,11 @@ ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni 
 - Nuevos: `sdd/specs/agenda-y-preparacion-de-llamadas.md` (draft), `sdd/plans/agenda-y-preparacion-de-llamadas.md` (draft), `S-0040`, `S-0041`.
 - Updated: `index.md` (filas de spec y plan).
 - Pendiente de Jose: aprobar spec y plan; bloqueos B1–B10 del plan §6.2.
+
+## 2026-09-30 — implement `agenda-y-preparacion-de-llamadas` (lo que se podía hacer ya)
+- **Fuera de plan:** `next build` dejó de compilar, también en `main` (Turbopack con Sora de Google Fonts). Las fuentes pasan al repositorio (`S-0042`, PR #2).
+- PR #3 (apilado sobre #2): el correo del cualificado deja de afirmar «cita confirmada» y lleva el enlace de reserva si existe; la pantalla deja de prometer una reserva inmediata; un solo criterio de «hay enlace».
+- PR 2 de la funcionalidad (apilado sobre #3): el veredicto y la versión del aviso se guardan con cada lead; aviso firmado a n8n con su contrato v1; puerta de secretos ampliada; aviso de privacidad de la fase A.
+- Sin aplicar: `01-TOOLS/SUPABASE/agenda.sql` (probado en un Postgres local efímero).
+- Nuevos: `01-TOOLS/{N8N,SLACK,PERPLEXITY}/`, `stack/n8n-agenda.md`, `producto/Borrador aviso de privacidad - agenda.md`, `sdd/progress/agenda-y-preparacion-de-llamadas.md`, `sdd/analysis/agenda-y-preparacion-de-llamadas.md`.
+- Pendiente de Jose: B1–B10 del plan, actas de tono S5, S9, S10 y S15, y la base legal de la fase B.

@@ -5,6 +5,7 @@ import { submitLead, DedupCache, validateAnswers } from './submit'
 import { FakeEmailPort } from '@/ports/email'
 import { FakeRegistryPort } from '@/ports/registry'
 import { FakeRateLimitPort } from '@/ports/rate-limit'
+import { FakeTeamNoticePort } from '@/ports/team-notice'
 import type { Answers } from './types'
 
 /** El catálogo de estas pruebas: la semilla, dada por viva. Lo que se mide aquí es la
@@ -61,8 +62,8 @@ describe('NUNCA sale una cifra improvisada de la firma (constitution 5, CA-02)',
 
     const r = await submitLead(conBasura('size', 'INVENTADO'), 'adv1', {
       catalog: catálogoVivo,
-      emailPort: email, registryPort: registry, rateLimitPort: new FakeRateLimitPort(), fingerprint: null,
-      internalMailbox: 'o@n.com', bookingUrl: null, now: () => new Date('2026-01-01'),
+      emailPort: email, registryPort: registry, rateLimitPort: new FakeRateLimitPort(), teamNoticePort: new FakeTeamNoticePort(), fingerprint: null,
+      internalMailbox: 'o@n.com', bookingUrl: null, privacy: { version: 'v', coversResearch: false }, now: () => new Date('2026-01-01'),
     }, new DedupCache())
 
     expect(r).toMatchObject({ kind: 'validation_error' })
@@ -76,8 +77,8 @@ describe('NUNCA sale una cifra improvisada de la firma (constitution 5, CA-02)',
       const email = new FakeEmailPort()
       const r = await submitLead(conBasura(campo, 'X'), `adv-${campo}`, {
         catalog: catálogoVivo,
-        emailPort: email, registryPort: new FakeRegistryPort(), rateLimitPort: new FakeRateLimitPort(), fingerprint: null,
-        internalMailbox: 'o@n.com', bookingUrl: null, now: () => new Date('2026-01-01'),
+        emailPort: email, registryPort: new FakeRegistryPort(), rateLimitPort: new FakeRateLimitPort(), teamNoticePort: new FakeTeamNoticePort(), fingerprint: null,
+        internalMailbox: 'o@n.com', bookingUrl: null, privacy: { version: 'v', coversResearch: false }, now: () => new Date('2026-01-01'),
       }, new DedupCache())
       expect(JSON.stringify(r)).not.toContain('NaN')
       expect(email.sent).toHaveLength(0)
@@ -139,7 +140,7 @@ describe('Validación de frenos — multi-valor sobre lista cerrada', () => {
     const resultado = await submitLead(
       conBasura('blockers', ['pereza']),
       's-frenos',
-      { catalog: catálogoVivo, emailPort: email, registryPort: registry, rateLimitPort: new FakeRateLimitPort(), fingerprint: null, internalMailbox: 'x@y.z', bookingUrl: null, now: () => new Date() },
+      { catalog: catálogoVivo, emailPort: email, registryPort: registry, rateLimitPort: new FakeRateLimitPort(), teamNoticePort: new FakeTeamNoticePort(), fingerprint: null, internalMailbox: 'x@y.z', bookingUrl: null, privacy: { version: 'v', coversResearch: false }, now: () => new Date() },
       new DedupCache(),
     )
     expect(resultado).toMatchObject({ kind: 'validation_error', field: 'blockers' })

@@ -6,6 +6,8 @@ import { scoreLead } from './scoring'
 import type { EmailPort } from '@/ports/email'
 import type { RegistryPort } from '@/ports/registry'
 import type { RateLimitPort } from '@/ports/rate-limit'
+import type { TeamNoticePort } from '@/ports/team-notice'
+import { buildLeadNotice, type TeamNoticeResult } from './team-notice'
 import { excedeElTope } from './rate-limit'
 import { BLOCKER_LABEL, BLOCKER_OPTIONS } from './options'
 import type { Answers, Blocker, LeadRecord, RedactedOutcome, Score } from './types'
@@ -40,6 +42,8 @@ export interface DispatchReport {
   readonly clientEmail: 'ok' | 'failed'
   readonly internalEmail: 'ok' | 'failed'
   readonly registry: 'ok' | 'failed'
+  /** El aviso al canal del equipo (spec `agenda-y-preparacion-de-llamadas`, CA-09). */
+  readonly teamNotice: TeamNoticeResult
 }
 
 export interface SubmitDeps {
@@ -58,12 +62,19 @@ export interface SubmitDeps {
   readonly emailPort: EmailPort
   readonly registryPort: RegistryPort
   readonly rateLimitPort: RateLimitPort
+  /** Aviso a n8n W1 → Slack. Nunca lanza; su resultado lo declara el correo interno (CA-09). */
+  readonly teamNoticePort: TeamNoticePort
   readonly internalMailbox: string
   /**
    * Enlace de la página de reservas, o `null` si no hay ninguna configurada. Es el MISMO valor que
    * incrusta la pantalla de resultado, así que pantalla y correo no pueden decir cosas distintas.
    */
   readonly bookingUrl: string | null
+  /**
+   * El aviso de privacidad vigente: su versión y si ya cuenta la investigación de la fase B. Entra
+   * desde fuera —de `content/privacidad.ts`, su único punto— y se guarda con el lead (CA-23, CA-25).
+   */
+  readonly privacy: { readonly version: string; readonly coversResearch: boolean }
   /** Huella del origen. `null` cuando no se pudo identificar: entonces no se aplica tope. */
   readonly fingerprint: string | null
   readonly now: () => Date
@@ -354,26 +365,38 @@ export async function submitLead(
     rangeText: outcome.rangeText,
     score,
     blockers: answers.blockers,
+    // El veredicto ya tomado, tal cual. Quien lea la fila (n8n) no vuelve a decidirlo.
+    outcomeKind: outcome.kind,
+    bookingOffered: outcome.showCalendar,
+    privacyVersion: deps.privacy.version,
+    researchAllowed: deps.privacy.coversResearch,
   }
 
   // El guardado va PRIMERO, y no por gusto: el aviso interno tiene que poder declarar si este lead
   // ha quedado registrado (CA-S3), y con el orden anterior el correo se redactaba antes de saberlo.
   const registry = await attempt(() => deps.registryPort.append(lead))
 
+  const clientEmail = await attempt(() =>
+    deps.emailPort.send({
+      to: answers.contact.email,
+      subject: 'Tu estimación orientativa — Nexus Consulting',
+      body: proposal,
+    }),
+  )
+
+  // El aviso al canal va DESPUÉS del correo al lead —para poder decir si salió— y ANTES del correo
+  // interno —que declara si el aviso falló—. El puerto no lanza nunca: el lead no depende de esto.
+  const teamNotice = await deps.teamNoticePort.notify(buildLeadNotice(lead, { registry, clientEmail }))
+
   const report: DispatchReport = {
     registry,
-    clientEmail: await attempt(() =>
-      deps.emailPort.send({
-        to: answers.contact.email,
-        subject: 'Tu estimación orientativa — Nexus Consulting',
-        body: proposal,
-      }),
-    ),
+    clientEmail,
+    teamNotice,
     internalEmail: await attempt(() =>
       deps.emailPort.send({
         to: deps.internalMailbox,
         subject: `Nuevo lead · ${answers.contact.company} · ${score.total}/10`,
-        body: buildInternalNotice(lead, registry, deps.catalog),
+        body: buildInternalNotice(lead, registry, deps.catalog, teamNotice),
       }),
     ),
   }
@@ -426,6 +449,19 @@ function avisoDeSinCatálogo(): string[] {
   ]
 }
 
+/**
+ * El aviso de que el canal del equipo NO se ha enterado de este lead. Va arriba, como los demás avisos,
+ * y solo cuando falla: si saliera siempre, dejaría de leerse (misma regla que `avisoDeNoGuardado`).
+ */
+function avisoDeSinCanal(teamNotice: TeamNoticeResult): string[] {
+  const motivo = teamNotice === 'not_configured' ? 'el aviso está sin configurar en este despliegue' : 'n8n o Slack no respondieron a tiempo'
+  return [
+    `⚠️  El aviso al canal del equipo NO ha salido (${motivo}).`,
+    '    Este lead solo está en este correo y en el registro: que alguien del equipo se entere.',
+    '',
+  ]
+}
+
 function avisoDeFoto(takenAt: string): string[] {
   return [
     '⚠️  ESTA CIFRA SE CALCULÓ CON LA FOTO DEL CATÁLOGO, NO CON EL CATÁLOGO VIVO.',
@@ -440,12 +476,14 @@ export function buildInternalNotice(
   lead: LeadRecord,
   registry: 'ok' | 'failed',
   catalog: LoadedCatalog | null,
+  teamNotice: TeamNoticeResult,
 ): string {
   const líneas = lead.score.breakdown.map((b) => `  - ${b.signal}: ${b.answer} → ${b.points > 0 ? '+' : ''}${b.points}`)
   return [
     ...(catalog === null ? avisoDeSinCatálogo() : []),
     ...(catalog?.source === 'snapshot' ? avisoDeFoto(catalog.takenAt) : []),
     ...(registry === 'failed' ? avisoDeNoGuardado() : []),
+    ...(teamNotice !== 'ok' ? avisoDeSinCanal(teamNotice) : []),
     `Contacto: ${lead.contact.name} <${lead.contact.email}> — ${lead.contact.company}`,
     `Recibido: ${lead.submittedAt}`,
     `Consentimiento: sí (${lead.submittedAt})`,

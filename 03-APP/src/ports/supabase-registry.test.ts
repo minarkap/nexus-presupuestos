@@ -16,6 +16,7 @@ const lead: LeadRecord = {
   serviceLabel: 'AI Opportunity Assessment',
   rangeText: '28.000 – 35.000 €',
   blockers: ['sin_perfiles'],
+  outcomeKind: 'qualified', bookingOffered: true, privacyVersion: '2026-09-02', researchAllowed: false,
   score: { total: 8, breakdown: [{ signal: 'sponsor', answer: 'Identificado y comprometido', points: 3 }] },
 }
 
@@ -70,6 +71,20 @@ describe('toLeadRow — el lead como fila de base de datos', () => {
     expect(fila.service_label).toBeNull()
     expect(fila.range_text).toBeNull()
     expect(fila.blockers).toEqual([])
+  })
+})
+
+describe('toLeadRow — lo que n8n lee sin tener que decidir nada (agenda-y-preparacion-de-llamadas)', () => {
+  it('guarda el veredicto de la web: desenlace y si se le ofreció reservar (CA-11)', () => {
+    const fila = toLeadRow(lead)
+    expect(fila.outcome_kind).toBe('qualified')
+    expect(fila.booking_offered).toBe(true)
+  })
+
+  it('guarda la versión del aviso y si permitía investigar (CA-25, CA-23)', () => {
+    const fila = toLeadRow({ ...lead, privacyVersion: '2026-11-01', researchAllowed: true })
+    expect(fila.privacy_version).toBe('2026-11-01')
+    expect(fila.research_allowed).toBe(true)
   })
 })
 

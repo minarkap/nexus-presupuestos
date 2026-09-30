@@ -90,7 +90,7 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
 
 ## Revisión pendiente — `agenda-y-preparacion-de-llamadas` (2026-09-30)
 
-> **Sin firmar.** Tres superficies cambian o nacen con esta spec. El acta del 2026-09-14 sigue valiendo
+> **Sin firmar.** Tres superficies cambian o nacen con esta spec (cuatro con S5, que cambia en el PR de la fase A). El acta del 2026-09-14 sigue valiendo
 > para todo lo demás; estas tres necesitan una firma nueva antes de publicar (principio 28, CA-12).
 > Las pruebas ya comprueban el léxico prohibido y que ningún texto dé una cita por hecha
 > (`tone.test.ts`). Lo que no pueden comprobar es si suena a Nexus Consulting.
@@ -129,6 +129,7 @@ deja de ser una horquilla.», falso siempre (`S-0040`).
 
 | Superficie | ¿Pasa? | Revisor | Fecha | Notas |
 |---|---|---|---|---|
+| S5 | ☐ | | | Solo en el PR de la fase A: «Quién los recibe» y «Transferencias» nombran la mensajería interna y la automatización, y el enlace de reserva también por correo (CA-24). Texto literal en `wiki/producto/Borrador aviso de privacidad - agenda.md` §2 |
 | S9 | ☐ | | | |
 | S10 | ☐ | | | |
 | S15 | ☐ | | | |

@@ -1,0 +1,7 @@
+.env
+keys/
+out/
+*.p8
+*.p12
+*.jks
+*service-account*.json

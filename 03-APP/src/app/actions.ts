@@ -6,9 +6,11 @@ import { fingerprintFor } from '@/core/rate-limit'
 import { selectEmailPort } from '@/ports/email'
 import { selectRegistryPort } from '@/ports/registry'
 import { selectRateLimitPort } from '@/ports/rate-limit'
+import { selectTeamNoticePort } from '@/ports/team-notice'
 import { loadCatalog } from '@/ports/catalog'
 import type { Answers } from '@/core/types'
 import { normalizeBookingUrl } from './booking-url'
+import { privacidad } from '@/content/privacidad'
 
 /**
  * Frontera de confianza. Todo lo que hay debajo de esta función corre en servidor:
@@ -78,9 +80,14 @@ export async function submitAction(answers: Answers, submissionId: string): Prom
       emailPort: selectEmailPort(process.env),
       registryPort: selectRegistryPort(process.env),
       rateLimitPort: selectRateLimitPort(process.env),
+      // Aviso a n8n W1 → Slack. Sin configurar en producción queda apagado y el correo interno lo dice.
+      teamNoticePort: selectTeamNoticePort(process.env),
       fingerprint: await huellaDelOrigen(),
       internalMailbox: INTERNAL_MAILBOX,
       bookingUrl: BOOKING_URL,
+      // El aviso vigente, de su único punto: la versión se guarda con el lead y decide si se le puede
+      // investigar (CA-23, CA-25).
+      privacy: { version: privacidad.updated, coversResearch: privacidad.coversResearch },
       now: () => new Date(),
       onDispatch: (report) => {
         if (Object.values(report).includes('failed')) {
