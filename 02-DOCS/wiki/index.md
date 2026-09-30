@@ -35,6 +35,7 @@ La landing que este workspace construye.
 
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
+| [Borrador del aviso de privacidad — agenda](producto/Borrador%20aviso%20de%20privacidad%20-%20agenda.md) | Cambios del aviso para la agenda: fase A (mensajería interna y automatización, en el código) y fase B (investigación de empresa y persona, NO publicada), con la base legal razonada y la evaluación de interés legítimo en borrador. Pendiente de Jose. | 2026-09-30 | — |
 | [Landing de Captación de Leads](producto/Landing%20de%20Captacion%20de%20Leads.md) | Requisitos derivados de las fuentes, restricciones de arquitectura y lo que sigue sin decidir. | 2026-08-26 | 14.0 |
 
 ## seo-geo
@@ -78,6 +79,7 @@ Convenciones técnicas y de diseño de `03-APP`. Se leen antes de tocar una supe
 | Article | Summary | Updated | Score |
 |---------|---------|---------|-------|
 | [Decisiones de diseño del sitio](stack/design.md) | Tokens verbatim del DS, botón primario sólido por AA (blanco sobre cian 1,66:1), raíl conectado como firma, movimiento reducible. | 2026-09-02 | — |
+| [Flujos de n8n de la agenda](stack/n8n-agenda.md) | Diseño de W1–W5 (aviso de lead, reserva, cambios, borrados, limpieza del canal), prompts de Perplexity con salida estructurada y fuente por afirmación, plantilla del documento y formatos de Slack. Borrador: nada construido aún. | 2026-09-30 | — |
 | [Convenciones Next.js del sitio](stack/nextjs.md) | Server Components por defecto, un island, contenido tipado, capa SEO derivada, `server-only` sobre el catálogo, puerta `seo-gate`. | 2026-09-02 | — |
 
 ## sdd
