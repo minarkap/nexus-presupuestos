@@ -1,0 +1,228 @@
+{
+  "name": "Nexus · W1 Aviso de lead",
+  "nodes": [
+    {
+      "id": "b9776ffc-5a95-45df-8d29-859386419594",
+      "name": "Aviso de lead (web)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        96
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nexus/lead",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode"
+      },
+      "webhookId": "b44a32b6-6f6b-483e-9993-573629b71922"
+    },
+    {
+      "id": "261abde2-0982-42de-ad38-566fc4f354be",
+      "name": "¿Contrato v1?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.body?.version }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "e0c33d4d-6e60-4acd-95a2-ad766be18bb6",
+      "name": "Mensaje para el canal",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        320
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "texto-slack",
+              "name": "texto",
+              "type": "string",
+              "value": "={{ [ ($json.body.booking_offered ? '🟢 *Lead cualificado*' : '⚪ *Lead*') + ' · ' + $json.body.contact.company + ' · ' + $json.body.score.total + '/10', $json.body.contact.name + ' · ' + $json.body.contact.email, 'Servicio: ' + ($json.body.service_label ?? 'Sin catalogar — llamada de alcance') + ' · Rango: ' + ($json.body.range_text ?? 'sin cifra'), 'Desglose: ' + $json.body.score.breakdown.map(b => b.signal + ': ' + b.answer + ' (' + b.points + ')').join(' · '), $json.body.booking_offered ? 'Le hemos ofrecido reservar. Aviso aquí cuando reserve.' : 'Propuesta enviada; responderá al correo si quiere avanzar.', $json.body.client_email === 'failed' ? '⚠️ Su correo NO salió: escríbele a mano.' : '', $json.body.registry === 'failed' ? '⚠️ NO quedó guardado en la base: el correo interno es la única copia.' : '' ].filter(Boolean).join('\\n') }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1209c938-4132-41f8-9cd3-c8869e391a91",
+      "name": "Publicar en el canal",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        720,
+        320
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": "<__PLACEHOLDER_VALUE__ID del canal de Slack del equipo (empieza por C)__>",
+        "messageType": "text",
+        "text": "={{ $json.texto }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "onError": "continueErrorOutput",
+      "webhookId": "1c22c5b4-b6d9-45e4-a94d-58abc828d40f"
+    },
+    {
+      "id": "ba48df00-7c8b-4c7b-896c-89d3c34b834f",
+      "name": "Responder 200 (publicado)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        976,
+        96
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ok\":true}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "acaf0e21-d9b0-474e-b574-281b03c4d308",
+      "name": "Responder 400 (versión)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        608,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"error\":\"version\"}",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "id": "769cfba3-3b3e-47fa-94b3-073284e57139",
+      "name": "Responder 502 (Slack no publicó)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        976,
+        288
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"error\":\"slack\"}",
+        "options": {
+          "responseCode": 502
+        }
+      }
+    },
+    {
+      "id": "db3995b5-7e81-4702-93cd-cdd3f4675b8e",
+      "name": "Sticky Note f0bdc35a",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        320
+      ],
+      "parameters": {
+        "content": "## W1 · Aviso de lead\nLa web (Nexus presupuestos) llama aquí tras guardar cada lead y enviar su correo. Contrato: `01-TOOLS/N8N/contracts/lead-notice.v1.schema.json`.\n\n**Responde DESPUÉS de publicar**: la web solo cuenta «ok» si el mensaje está en el canal; si no, el correo interno lo avisa.\n\n**Nunca recalcula el umbral**: la marca de cualificado es `booking_offered`, tal cual llega.\n\nPendiente: credencial «Nexus · aviso de lead» (Header Auth: `Authorization` = `Bearer <secreto>`), credencial «Nexus · Slack» y el ID del canal.",
+        "color": 4
+      }
+    }
+  ],
+  "connections": {
+    "Aviso de lead (web)": {
+      "main": [
+        [
+          {
+            "node": "¿Contrato v1?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Contrato v1?": {
+      "main": [
+        [
+          {
+            "node": "Mensaje para el canal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 400 (versión)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje para el canal": {
+      "main": [
+        [
+          {
+            "node": "Publicar en el canal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar en el canal": {
+      "main": [
+        [
+          {
+            "node": "Responder 200 (publicado)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 502 (Slack no publicó)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  }
+}

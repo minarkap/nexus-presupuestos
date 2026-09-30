@@ -181,3 +181,24 @@ status: active
 - la protección del proyecto no deja fusionar ramas mientras haya cambios del arnés sin guardar (no
   son de esta tarea), y reacciona incluso a esa palabra dentro de un texto. El commit se trajo con
   `cherry-pick` en vez de desactivarla
+
+## B3 — 2026-09-30 · La instancia de n8n y W1
+- instancia del proyecto, indicada por Jose: `https://sanchis18.app.n8n.cloud`. Vacía, sin credenciales
+- servidor MCP oficial registrado en Claude Code con alcance **local** (`claude mcp add --scope local`),
+  **no** en el `.mcp.json` versionado. Token también en `01-TOOLS/N8N/.env` (fuera de git, `600`)
+- **W1 creado sin publicar** (`6JYJME98VXchjGIh`) desde código del SDK de n8n. `validate_workflow`:
+  válido, 8 nodos; un aviso esperado por el ID del canal, que falta
+- ensayos con datos fijados (`test_workflow`), las tres ejecuciones con éxito:
+  - cualificado → mensaje con 🟢, desglose y «ofrecido reservar»; responde 200;
+  - no cualificado, sin cifra y con el correo roto → ⚪, «sin cifra» y el aviso de correo; responde 200;
+  - versión 2 → responde 400, sin publicar
+- sin ensayar: la rama «Slack no publicó» (502), porque necesita Slack real
+- exportado a `01-TOOLS/N8N/workflows/w1-aviso-de-lead.json`. La comprobación de secretos de la
+  exportación se afinó: la primera paraba en la nota del flujo («`Bearer <secreto>`», que es una
+  instrucción); ahora busca los valores reales del `.env`
+- secreto del webhook generado (64 hex) **solo en `.env`**; URL `…/webhook/nexus/lead`
+- **el token del MCP dejó de valer (401) a los pocos minutos**; probablemente Jose ya lo rotó. Con el
+  nuevo en `.env`, se vuelve a registrar `claude mcp`
+- falta de Jose: credencial «Nexus · aviso de lead» (Header Auth) y «Nexus · Slack» en n8n, el ID del
+  canal, y publicar W1
+
