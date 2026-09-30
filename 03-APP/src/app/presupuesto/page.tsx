@@ -7,6 +7,7 @@ import { JsonLd } from '@/seo/json-ld'
 import { Breadcrumbs } from '@/components/site/Breadcrumbs'
 import { Estimator } from '@/components/Estimator'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { normalizeBookingUrl } from '@/app/booking-url'
 
 export const metadata: Metadata = pageMetadata('presupuesto')
 
@@ -29,7 +30,7 @@ export default async function Presupuesto({ searchParams }: { searchParams: Prom
           </p>
         </div>
       </header>
-      <Estimator initialChallenge={initialChallenge} calendarUrl={process.env.NEXT_PUBLIC_CALENDAR_URL} />
+      <Estimator initialChallenge={initialChallenge} calendarUrl={normalizeBookingUrl(process.env.NEXT_PUBLIC_CALENDAR_URL) ?? undefined} />
     </>
   )
 }

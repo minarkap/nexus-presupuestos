@@ -2,6 +2,21 @@ import type { Contact, PriceRange, ServiceRef } from './types'
 
 export type OutcomeKind = 'qualified' | 'not_qualified' | 'uncatalogued'
 
+/**
+ * Si al lead se le ofrece reservar la llamada, y con qué enlace.
+ *
+ * - `null` → no se le ofrece (no supera el umbral). Nada en el correo habla de reservar.
+ * - `{ url: null }` → se le ofrece, pero no hay página de reservas configurada. El correo no puede
+ *   prometer lo que no existe: dice que el equipo le escribirá con disponibilidad.
+ * - `{ url }` → se le ofrece y el correo lleva el enlace.
+ *
+ * Quién recibe la oferta lo decide `showCalendar`, la MISMA regla que pone el calendario en pantalla
+ * (spec `agenda-y-preparacion-de-llamadas`, CA-01…CA-04). Aquí sólo se redacta.
+ */
+export type BookingOffer = { readonly url: string | null } | null
+
+const DISPONIBILIDAD = 'Te escribimos con la disponibilidad del equipo en cuanto revisemos tu caso'
+
 function formatRange(price: PriceRange): string {
   const sufijo = price.unit === 'month' ? ' al mes' : ''
   if (price.high === null) {
@@ -20,6 +35,7 @@ export function composeProposal(
   service: ServiceRef | null,
   price: PriceRange | null,
   kind: OutcomeKind,
+  booking: BookingOffer,
 ): string {
   // split(' ', 1).join('') devuelve siempre una cadena: sin rama muerta y sin aserción de tipo.
   // La validación de contacto ya garantiza que el nombre no viene vacío.
@@ -41,16 +57,27 @@ export function composeProposal(
         'para acotar tu caso. No es una presentación comercial: es una conversación para saber si ' +
         'somos la firma adecuada para esto.',
       '',
+      ...(booking === null
+        ? ['Si te encaja, responde a este correo y buscamos un hueco.']
+        : booking.url === null
+          ? [`${DISPONIBILIDAD}.`]
+          : ['Puedes reservarla aquí:', '', booking.url]),
+      '',
       'Un saludo,',
       'Nexus Consulting',
     ].join('\n')
   }
 
-  const cierre =
-    kind === 'qualified'
-      ? 'Tienes tu cita confirmada con uno de nuestros socios; ahí contrastamos el alcance y la cifra ' +
-        'deja de ser una horquilla.'
-      : 'Si quieres avanzar, responde a este correo y lo vemos. No hace falta que prepares nada.'
+  // Antes el cierre del cualificado daba la cita por hecha. Era falso siempre: este correo sale antes
+  // de que nadie reserve nada (S-0040). Ahora invita, no afirma.
+  const cierre: readonly string[] =
+    booking === null
+      ? ['Si quieres avanzar, responde a este correo y lo vemos. No hace falta que prepares nada.']
+      : booking.url === null
+        ? [`${DISPONIBILIDAD}, para buscar un hueco con uno de nuestros socios. Ahí contrastamos el ` +
+            'alcance y la cifra deja de ser una horquilla.']
+        : ['Si quieres contrastarlo con uno de nuestros socios, puedes reservar una llamada de 30 ' +
+            'minutos, sin coste. Ahí vemos el alcance y la cifra deja de ser una horquilla:', '', booking.url]
 
   return [
     `${nombre},`,
@@ -68,7 +95,7 @@ export function composeProposal(
       'conversación que vas a tener con nosotros. Lo que te llevas no es un informe: es una decisión ' +
       'que podéis defender internamente.',
     '',
-    cierre,
+    ...cierre,
     '',
     'Un saludo,',
     'Nexus Consulting',

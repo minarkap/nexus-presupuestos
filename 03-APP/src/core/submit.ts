@@ -1,6 +1,6 @@
 import { mapOutcome } from './outcome'
 import { priceService } from './pricing'
-import { composeProposal } from './proposal'
+import { composeProposal, type BookingOffer } from './proposal'
 import { resolveService } from './service-resolver'
 import { scoreLead } from './scoring'
 import type { EmailPort } from '@/ports/email'
@@ -59,6 +59,11 @@ export interface SubmitDeps {
   readonly registryPort: RegistryPort
   readonly rateLimitPort: RateLimitPort
   readonly internalMailbox: string
+  /**
+   * Enlace de la página de reservas, o `null` si no hay ninguna configurada. Es el MISMO valor que
+   * incrusta la pantalla de resultado, así que pantalla y correo no pueden decir cosas distintas.
+   */
+  readonly bookingUrl: string | null
   /** Huella del origen. `null` cuando no se pudo identificar: entonces no se aplica tope. */
   readonly fingerprint: string | null
   readonly now: () => Date
@@ -335,7 +340,10 @@ export async function submitLead(
   const outcome = catalog
     ? mapOutcome(catalog, service, price, score)
     : DESENLACE_SIN_CATÁLOGO
-  const proposal = composeProposal(answers.contact, service, price, outcome.kind)
+  // Quién recibe la oferta de reserva lo decide `showCalendar`: la misma regla, en el mismo sitio, que
+  // pone el calendario en pantalla. No hay una segunda comparación con el umbral (constitution 9).
+  const booking: BookingOffer = outcome.showCalendar ? { url: deps.bookingUrl } : null
+  const proposal = composeProposal(answers.contact, service, price, outcome.kind, booking)
 
   const lead: LeadRecord = {
     submissionId,

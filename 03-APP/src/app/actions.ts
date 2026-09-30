@@ -8,6 +8,7 @@ import { selectRegistryPort } from '@/ports/registry'
 import { selectRateLimitPort } from '@/ports/rate-limit'
 import { loadCatalog } from '@/ports/catalog'
 import type { Answers } from '@/core/types'
+import { normalizeBookingUrl } from './booking-url'
 
 /**
  * Frontera de confianza. Todo lo que hay debajo de esta función corre en servidor:
@@ -20,6 +21,10 @@ const cache = new DedupCache()
 // (`oportunidades@nexus.ad`) era un dominio sin correo: cualquier despliegue que olvidara la
 // variable perdía todos los leads en silencio, que es el único fallo de este sistema que nadie ve.
 const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'jose.sanchis@executivelab.ai'
+
+// La MISMA variable, por la MISMA función, que el calendario de `/presupuesto`: pantalla y correo no
+// pueden decir cosas distintas. Vacía o solo espacios → `null` → nadie promete una reserva.
+const BOOKING_URL = normalizeBookingUrl(process.env.NEXT_PUBLIC_CALENDAR_URL)
 
 /**
  * La huella del origen, calculada AQUÍ y sólo aquí.
@@ -75,6 +80,7 @@ export async function submitAction(answers: Answers, submissionId: string): Prom
       rateLimitPort: selectRateLimitPort(process.env),
       fingerprint: await huellaDelOrigen(),
       internalMailbox: INTERNAL_MAILBOX,
+      bookingUrl: BOOKING_URL,
       now: () => new Date(),
       onDispatch: (report) => {
         if (Object.values(report).includes('failed')) {

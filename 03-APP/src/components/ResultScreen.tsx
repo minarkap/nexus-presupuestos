@@ -23,7 +23,9 @@ export function ResultScreen({ outcome, calendarUrl }: ResultScreenProps) {
         </div>
         {outcome.showCalendar && (
           <Card variant="node" padding="lg" className="calendar">
-            <h2>Reserva un hueco</h2>
+            {/* Sin página de reservas, un título que invitara a reservar prometería lo que el párrafo de
+                debajo desmiente (acta de tono S9, 2026-09-30). */}
+            <h2>{calendarUrl ? 'Reserva un hueco' : 'Una conversación con un socio'}</h2>
             <p style={{ marginTop: 'var(--space-3)' }}>Treinta minutos con un socio para ver si encajamos. Sin coste y sin presentación comercial.</p>
             {calendarUrl ? (
               <>

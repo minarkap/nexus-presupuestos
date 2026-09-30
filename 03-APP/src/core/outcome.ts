@@ -10,9 +10,11 @@ const DISCLAIMER =
 const DISCLAIMER_SIN_CIFRA =
   'Preferimos no dar un número antes de entender el problema. Es criterio de la casa, no una evasiva.'
 
+// Decía «Puedes reservar ahora mismo un hueco», encima de un calendario que en producción no estaba
+// configurado. Si hay reserva o no lo dice la tarjeta del calendario, que sí sabe si hay enlace (S-0040).
 const CUERPO_CUALIFICADO =
   'Con lo que nos has contado, este es el orden de magnitud en el que se mueve un encargo así. ' +
-  'Puedes reservar ahora mismo un hueco con un socio para contrastarlo.'
+  'El siguiente paso es contrastarlo con un socio.'
 
 const CUERPO_NO_CUALIFICADO =
   'Con lo que nos has contado, este es el orden de magnitud en el que se mueve un encargo así. ' +

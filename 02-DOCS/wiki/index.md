@@ -102,6 +102,7 @@ Especificaciones del chain SDD: qué se construye y por qué, antes de decidir c
 | [Spec — Límite de frecuencia del formulario](sdd/specs/limite-de-frecuencia.md) | Tope de envíos por origen para que la acción pública no pueda inundar la base de datos, sin bloquear jamás en silencio a un lead legítimo y sin que el aviso de privacidad deje de ser cierto. Aprobada en autopilot. | 2026-09-14 | — |
 | [Spec — El catálogo comercial vive en la base de datos](sdd/specs/catalogo-en-supabase.md) | Servicios, rangos, multiplicadores, tabla de puntos y umbral salen del código y pasan a la base de datos, para que cambiar un precio no exija publicar el sitio. Consulta en cada cálculo con respaldo en una foto tomada al publicar, validación en la escritura y vigilancia del caso de referencia. Borrador pendiente de aprobación. | 2026-09-14 | — |
 | [Spec — La conservación de doce meses se ejecuta sola](sdd/specs/retencion-doce-meses.md) | El aviso de privacidad promete conservar doce meses; esta spec lo convierte en algo que ocurre solo, con la excepción de los leads que dieron lugar a relación comercial. Aprobada en autopilot. | 2026-09-14 | — |
+| [Spec — Agenda y preparación de la llamada](sdd/specs/agenda-y-preparacion-de-llamadas.md) | El lead cualificado reserva de verdad (enlace en pantalla y en el correo, que deja de afirmar una cita inexistente), el equipo recibe cada lead en Slack, y cada reserva llega preparada con una investigación de empresa y persona que el lead nunca ve. Dos fases; la B espera al nuevo aviso de privacidad. Borrador pendiente de aprobación. | 2026-09-30 | — |
 
 ## sdd/plans
 
@@ -146,6 +147,7 @@ Listas que bloquean la publicación y que ninguna prueba automática puede cerra
 | [Plan — Límite de frecuencia del formulario](sdd/plans/limite-de-frecuencia.md) | Huella HMAC calculada en la frontera, decisión pura en el núcleo, conteo en una segunda tabla cerrada, y el fallo abriendo en vez de cerrando. | 2026-09-14 | — |
 | [Plan — El catálogo comercial vive en la base de datos](sdd/plans/catalogo-en-supabase.md) | El catálogo se inyecta para que el núcleo siga síncrono y puro; cuatro tablas editables celda a celda leídas de una vez por una función de Postgres; foto cocida en cada publicación como respaldo; y un fichero dorado que demuestra que la mudanza no cambió ni una cifra. | 2026-09-14 | — |
 | [Plan — La conservación de doce meses se ejecuta sola](sdd/plans/retencion-doce-meses.md) | Tarea programada dentro de Postgres en vez de una ruta del sitio, para no exponer ningún endpoint capaz de borrar datos; más la columna que protege a los leads convertidos en cliente. | 2026-09-14 | — |
+| [Plan — Agenda y preparación de la llamada](sdd/plans/agenda-y-preparacion-de-llamadas.md) | La web decide y avisa (puerto firmado hacia n8n que espera a Slack); n8n ejecuta Slack, Calendar, Drive y Perplexity; `research_allowed` decidido por el aviso vigente; cola de borrados externos para cumplir los doce meses. Separa lo que se hace ya de lo bloqueado (B1–B10). Borrador. | 2026-09-30 | — |
 
 ## ftd
 

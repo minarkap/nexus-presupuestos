@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { PROHIBIDAS } from './tone'
+import { CITA_DADA_POR_HECHA, PROHIBIDAS } from './tone'
 
 const dir = __dirname
 const contentFiles = readdirSync(dir).filter((f) => /\.ts$/.test(f) && !/\.test\.ts$/.test(f) && f !== 'tone.ts').map((f) => join(dir, f))
@@ -43,5 +43,18 @@ describe('Tono de marca (constitution 27, 36 · CA-04, CA-05)', () => {
       const text = readFileSync(f, 'utf8')
       expect(text, f).not.toMatch(/garantiz|en \d+ (semanas|días|meses) (lo|te|os)/i)
     }
+  })
+})
+
+/**
+ * Ningún texto que ve el lead puede dar una reserva por hecha: el correo sale ANTES de que reserve
+ * nada, y la pantalla no sabe si reservará. La frase «Tienes tu cita…» vivió en `proposal.ts` desde
+ * el primer día sin que ninguna puerta la mirase (spec `agenda-y-preparacion-de-llamadas`, CA-05).
+ */
+describe('Ninguna superficie da una cita por hecha (CA-05 de agenda-y-preparacion-de-llamadas)', () => {
+  it.each([...contentFiles, ...coreCopy, ...otrasSuperficies].map((f) => [f.split('/').slice(-2).join('/'), f]))('%s no afirma una reserva que no existe', (_n, f) => {
+    const text = norm(readFileSync(f, 'utf8'))
+    const hits = CITA_DADA_POR_HECHA.filter((re) => new RegExp(norm(re.source), re.flags).test(text)).map(String)
+    expect(hits).toEqual([])
   })
 })
