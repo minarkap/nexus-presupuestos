@@ -1008,3 +1008,29 @@ status: stable
   pruebas — pero deja datos de prueba en la tabla de producción, y eso hay que limpiarlo antes de que
   lleguen leads de verdad.
 - supersedes: none
+
+## S-0042 — Las fuentes pasan a vivir en el repositorio: compilar no puede depender de Google
+
+- fecha: 2026-09-30
+- fase: `debug`, fuera del chain SDD (un arreglo que devuelve un comportamiento previsto: que el
+  sitio compile). Salió al pasar la puerta en `agenda-y-preparacion-de-llamadas`.
+- context: `next build` (Turbopack) empezó a fallar con Sora, la tipografía de titulares:
+  «next/font/google queries have exactly one entry» y «Can't resolve
+  '@vercel/turbopack-next/internal/font/google/font'». **Fallaba igual con el código de `main`**, así
+  que ninguna versión del sitio se podía publicar. El día anterior compilaba. `next build --webpack`
+  sí compilaba. Es un defecto conocido: `next/font/google` descarga las fuentes en cada compilación,
+  y cuando Google Fonts responde con direcciones que llevan `&` dentro (`/l/font?kit=…&skey=…`),
+  Turbopack las parte como si fueran varias y aborta. No se pudo reproducir esa respuesta con `curl`
+  ni con `fetch` desde la misma máquina, y la compilación falló cinco veces seguidas.
+- opciones:
+  1. esperar y reintentar;
+  2. compilar con webpack en vez de Turbopack;
+  3. servir los mismos ficheros desde el repositorio con `next/font/local`.
+- decision: la opción 3. La 1 deja cada publicación a merced de una respuesta ajena. La 2 cambia la
+  herramienta de compilación por un fallo de una sola pieza. La 3 quita la dependencia entera: son
+  los mismos WOFF2 que servía Google (subconjunto `latin`, el único que se precargaba), con su
+  licencia SIL OFL 1.1 al lado. Pesan 112 KB en total.
+- lo que enseña: una compilación que descarga algo de internet no es reproducible, y el día que
+  falla lo hace en el peor sitio, que es la publicación. El sitio en producción nunca dejó de
+  funcionar; lo que se había roto era poder cambiarlo.
+- supersedes: none
