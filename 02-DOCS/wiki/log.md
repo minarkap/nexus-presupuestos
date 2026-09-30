@@ -65,3 +65,9 @@ ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni 
 - **T19 hecha contra producción** (CA-02): precio cambiado en la base → el formulario real devolvió 30.000 – 35.000 €; restaurado → 28.000 – 35.000 €. Cero despliegues entre medias. Los dos envíos quedaron como leads en la tabla, marcados `Executive Lab (prueba T19)`.
 - Corregido el defecto del buzón interno: `oportunidades@nexus.ad` (dominio sin correo) → `jose.sanchis@executivelab.ai`.
 - Nuevos: `sdd/verifications/catalogo-en-supabase-2026-09-15.md`, `S-0038`, `S-0039`. Updated: plan del catálogo (estado final), acta del 14 (marcada como superada), `harness/user-profile.md` (buzón), `01-TOOLS/VERCEL/README.md` (variables del panel, aviso del buzón resuelto).
+
+## 2026-09-30 — specify + plan `agenda-y-preparacion-de-llamadas`
+- Diagnóstico previo: la reserva del lead cualificado no existe en producción (`NEXT_PUBLIC_CALENDAR_URL` vacía) y su correo afirma «cita confirmada». La prueba de humo de Vercel falla (token, HTTP 404); la de Google, sin credenciales, es la esperada.
+- Nuevos: `sdd/specs/agenda-y-preparacion-de-llamadas.md` (draft), `sdd/plans/agenda-y-preparacion-de-llamadas.md` (draft), `S-0040`, `S-0041`.
+- Updated: `index.md` (filas de spec y plan).
+- Pendiente de Jose: aprobar spec y plan; bloqueos B1–B10 del plan §6.2.

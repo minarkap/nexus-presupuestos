@@ -1009,6 +1009,60 @@ status: stable
   lleguen leads de verdad.
 - supersedes: none
 
+## S-0040 — La agenda se hace real, y la investigación del lead va donde el lead no mira
+
+- fecha: 2026-09-30
+- fase: `specify` de [agenda-y-preparacion-de-llamadas](./specs/agenda-y-preparacion-de-llamadas.md)
+- context: la rama cualificada promete una reserva que no existe. En producción
+  `NEXT_PUBLIC_CALENDAR_URL` está vacía, así que la pantalla dice «te escribimos con la disponibilidad
+  del equipo». Y el correo del cualificado dice «Tienes tu cita confirmada con uno de nuestros
+  socios», que es falso siempre, porque sale antes de que nadie reserve. Jose pide: aviso en Slack,
+  enlace de reserva por correo a los cualificados, investigación del lead con Perplexity al
+  reservar, guardado en Supabase, recordatorios desde Google y la coordinación en n8n.
+- decision:
+  - una spec y **dos fases**: A (reserva y avisos) y B (preparación de la llamada);
+  - las cinco respuestas de Jose se recogen literalmente en la spec;
+  - la investigación **no** va en la descripción de la cita reservada, como Jose sugirió, sino en una
+    **entrada interna** de la agenda del equipo que enlaza un documento del equipo. La descripción de
+    una cita la ve también el invitado, y escribir ahí la investigación se la enseñaría al propio lead.
+- objeciones registradas y superadas por Jose (no bloquean):
+  - **O-1 volumen:** a decenas de leads al mes, investigar a mano cuesta menos que mantener la
+    automatización;
+  - **O-2 persona:** la recomendación era investigar solo la empresa, y Jose decide investigar las dos.
+
+  Consecuencia de O-2: el aviso de privacidad cambia más y la fase B no se activa sin él
+  (principio 23).
+- lo que enseña: un valor vacío en el panel (`NEXT_PUBLIC_CALENDAR_URL`) y una frase escrita antes de
+  tiempo («cita confirmada») llevaban desde el primer día contradiciéndose delante del mejor lead del
+  mes. Ninguna puerta lo miraba, porque las dos cosas estaban, por separado, bien.
+- supersedes: none
+
+## S-0041 — La web decide y avisa; n8n ejecuta
+
+- fecha: 2026-09-30
+- fase: `plan` de [agenda-y-preparacion-de-llamadas](./plans/agenda-y-preparacion-de-llamadas.md)
+- context: el aviso de cada lead tiene que salir hacia Slack a través de n8n, y la spec exige que su
+  fallo se vea en el correo interno (CA-09) y que el umbral siga en un único punto (principio 9).
+- opciones:
+  1. la web avisa a n8n por un puerto propio, con una petición autenticada que espera a que Slack
+     confirme;
+  2. un disparador de la base al insertar el lead;
+  3. n8n consultando la tabla cada pocos minutos.
+- decision: la opción 1. Es la única en la que la web **sabe** si el aviso llegó y puede declararlo en
+  el correo interno. Mantiene la cualificación en `outcome.ts`, porque n8n recibe el veredicto y no
+  lo recalcula. Y sigue el patrón de puertos con adaptador falso de la casa. La 2 no puede declarar el
+  fallo y dispararía también con filas insertadas a mano; la 3 añade retraso y estado en n8n.
+- decisiones derivadas:
+  - `research_allowed` se decide en la web **al enviar**, a partir de la versión del aviso vigente
+    (`COVERS_RESEARCH`), y n8n solo lo lee;
+  - n8n entra en Postgres con un rol propio (`n8n_agenda`) que solo ve una vista mínima, en la línea
+    de `S-0037`;
+  - los borrados fuera de la base (documento, entrada de agenda) los encola un disparador cuando la
+    retención borra el lead, y los ejecuta n8n. El «cuándo» sigue viviendo en Postgres.
+- consecuencia asumida: el envío del formulario espera la respuesta de n8n, con un tope de 5 s.
+  Revisable si la latencia medida pasa de 1,5 s (R-8 del plan).
+- supersedes: none
+
 ## S-0042 — Las fuentes pasan a vivir en el repositorio: compilar no puede depender de Google
 
 - fecha: 2026-09-30
