@@ -5,9 +5,11 @@ import { submitLead, DedupCache, validateContact, buildInternalNotice, type Subm
 import { FakeEmailPort } from '@/ports/email'
 import { FakeRegistryPort } from '@/ports/registry'
 import { FakeRateLimitPort } from '@/ports/rate-limit'
+import { FakeTeamNoticePort } from '@/ports/team-notice'
 import { RATE_LIMIT } from './rate-limit'
 import type { Answers, EmailMessage } from './types'
 import type { EmailPort } from '@/ports/email'
+import type { TeamNoticePort } from '@/ports/team-notice'
 
 const answers: Answers = {
   challenge: 'ia', need: 'diagnostico', size: '250-999', maturity: 'inicial',
@@ -18,6 +20,7 @@ const answers: Answers = {
 let email: FakeEmailPort
 let registry: FakeRegistryPort
 let cache: DedupCache
+let equipo: FakeTeamNoticePort
 
 /** En las pruebas del núcleo el catálogo es la semilla y se da por vivo: lo que se mide
  *  aquí es la lógica de envío, no de dónde salieron los precios. El repliegue a la foto
@@ -36,6 +39,9 @@ const deps = () => ({
   // Sin página de reservas por defecto: es lo que hay hoy en producción. Las pruebas de la oferta
   // de reserva la ponen explícitamente.
   bookingUrl: null as string | null,
+  // El aviso vigente hoy: el del 2026-09-02, que NO cuenta la investigación (fase B sin publicar).
+  privacy: { version: '2026-09-02', coversResearch: false },
+  teamNoticePort: equipo as TeamNoticePort,
   now: () => new Date('2026-08-26T10:00:00.000Z'),
 })
 
@@ -43,6 +49,7 @@ beforeEach(() => {
   email = new FakeEmailPort()
   registry = new FakeRegistryPort()
   cache = new DedupCache()
+  equipo = new FakeTeamNoticePort()
 })
 
 describe('SubmitAction — los dos correos (CA-15)', () => {
@@ -81,6 +88,7 @@ describe('SubmitAction — el aviso interno lleva el desglose (CA-16)', () => {
       answers,
       serviceLabel: 'X',
       rangeText: 'Y',
+      outcomeKind: 'qualified', bookingOffered: true, privacyVersion: '2026-09-02', researchAllowed: false,
       blockers: [],
       score: { total: 8, breakdown: [
         { signal: 'sponsor', answer: 'a', points: 3 },
@@ -89,7 +97,7 @@ describe('SubmitAction — el aviso interno lleva el desglose (CA-16)', () => {
         { signal: 'madurez', answer: 'd', points: 0 },
         { signal: 'tamaño', answer: 'e', points: 1 },
       ] },
-    }, 'ok', catálogoVivo)
+    }, 'ok', catálogoVivo, 'ok')
     expect(notice.split('\n').filter((l) => l.trim().startsWith('- ') && l.includes('→'))).toHaveLength(5)
   })
 })
@@ -111,7 +119,7 @@ describe('SubmitAction — el lead ve su resultado pase lo que pase (CA-17)', ()
       { ...deps(), emailPort: new BrokenEmailPort(), onDispatch: (r) => { report = r } },
       cache,
     )
-    expect(report).toEqual({ clientEmail: 'failed', internalEmail: 'failed', registry: 'ok' })
+    expect(report).toEqual({ clientEmail: 'failed', internalEmail: 'failed', registry: 'ok', teamNotice: 'ok' })
   })
 
   it('el registro sigue recibiendo el lead aunque el correo falle', async () => {
@@ -124,7 +132,7 @@ describe('SubmitAction — el lead ve su resultado pase lo que pase (CA-17)', ()
     let report: unknown = null
     await submitLead(answers, 's1', { ...deps(), registryPort: roto, onDispatch: (r) => { report = r } }, cache)
     expect(email.sent).toHaveLength(2)
-    expect(report).toEqual({ clientEmail: 'ok', internalEmail: 'ok', registry: 'failed' })
+    expect(report).toEqual({ clientEmail: 'ok', internalEmail: 'ok', registry: 'failed', teamNotice: 'ok' })
   })
 })
 
@@ -531,5 +539,141 @@ describe('La oferta de reserva en el correo al lead (CA-01…CA-04, CA-11)', () 
     const umbralAlto: LoadedCatalog = { catalog: { ...SEED_CATALOG, threshold: 10 }, source: 'live' }
     await submitLead(answers, 'res-6', { ...conEnlace(), catalog: umbralAlto }, cache)
     expect(alLead().body).not.toContain(ENLACE)
+  })
+})
+
+/**
+ * Lo que la web guarda con cada lead para que n8n no tenga que decidir nada (spec
+ * `agenda-y-preparacion-de-llamadas`, S-0041): el veredicto que ya tomó y el aviso que la persona aceptó.
+ */
+describe('El veredicto y el aviso viajan con el lead (CA-11, CA-23, CA-25)', () => {
+  const flojo: Answers = { ...answers, sponsor: 'no', budget: 'sin', timing: '<3m' }
+  const fila = () => registry.rows[0]
+
+  it('CA-11 · el cualificado se guarda como tal y con la reserva ofrecida', async () => {
+    await submitLead(answers, 'ver-1', deps(), cache)
+    expect(fila()?.outcomeKind).toBe('qualified')
+    expect(fila()?.bookingOffered).toBe(true)
+  })
+
+  it('CA-11 · el no cualificado, sin reserva ofrecida', async () => {
+    await submitLead(flojo, 'ver-2', deps(), cache)
+    expect(fila()?.outcomeKind).toBe('not_qualified')
+    expect(fila()?.bookingOffered).toBe(false)
+  })
+
+  it('CA-11 · el sin catalogar que supera el umbral se guarda sin catalogar pero con reserva ofrecida', async () => {
+    await submitLead({ ...answers, challenge: 'estrategia_operaciones', need: null }, 'ver-3', deps(), cache)
+    expect(fila()?.outcomeKind).toBe('uncatalogued')
+    expect(fila()?.bookingOffered).toBe(true)
+  })
+
+  it('CA-11 · con el umbral cambiado en su único punto, cambia lo guardado', async () => {
+    const umbralAlto: LoadedCatalog = { catalog: { ...SEED_CATALOG, threshold: 10 }, source: 'live' }
+    await submitLead(answers, 'ver-4', { ...deps(), catalog: umbralAlto }, cache)
+    expect(fila()?.bookingOffered).toBe(false)
+  })
+
+  it('sin catálogo, se guarda sin catalogar y sin reserva ofrecida', async () => {
+    await submitLead(answers, 'ver-5', { ...deps(), catalog: null }, cache)
+    expect(fila()?.outcomeKind).toBe('uncatalogued')
+    expect(fila()?.bookingOffered).toBe(false)
+  })
+
+  it('CA-25 · el lead guarda la versión del aviso vigente al enviarlo', async () => {
+    await submitLead(answers, 'ver-6', { ...deps(), privacy: { version: '2026-10-15', coversResearch: false } }, cache)
+    expect(fila()?.privacyVersion).toBe('2026-10-15')
+  })
+
+  it('CA-23 · mientras el aviso no cuente la investigación, nadie queda autorizado a ser investigado', async () => {
+    await submitLead(answers, 'ver-7', deps(), cache)
+    expect(fila()?.researchAllowed).toBe(false)
+  })
+
+  it('con un aviso que sí la cuenta, el lead queda autorizado', async () => {
+    await submitLead(answers, 'ver-8', { ...deps(), privacy: { version: '2026-11-01', coversResearch: true } }, cache)
+    expect(fila()?.researchAllowed).toBe(true)
+  })
+})
+
+/**
+ * El aviso al canal del equipo (spec `agenda-y-preparacion-de-llamadas`, CA-06…CA-09). Va DESPUÉS del
+ * correo al lead —para poder decir si salió— y ANTES del correo interno —que declara si el aviso falló—.
+ */
+describe('El aviso al equipo, entre el correo al lead y el correo interno (CA-06…CA-09)', () => {
+  const flojo: Answers = { ...answers, sponsor: 'no', budget: 'sin', timing: '<3m' }
+  const interno = () => email.sent.find((m) => m.to === 'oportunidades@nexus-st.com') as EmailMessage
+  class CorreoRoto implements EmailPort {
+    async send(): Promise<void> { throw new Error('proveedor caído') }
+  }
+
+  it('CA-06 · un lead válido produce EXACTAMENTE un aviso, con lo que el equipo necesita', async () => {
+    await submitLead(answers, 'eq-1', deps(), cache)
+    expect(equipo.sent).toHaveLength(1)
+    const n = equipo.sent[0]
+    expect(n?.submission_id).toBe('eq-1')
+    expect(n?.contact.company).toBe('Acme')
+    expect(n?.service_label).toBe('AI Opportunity Assessment')
+    expect(n?.range_text).toContain('28.000')
+    expect(n?.score.total).toBe(9)
+    expect(n?.booking_offered).toBe(true)
+    expect(n?.client_email).toBe('ok')
+    expect(n?.registry).toBe('ok')
+  })
+
+  it('CA-06 · el no cualificado también avisa, sin la marca', async () => {
+    await submitLead(flojo, 'eq-2', deps(), cache)
+    expect(equipo.sent[0]?.booking_offered).toBe(false)
+  })
+
+  it('el aviso sabe si el correo al lead salió: va después de enviarlo', async () => {
+    await submitLead(answers, 'eq-3', { ...deps(), emailPort: new CorreoRoto() }, cache)
+    expect(equipo.sent[0]?.client_email).toBe('failed')
+  })
+
+  it('CA-07 · el mismo envío repetido no avisa dos veces', async () => {
+    await submitLead(answers, 'eq-4', deps(), cache)
+    await submitLead(answers, 'eq-4', deps(), cache)
+    expect(equipo.sent).toHaveLength(1)
+  })
+
+  it('CA-08 · un envío rechazado por validación no avisa', async () => {
+    const r = await submitLead({ ...answers, contact: { ...answers.contact, name: '' } }, 'eq-5', deps(), cache)
+    expect(r).toMatchObject({ kind: 'validation_error' })
+    expect(equipo.sent).toHaveLength(0)
+  })
+
+  it('CA-08 · un envío frenado por el tope no avisa', async () => {
+    const tope = new FakeRateLimitPort()
+    for (let i = 0; i < RATE_LIMIT.perHour; i++) await tope.registerAndCount('huella-x')
+    const r = await submitLead(answers, 'eq-6', { ...deps(), fingerprint: 'huella-x', rateLimitPort: tope }, cache)
+    // Sin esta aserción la prueba pasaría aunque el tope no se disparase: ya pasó una vez (2026-09-30).
+    expect(r).toMatchObject({ kind: 'rate_limited' })
+    expect(equipo.sent).toHaveLength(0)
+  })
+
+  it('CA-09 · si el aviso falla, el lead se guarda, salen los dos correos y el interno lo dice', async () => {
+    const caído = new FakeTeamNoticePort('failed')
+    await submitLead(answers, 'eq-7', { ...deps(), teamNoticePort: caído }, cache)
+    expect(registry.rows).toHaveLength(1)
+    expect(email.sent).toHaveLength(2)
+    expect(interno().body).toMatch(/aviso al canal del equipo NO ha salido/i)
+  })
+
+  it('CA-09 · sin configurar, el interno también lo dice (desde fuera se ve igual: el canal no se entera)', async () => {
+    await submitLead(answers, 'eq-8', { ...deps(), teamNoticePort: new FakeTeamNoticePort('not_configured') }, cache)
+    expect(interno().body).toMatch(/aviso al canal del equipo NO ha salido/i)
+    expect(interno().body).toMatch(/sin configurar/i)
+  })
+
+  it('cuando el aviso sale, el correo interno no gana ninguna línea', async () => {
+    await submitLead(answers, 'eq-9', deps(), cache)
+    expect(interno().body).not.toMatch(/canal del equipo/i)
+  })
+
+  it('el informe de despacho declara el aviso', async () => {
+    let report: unknown = null
+    await submitLead(answers, 'eq-10', { ...deps(), teamNoticePort: new FakeTeamNoticePort('failed'), onDispatch: (r) => { report = r } }, cache)
+    expect(report).toEqual({ registry: 'ok', clientEmail: 'ok', teamNotice: 'failed', internalEmail: 'ok' })
   })
 })

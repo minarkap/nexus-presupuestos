@@ -61,6 +61,7 @@ describe('La base de datos no se expone al navegador', () => {
       serviceLabel: null,
       rangeText: null,
       blockers: [],
+      outcomeKind: 'not_qualified', bookingOffered: false, privacyVersion: '2026-09-02', researchAllowed: false,
       score: { total: 0, breakdown: [] },
     } satisfies LeadRecord
 
