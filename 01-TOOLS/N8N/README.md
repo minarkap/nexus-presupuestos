@@ -29,13 +29,16 @@ el `.mcp.json` versionado, que no puede llevar secretos. El token vive también 
 
 Diseño completo en [`02-DOCS/wiki/stack/n8n-agenda.md`](../../02-DOCS/wiki/stack/n8n-agenda.md).
 
-| Flujo | Disparo | Fase |
-|-------|---------|------|
-| W1 Aviso de lead — **creado, sin publicar** (`6JYJME98VXchjGIh`, exportado en `workflows/w1-aviso-de-lead.json`) | Webhook `POST /webhook/nexus/lead`, con secreto | A |
-| W2 Reserva confirmada | Evento nuevo en el calendario de reservas | B |
-| W3 Cambios de reserva | Evento actualizado o cancelado | B |
-| W4 Borrados pendientes | Diario, 04:00 | B |
-| W5 Limpieza del canal | Diario, 04:30 | A |
+| Flujo | Disparo | Fase | Credenciales |
+|-------|---------|------|------|
+| W1 Aviso de lead · `6JYJME98VXchjGIh` | Webhook `POST /webhook/nexus/lead`, con secreto | A | Slack ✓ · **falta** la credencial Header Auth |
+| W2 Reserva confirmada · `tLn3PxyN11UlkCqW` | Cita nueva «Agendas Nexus Web» en el calendario de Jose | B | Google ✓ · Slack ✓ · **faltan** Supabase y Perplexity |
+| W3 Cambios de reserva · `PcDrpy12t7fZVJ54` | Cita cambiada o cancelada | B | Google ✓ · Slack ✓ · **falta** Supabase |
+| W4 Borrados pendientes · `v7MzIN6xnbrqT8Jy` | Diario, 04:00 Madrid | B | Google ✓ · Slack ✓ · **falta** Supabase |
+| W5 Limpieza del canal · `XnUPWijAL2s2N2ci` | Diario, 04:30 Madrid | A | Slack ✓ |
+
+Los cinco están **sin publicar** y exportados en `workflows/`. La base de datos se usa por el nodo de
+Supabase con la llave de servidor, a petición de Jose (`S-0045`).
 
 ## Notas operativas
 

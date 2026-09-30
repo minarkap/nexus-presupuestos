@@ -1,0 +1,905 @@
+{
+  "name": "Nexus · W2 Reserva confirmada",
+  "nodes": [
+    {
+      "id": "337c5fd5-cbdc-4a6d-9904-1df3cf9c64e6",
+      "name": "Cita nueva en «Llamada de alcance»",
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        288
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "calendarId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jose.sanchis@executivelab.ai",
+          "cachedResultName": "jose.sanchis@executivelab.ai"
+        },
+        "triggerOn": "eventCreated",
+        "options": {
+          "matchTerm": "Agendas Nexus Web"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sr34fjtMebKFabzc",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "id": "f26ecbb3-c540-4049-9d04-d0082e598d20",
+      "name": "¿Es una reserva? (provisional, spike S-1)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        288
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const salida = [];\nfor (const item of $input.all()) {\n  const e = item.json;\n  const invitados = Array.isArray(e.attendees) ? e.attendees : [];\n  const reservante = invitados.find((a) => !a.self && !a.organizer && a.email);\n  if (!reservante) continue;\n  salida.push({ json: {\n    event_id: e.id,\n    starts_at: e.start?.dateTime ?? e.start?.date,\n    booker_email: String(reservante.email).toLowerCase(),\n    booker_name: reservante.displayName ?? reservante.email,\n  } });\n}\nreturn salida;"
+      }
+    },
+    {
+      "id": "1f806b32-a143-49b4-b5fa-b692006617b5",
+      "name": "Leads de ese correo (60 días)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        288
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "getAll",
+        "tableId": "leads_para_agenda",
+        "returnAll": true,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "contact_email",
+              "condition": "eq",
+              "keyValue": "={{ $json.booker_email }}"
+            }
+          ]
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "15ea35cb-e28d-489b-a0b8-5495705295db",
+      "name": "¿Ya hay investigación de esta cita?",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        672,
+        288
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "getAll",
+        "tableId": "lead_research",
+        "returnAll": true,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "booking_event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('¿Es una reserva? (provisional, spike S-1)').first().json.event_id }}"
+            }
+          ]
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "d88cee72-f337-4d1e-9545-5f430cd34f50",
+      "name": "Buscar el lead de ese correo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        288
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const leads = $(\"Leads de ese correo (60 días)\").all().map((i) => i.json).filter((l) => l.submission_id);\nleads.sort((a, b) => String(b.submitted_at).localeCompare(String(a.submitted_at)));\nconst yaInvestigado = $(\"¿Ya hay investigación de esta cita?\").all().some((i) => i.json.id);\nreturn [{ json: { ...(leads[0] || {}), ya_investigado: yaInvestigado } }];"
+      }
+    },
+    {
+      "id": "ba872382-9e75-4020-870c-7a27465729df",
+      "name": "¿Qué hacemos con esta reserva?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1120,
+        240
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ !$json.submission_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sin lead"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ya_investigado === true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ya investigado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.booking_offered === false }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "No cualificaba"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.research_allowed !== true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aviso anterior"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Investigar"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d7229ccd-ae54-4e67-b0fa-01b073cdcd66",
+      "name": "Avisar: reserva sin lead",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=📅 Reserva sin lead asociado: {{ $('¿Es una reserva? (provisional, spike S-1)').item.json.booker_name }} · {{ $('¿Es una reserva? (provisional, spike S-1)').item.json.booker_email }}, {{ DateTime.fromISO($('¿Es una reserva? (provisional, spike S-1)').item.json.starts_at).setZone('Europe/Madrid').setLocale('es').toFormat(\"cccc d 'de' LLLL, HH:mm\") }}. No se investiga: prepárala a mano.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "be34a2cf-92f0-4c0b-8ce3-1e4d38965afa",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "24fa0729-87c5-4711-9cb8-826fc446fd9c",
+      "name": "Avisar: no cualificaba",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        192
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=📅 Reserva de {{ $json.contact_company }} ({{ $json.contact_name }}), que no cualificaba. ¿Enlace reenviado? No se investiga.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "47c7a53a-9c13-49fb-b1ef-17fb6b70246b",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "f4090a9c-da0d-41fb-8369-46b9fdd48014",
+      "name": "Avisar: sin investigación (aviso anterior)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        384
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=📅 {{ $json.contact_name }} de {{ $json.contact_company }} ha reservado. Sin investigación: envió el formulario con un aviso de privacidad que aún no la contaba.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "afbab9a3-6ba2-4cc1-b4e8-33666a6a89c6",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "660ea0bd-1590-4ed0-a54b-afae507e01d7",
+      "name": "Avisar: ha reservado",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        576
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=📅 {{ $json.contact_name }} de {{ $json.contact_company }} ha reservado para el {{ DateTime.fromISO($('¿Es una reserva? (provisional, spike S-1)').item.json.starts_at).setZone('Europe/Madrid').setLocale('es').toFormat(\"cccc d 'de' LLLL, HH:mm\") }}. Preparo la investigación.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "52fc1714-c1ab-4d5c-90d0-4d6fab7f2ab8",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "c917d0e7-13d9-4591-9316-afa70a312e00",
+      "name": "Perplexity: la empresa",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1568,
+        576
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: \"sonar-pro\", temperature: 0.1, response_format: { type: \"json_schema\", json_schema: { schema: {\"type\":\"object\",\"required\":[\"claims\",\"summary\"],\"properties\":{\"claims\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"topic\",\"text\",\"source_url\",\"confidence\",\"possible_homonym\"],\"properties\":{\"topic\":{\"type\":\"string\"},\"text\":{\"type\":\"string\"},\"source_url\":{\"type\":\"string\"},\"confidence\":{\"type\":\"string\",\"enum\":[\"alta\",\"media\",\"baja\"]},\"possible_homonym\":{\"type\":\"boolean\"}}}},\"summary\":{\"type\":\"string\"}}} } }, messages: [ { role: \"system\", content: \"Eres un analista que prepara una primera llamada comercial de una consultora. Buscas SOLO información pública y profesional. Reglas que no se rompen: 1) Cada afirmación lleva la URL de la fuente donde la has leído; si no tienes fuente, no la escribas. 2) Nada de vida privada, familia, domicilio, redes personales, ni datos de salud, ideología, religión, afiliación sindical, orientación sexual u origen étnico; si una fuente los menciona, ignóralos. 3) Si hay varias personas u organizaciones con el mismo nombre y no puedes distinguirlas con certeza, márcalo con possible_homonym = true y no mezcles sus datos. 4) No deduzcas ni inventes; «no encontrado» es una respuesta válida. 5) Responde en español y solo con el JSON pedido.\" }, { role: \"user\", content: \"Organización: «\" + $(\"Buscar el lead de ese correo\").item.json.contact_company + \"». Dominio del correo de contacto: «\" + $(\"Buscar el lead de ese correo\").item.json.contact_email.split(\"@\")[1] + \"». País probable: Andorra o España. Quiero: a qué se dedica, sector, tamaño aproximado, sedes, noticias de los últimos 18 meses y señales públicas sobre su tecnología, sus datos o sus procesos.\" } ] }) }}"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "c8139efe-820f-445a-9e4a-0cad58d36228",
+      "name": "Perplexity: la persona",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1792,
+        512
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: \"sonar-pro\", temperature: 0.1, response_format: { type: \"json_schema\", json_schema: { schema: {\"type\":\"object\",\"required\":[\"claims\",\"summary\"],\"properties\":{\"claims\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"topic\",\"text\",\"source_url\",\"confidence\",\"possible_homonym\"],\"properties\":{\"topic\":{\"type\":\"string\"},\"text\":{\"type\":\"string\"},\"source_url\":{\"type\":\"string\"},\"confidence\":{\"type\":\"string\",\"enum\":[\"alta\",\"media\",\"baja\"]},\"possible_homonym\":{\"type\":\"boolean\"}}}},\"summary\":{\"type\":\"string\"}}} } }, messages: [ { role: \"system\", content: \"Eres un analista que prepara una primera llamada comercial de una consultora. Buscas SOLO información pública y profesional. Reglas que no se rompen: 1) Cada afirmación lleva la URL de la fuente donde la has leído; si no tienes fuente, no la escribas. 2) Nada de vida privada, familia, domicilio, redes personales, ni datos de salud, ideología, religión, afiliación sindical, orientación sexual u origen étnico; si una fuente los menciona, ignóralos. 3) Si hay varias personas u organizaciones con el mismo nombre y no puedes distinguirlas con certeza, márcalo con possible_homonym = true y no mezcles sus datos. 4) No deduzcas ni inventes; «no encontrado» es una respuesta válida. 5) Responde en español y solo con el JSON pedido.\" }, { role: \"user\", content: \"Persona: «\" + $(\"Buscar el lead de ese correo\").item.json.contact_name + \"», que trabaja en «\" + $(\"Buscar el lead de ese correo\").item.json.contact_company + \"» (dominio «\" + $(\"Buscar el lead de ese correo\").item.json.contact_email.split(\"@\")[1] + \"»). Quiero SOLO su perfil profesional público: cargo actual, trayectoria profesional y presencia profesional pública (ponencias, artículos, entrevistas). Búscala siempre junto a su empresa.\" } ] }) }}"
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "353d1912-540b-476a-80cf-45a18c6165e8",
+      "name": "Filtrar y componer el informe (CA-17a)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        432
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const leer = (nodo) => { try { return JSON.parse($(nodo).first().json.choices[0].message.content); } catch (e) { return { claims: [], summary: \"\" }; } };\nconst conFuente = (c) => typeof c.source_url === \"string\" && /^https?:\\/\\//.test(c.source_url) && c.text;\nconst marca = (c) => (c.possible_homonym || c.confidence === \"baja\" ? \"⚠️ \" : \"\") + c.text + \" — fuente: \" + c.source_url;\nconst empresa = leer(\"Perplexity: la empresa\");\nconst persona = leer(\"Perplexity: la persona\");\nconst ce = (empresa.claims || []).filter(conFuente);\nconst cp = (persona.claims || []).filter(conFuente);\nconst lead = $(\"Buscar el lead de ese correo\").first().json;\nconst reserva = $(\"¿Es una reserva? (provisional, spike S-1)\").first().json;\nconst cargo = (cp.find((c) => /cargo|puesto|rol|posici/i.test(c.topic)) || {}).text || \"cargo no encontrado\";\nconst fecha = DateTime.fromISO(reserva.starts_at).setZone(\"Europe/Madrid\").setLocale(\"es\").toFormat(\"d LLL yyyy HH:mm\");\nconst titulo = \"Preparación · \" + lead.contact_company + \" · \" + lead.contact_name + \" · \" + fecha;\nconst texto = [\n  \"Punto de partida para la llamada, no un veredicto. Las afirmaciones marcadas con ⚠️ pueden ser de otra persona u organización con el mismo nombre. Todo lo que hay aquí es público y lleva su fuente.\",\n  \"\", \"Resumen\", (empresa.summary || \"—\") + \" \" + lead.contact_name + \": \" + cargo + \".\",\n  \"\", \"La empresa\", ...(ce.length ? ce.map((c) => \"• \" + marca(c)) : [\"• No se encontró nada con fuente.\"]),\n  \"\", \"La persona (solo perfil profesional)\", ...(cp.length ? cp.map((c) => \"• \" + marca(c)) : [\"• No se encontró nada con fuente.\"]),\n  \"\", \"Del formulario\", \"Servicio que encaja: \" + (lead.service_label || \"sin catalogar\") + \". Respuestas completas: correo interno del \" + String(lead.submitted_at).slice(0, 10) + \".\",\n  \"\", \"Este documento se borra solo doce meses después de que \" + lead.contact_name + \" enviara el formulario.\"\n].join(\"\\n\");\nreturn [{ json: { titulo, texto, resumen: (empresa.summary || \"\").slice(0, 400), cargo, informe: { empresa: ce, persona: cp }, event_id: reserva.event_id, starts_at: reserva.starts_at, submission_id: lead.submission_id, empresa_nombre: lead.contact_company, persona_nombre: lead.contact_name } }];"
+      }
+    },
+    {
+      "id": "bd087b39-eabe-46a4-acf2-5614b8f33d69",
+      "name": "Crear el documento del equipo",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        432
+      ],
+      "parameters": {
+        "resource": "document",
+        "operation": "create",
+        "authentication": "oAuth2",
+        "folderId": "1OM76yXHbjhDIooayNz3xK1CdEjpWs9LY",
+        "title": "={{ $json.titulo }}"
+      },
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "bm2bfHOV7N8SFihm",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "id": "1e9686ce-572e-48c0-b203-e635928a380c",
+      "name": "Escribir el informe",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        368
+      ],
+      "parameters": {
+        "resource": "document",
+        "operation": "update",
+        "authentication": "oAuth2",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "text",
+              "action": "insert",
+              "locationChoice": "endOfSegmentLocation",
+              "text": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.texto }}"
+            }
+          ]
+        }
+      },
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "bm2bfHOV7N8SFihm",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "id": "5ec36fe4-6d83-45f1-9627-f6644edd8f67",
+      "name": "Entrada interna «Preparar…» (sin invitados)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2688,
+        288
+      ],
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jose.sanchis@executivelab.ai",
+          "cachedResultName": "jose.sanchis@executivelab.ai"
+        },
+        "start": "={{ DateTime.fromISO($('Filtrar y componer el informe (CA-17a)').item.json.starts_at).minus({ minutes: 15 }).toISO() }}",
+        "end": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.starts_at }}",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "summary": "=Preparar: {{ $('Filtrar y componer el informe (CA-17a)').item.json.empresa_nombre }} — {{ $('Filtrar y componer el informe (CA-17a)').item.json.persona_nombre }}",
+          "description": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.resumen }}\n\nCargo: {{ $('Filtrar y componer el informe (CA-17a)').item.json.cargo }}\n\nDocumento: https://docs.google.com/document/d/{{ $('Crear el documento del equipo').item.json.id }}",
+          "showMeAs": "transparent",
+          "visibility": "private",
+          "sendUpdates": "none"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sr34fjtMebKFabzc",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "id": "2d102412-0404-4401-977b-e19997334afe",
+      "name": "Guardar la investigación con el lead",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        224
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "create",
+        "tableId": "lead_research",
+        "dataToSend": "defineBelow",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "submission_id",
+              "fieldValue": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.submission_id }}"
+            },
+            {
+              "fieldId": "booking_event_id",
+              "fieldValue": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.event_id }}"
+            },
+            {
+              "fieldId": "booking_starts_at",
+              "fieldValue": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.starts_at }}"
+            },
+            {
+              "fieldId": "report",
+              "fieldValue": "={{ JSON.stringify($('Filtrar y componer el informe (CA-17a)').item.json.informe) }}"
+            },
+            {
+              "fieldId": "summary",
+              "fieldValue": "={{ $('Filtrar y componer el informe (CA-17a)').item.json.resumen }}"
+            },
+            {
+              "fieldId": "drive_file_id",
+              "fieldValue": "={{ $('Crear el documento del equipo').item.json.id }}"
+            },
+            {
+              "fieldId": "prep_event_id",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "8be5de57-1166-4e16-b87c-539cbadfaa93",
+      "name": "Resumen en el canal",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        3136,
+        176
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=📋 *Preparación lista* · {{ $('Filtrar y componer el informe (CA-17a)').item.json.empresa_nombre }}\n{{ $('Filtrar y componer el informe (CA-17a)').item.json.resumen }}\n{{ $('Filtrar y componer el informe (CA-17a)').item.json.persona_nombre }}: {{ $('Filtrar y componer el informe (CA-17a)').item.json.cargo }}\nDocumento: https://docs.google.com/document/d/{{ $('Crear el documento del equipo').item.json.id }} · En tu agenda: «Preparar…», 15 minutos antes",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "946fae85-cb66-4fbf-95ea-9ad783ce89b2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "7d721493-291a-49e7-9250-326705548514",
+      "name": "Avisar: investigación no disponible",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        3136,
+        672
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=⚠️ Reserva de {{ $('Buscar el lead de ese correo').first().json.contact_company }} confirmada; la investigación no está disponible, prepárala a mano.",
+        "otherOptions": {
+          "includeLinkToWorkflow": true
+        }
+      },
+      "executeOnce": true,
+      "webhookId": "5b342358-6ad9-486f-baa2-611e8f3989a7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "3e3f1300-b4a4-4e0c-bece-2ef687013b3e",
+      "name": "Sticky Note f4934bd3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        672
+      ],
+      "parameters": {
+        "content": "## W2 · Reserva confirmada (fase B)\n**Sin publicar hasta que el aviso de privacidad cuente la investigación** (principio 23, CA-23): el lead también tiene que traer `research_allowed = true`.\n\n**El lead nunca ve su investigación**: nada se escribe en su cita; va a una entrada interna sin invitados y a un documento solo del equipo (CA-15, CA-16).\n\nEl nodo «¿Es una reserva?» es PROVISIONAL: su criterio sale del spike S-1 (una reserva real, leída en crudo).\n\nCredenciales pendientes: Google Calendar, Google Docs, Perplexity (tipo Bearer: solo la clave) y Supabase («Supabase account»: la URL del proyecto y la llave de servidor).",
+        "color": 4
+      }
+    }
+  ],
+  "connections": {
+    "Cita nueva en «Llamada de alcance»": {
+      "main": [
+        [
+          {
+            "node": "¿Es una reserva? (provisional, spike S-1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es una reserva? (provisional, spike S-1)": {
+      "main": [
+        [
+          {
+            "node": "Leads de ese correo (60 días)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leads de ese correo (60 días)": {
+      "main": [
+        [
+          {
+            "node": "¿Ya hay investigación de esta cita?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ya hay investigación de esta cita?": {
+      "main": [
+        [
+          {
+            "node": "Buscar el lead de ese correo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar el lead de ese correo": {
+      "main": [
+        [
+          {
+            "node": "¿Qué hacemos con esta reserva?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Qué hacemos con esta reserva?": {
+      "main": [
+        [
+          {
+            "node": "Avisar: reserva sin lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Avisar: no cualificaba",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: sin investigación (aviso anterior)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: ha reservado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar: ha reservado": {
+      "main": [
+        [
+          {
+            "node": "Perplexity: la empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity: la empresa": {
+      "main": [
+        [
+          {
+            "node": "Perplexity: la persona",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: investigación no disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity: la persona": {
+      "main": [
+        [
+          {
+            "node": "Filtrar y componer el informe (CA-17a)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: investigación no disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar y componer el informe (CA-17a)": {
+      "main": [
+        [
+          {
+            "node": "Crear el documento del equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear el documento del equipo": {
+      "main": [
+        [
+          {
+            "node": "Escribir el informe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: investigación no disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escribir el informe": {
+      "main": [
+        [
+          {
+            "node": "Entrada interna «Preparar…» (sin invitados)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: investigación no disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada interna «Preparar…» (sin invitados)": {
+      "main": [
+        [
+          {
+            "node": "Guardar la investigación con el lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: investigación no disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar la investigación con el lead": {
+      "main": [
+        [
+          {
+            "node": "Resumen en el canal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar: investigación no disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Madrid"
+  }
+}

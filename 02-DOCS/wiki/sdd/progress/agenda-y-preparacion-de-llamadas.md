@@ -202,3 +202,32 @@ status: active
 - falta de Jose: credencial «Nexus · aviso de lead» (Header Auth) y «Nexus · Slack» en n8n, el ID del
   canal, y publicar W1
 
+## B7, B2, B3–B5 y los flujos — 2026-09-30
+- **B7 aplicado en producción** con el sí de Jose («Crea todo lo de la base de datos, sí»):
+  - bloque A: 8 leads rellenados (5 cualificados, 3 no), todos con el aviso del 2026-09-02 y sin
+    permiso de investigación;
+  - bloque B: permisos comprobados con `has_table_privilege`. `n8n_agenda` no lee `leads` ni el
+    catálogo; el público no ve nada nuevo;
+  - la prueba de humo de Supabase, en verde con las piezas nuevas;
+  - los avisos de seguridad de Supabase no marcan nada nuevo. Ya estaban antes: `rls_auto_enable()`,
+    que puede ejecutar cualquiera, y el `search_path` de `catalogo_completo`
+- **#2 y #3 fusionados.** En `main` había cuatro commits de otra sesión (Vercel, arnés 2.0.18, clave
+  de Resend y secretos sensibles). Se trajo `main` a las dos ramas y el único conflicto fue de
+  documentación: el log y el README de Vercel, resueltos quedándose con los dos lados. Producción
+  publicada: fuentes locales y correo corregido
+- **incidente corregido:** un commit del arnés se llevó por error `NEXUS.md` de Jose; como aún no
+  estaba subido, se quitó del commit, y el fichero siguió en la carpeta intacto (11.681 bytes,
+  comparado con dos copias de seguridad)
+- **B2 hecho con el token de Vercel** (la otra sesión arregló su prueba de humo):
+  `NEXT_PUBLIC_CALENDAR_URL`, `N8N_LEAD_WEBHOOK_URL` y `N8N_LEAD_WEBHOOK_SECRET` (este último de tipo
+  sensible) en production y preview. Producción vuelta a publicar: **`/presupuesto` ya incrusta la
+  agenda**
+- **Slack real:** W1 publicó un mensaje de prueba en `#ventas-test` y respondió 200
+- **n8n, los cinco flujos creados y sin publicar** (W2 y W4 rehechos con Supabase; las versiones
+  anteriores, archivadas). Ensayos con datos fijados:
+  - W5 deja pasar solo el mensaje propio, no el de otra automatización ni el de una persona;
+  - W4 reparte bien documento y entrada, y quita de la cola una vez por elemento
+- exportados a `01-TOOLS/N8N/workflows/`, sin valores de credenciales
+- falta de Jose: la credencial «Header Auth» del webhook de W1, «Supabase account» y la clave de
+  Perplexity
+

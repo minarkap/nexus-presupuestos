@@ -1,0 +1,459 @@
+{
+  "name": "Nexus · W3 Cambios de reserva",
+  "nodes": [
+    {
+      "id": "4fb097a0-4a21-41b0-811e-637d89d45656",
+      "name": "Cita cambiada en «Llamada de alcance»",
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "calendarId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jose.sanchis@executivelab.ai",
+          "cachedResultName": "jose.sanchis@executivelab.ai"
+        },
+        "triggerOn": "eventUpdated",
+        "options": {
+          "matchTerm": "Agendas Nexus Web"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sr34fjtMebKFabzc",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "id": "ee530133-aab2-4ec0-8111-716cf19a4fae",
+      "name": "Investigación de esta cita",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        96
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "getAll",
+        "tableId": "lead_research",
+        "returnAll": true,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "booking_event_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3b495f8a-dc78-4ea5-95bf-3227ae0c526c",
+      "name": "Cita cancelada en «Llamada de alcance»",
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "calendarId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jose.sanchis@executivelab.ai",
+          "cachedResultName": "jose.sanchis@executivelab.ai"
+        },
+        "triggerOn": "eventCancelled",
+        "options": {
+          "matchTerm": "Agendas Nexus Web"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sr34fjtMebKFabzc",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "id": "2b08b9eb-2c6c-43cf-a67e-ea0d08c2df97",
+      "name": "El lead de esa investigación",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        96
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "getAll",
+        "tableId": "leads_para_agenda",
+        "returnAll": true,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "submission_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.submission_id }}"
+            }
+          ]
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "9e5759fa-4271-457b-8901-298fff232414",
+      "name": "¿Cancelada, movida o nada relevante?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const evento = $(\"Cita cambiada en «Llamada de alcance»\").isExecuted ? $(\"Cita cambiada en «Llamada de alcance»\").item.json : $(\"Cita cancelada en «Llamada de alcance»\").item.json;\nconst inv = $(\"Investigación de esta cita\").item.json;\nconst lead = $json || {};\nconst nuevo = evento.start?.dateTime ?? evento.start?.date ?? null;\nconst antes = inv.booking_starts_at;\nconst cancelada = evento.status === \"cancelled\";\nconst movida = !cancelada && nuevo && antes && new Date(nuevo).getTime() !== new Date(antes).getTime();\nreturn { json: { que: cancelada ? \"cancelada\" : (movida ? \"movida\" : \"nada\"), investigacion_id: inv.id, prep_event_id: inv.prep_event_id, nuevo_inicio: nuevo, empresa: lead.contact_company ?? \"(lead ya caducado)\", persona: lead.contact_name ?? \"\" } };"
+      }
+    },
+    {
+      "id": "8ce83b2e-a7ae-4f67-b2c0-07d13b68750c",
+      "name": "¿Qué ha pasado?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        896,
+        96
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.que }}",
+                    "rightValue": "cancelada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancelada"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.que }}",
+                    "rightValue": "movida",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Movida"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "84eda8e5-ec83-40a4-8933-918818e269cc",
+      "name": "Avisar: cancelada",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=❌ {{ $json.empresa }} ({{ $json.persona }}) ha cancelado su llamada. La investigación se conserva hasta su caducidad normal.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "c4e6dcea-bb20-4329-861f-20d0fc29414e",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "829fafa4-c60d-433d-87a4-cd76143a972e",
+      "name": "Guardar la hora nueva",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "tableId": "lead_research",
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.investigacion_id }}"
+            }
+          ]
+        },
+        "dataToSend": "defineBelow",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "booking_starts_at",
+              "fieldValue": "={{ $json.nuevo_inicio }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "23a6e04c-4021-4cca-89e5-88a7c984fa5c",
+      "name": "Mover la entrada «Preparar…»",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        192
+      ],
+      "parameters": {
+        "resource": "event",
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jose.sanchis@executivelab.ai",
+          "cachedResultName": "jose.sanchis@executivelab.ai"
+        },
+        "eventId": "={{ $('¿Cancelada, movida o nada relevante?').item.json.prep_event_id }}",
+        "updateFields": {
+          "start": "={{ DateTime.fromISO($('¿Cancelada, movida o nada relevante?').item.json.nuevo_inicio).minus({ minutes: 15 }).toISO() }}",
+          "end": "={{ $('¿Cancelada, movida o nada relevante?').item.json.nuevo_inicio }}",
+          "sendUpdates": "none"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sr34fjtMebKFabzc",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "id": "e3322e40-88c7-4672-af69-7e3e3b042761",
+      "name": "Avisar: cambio de hora",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1568,
+        192
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "messageType": "text",
+        "text": "=🔁 {{ $('¿Cancelada, movida o nada relevante?').item.json.empresa }} ha cambiado la llamada al {{ DateTime.fromISO($('¿Cancelada, movida o nada relevante?').item.json.nuevo_inicio).setZone('Europe/Madrid').setLocale('es').toFormat(\"cccc d 'de' LLLL, HH:mm\") }}. La investigación sigue valiendo; la entrada «Preparar…» se ha movido.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "60170c94-e24b-4a27-aad2-eef7e4b4fa8c",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "2d9cfc58-56fd-409c-92fb-bc2adad22cc2",
+      "name": "Sticky Note bcda1049",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        192
+      ],
+      "parameters": {
+        "content": "## W3 · Cambios de reserva (fase B)\nSolo actúa si la cita tiene investigación (si no, no es nuestra o W2 no la preparó).\n\n**Cambio de hora** → guarda la hora nueva, mueve la entrada interna y avisa. **No** se investiga otra vez (CA-19).\n\n**Cancelación** → avisa; la investigación se queda hasta su caducidad normal.",
+        "color": 4
+      }
+    }
+  ],
+  "connections": {
+    "Cita cambiada en «Llamada de alcance»": {
+      "main": [
+        [
+          {
+            "node": "Investigación de esta cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Investigación de esta cita": {
+      "main": [
+        [
+          {
+            "node": "El lead de esa investigación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cita cancelada en «Llamada de alcance»": {
+      "main": [
+        [
+          {
+            "node": "Investigación de esta cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "El lead de esa investigación": {
+      "main": [
+        [
+          {
+            "node": "¿Cancelada, movida o nada relevante?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cancelada, movida o nada relevante?": {
+      "main": [
+        [
+          {
+            "node": "¿Qué ha pasado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Qué ha pasado?": {
+      "main": [
+        [
+          {
+            "node": "Avisar: cancelada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guardar la hora nueva",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar la hora nueva": {
+      "main": [
+        [
+          {
+            "node": "Mover la entrada «Preparar…»",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mover la entrada «Preparar…»": {
+      "main": [
+        [
+          {
+            "node": "Avisar: cambio de hora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Madrid"
+  }
+}

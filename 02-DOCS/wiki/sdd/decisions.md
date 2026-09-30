@@ -1133,3 +1133,35 @@ status: stable
   aceptable en una demo y **no lo es para publicar con leads reales**. Queda escrito para que nadie lo
   herede sin saberlo.
 - supersedes: none
+
+## S-0045 — n8n entra en la base por Supabase con la llave de servidor, y las demás piezas de la demo
+
+- fecha: 2026-09-30
+- fase: `implement` de [agenda-y-preparacion-de-llamadas](./specs/agenda-y-preparacion-de-llamadas.md) (B3, B5)
+- context: el plan (`S-0041`) daba a n8n un rol propio de Postgres, `n8n_agenda`, que solo ve una vista
+  mínima de 60 días, escribe investigaciones y vacía la cola. Está creado en producción. Conectarlo
+  desde n8n exige una credencial de Postgres con seis campos. Jose, literal: «Las conexiones de la
+  base de datos hazmelas en supabase que es más fácil».
+- decision:
+  - **n8n usa el nodo de Supabase con la credencial «Supabase account»**: URL del proyecto y llave
+    de servidor. Es más fácil de conectar, pero **la llave de servidor lo puede leer y escribir
+    todo**, datos de los leads incluidos, mientras que el rol limitado solo veía la vista mínima. Se
+    avisó a Jose en una línea antes de hacerlo. El rol `n8n_agenda` queda creado y sin usar; **volver
+    a él es lo recomendado antes de trabajar con leads reales**.
+  - **la regla «el más reciente de ese correo»** se cumple en un nodo de código, porque el nodo de
+    Supabase no permite ordenar.
+  - **calendario de las reservas:** el de Jose (`jose.sanchis@executivelab.ai`). W2 y W3 solo
+    reaccionan a las citas cuyo título contiene «Agendas Nexus Web», el nombre real de la página de
+    reservas. Así no toman por reserva cualquier reunión con invitados. Sigue pendiente el spike S-1
+    para afinar el criterio con una reserva real.
+  - **las entradas «Preparar…»** van al calendario de Jose como **privadas** y sin ocupar hueco. El
+    plan recomendaba un calendario propio, que no existe. Da lo mismo para el lead, que nunca es
+    invitado a esa entrada.
+  - **documentos:** carpeta nueva y privada «Nexus · Preparación de llamadas» en la raíz del Drive
+    de Jose, creada por un flujo de un solo uso que después se archivó.
+  - **Perplexity:** credencial de tipo Bearer, en la que solo se pega la clave.
+  - **zona horaria Europe/Madrid** en los cinco flujos.
+- consecuencia asumida: la garantía «n8n no puede leer la tabla de leads», que el plan dejaba en los
+  permisos de la base, **no se cumple mientras se use la llave de servidor**. Aceptado para la demo.
+- supersedes: la parte de `S-0041` que da a n8n el rol `n8n_agenda` (en suspenso, no retirada)
+

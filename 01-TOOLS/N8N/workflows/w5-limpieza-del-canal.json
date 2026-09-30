@@ -1,0 +1,228 @@
+{
+  "name": "Nexus · W5 Limpieza del canal",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 4,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "id": "b4fac8c6-4809-441b-9c12-61309de6e607",
+      "name": "Cada día a las 04:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "channel",
+        "operation": "history",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "returnAll": true,
+        "filters": {
+          "latest": "={{ $now.minus({ days: 365 }).toSeconds() }}"
+        }
+      },
+      "id": "f78a0df3-5785-4288-a675-c5a6ea3b20cf",
+      "name": "Mensajes de hace más de un año",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        0
+      ],
+      "webhookId": "8ea1d704-4530-4805-bbed-2a7c5a2f6a9f",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.bot_id }}",
+              "rightValue": "B0ABUV79K8Q",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "^(🟢|⚪|📅|📋|🔁|❌|⚠️)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1166fd76-11b2-4f8f-9d70-422f33719b4b",
+      "name": "Solo los de la automatización",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "delete",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "timestamp": "={{ $json.ts }}"
+      },
+      "id": "3c58d73a-8acb-4cd2-ac81-c0a62807057f",
+      "name": "Borrar el mensaje",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        672,
+        0
+      ],
+      "webhookId": "ade400fe-f3b0-4ef3-b283-06e4b072f82f",
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0AAKA6MU7R",
+          "cachedResultName": "ventas-test"
+        },
+        "text": "⚠️ La limpieza del canal no pudo borrar algún mensaje de hace más de un año. Se reintenta mañana.",
+        "otherOptions": {
+          "includeLinkToWorkflow": true
+        }
+      },
+      "id": "405b6e4a-2f19-421a-82ea-49a9b5c51246",
+      "name": "Avisar de que la limpieza falló",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        0
+      ],
+      "executeOnce": true,
+      "webhookId": "d5270093-1892-4c69-afa7-b03ee92b74f1",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4KwRCjRpUCUgSiJV",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## W5 · Limpieza del canal\nEl canal es un aviso, no un archivo: a los doce meses desaparecen los mensajes de esta automatización (spec agenda-y-preparacion-de-llamadas, CA-26).\n\n**Solo** borra mensajes con la firma del bot de n8n **y** que empiezan por un marcador nuestro (🟢 ⚪ 📅 📋 🔁 ❌ ⚠️). Nunca el de una persona.\n\nEl primer borrado real cae en 2027-10.",
+        "height": 288,
+        "width": 448,
+        "color": 5
+      },
+      "id": "e8554756-9f62-497f-af8a-c99fadf3dc76",
+      "name": "Sticky Note 966d68ce",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        256
+      ]
+    }
+  ],
+  "connections": {
+    "Cada día a las 04:30": {
+      "main": [
+        [
+          {
+            "node": "Mensajes de hace más de un año",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensajes de hace más de un año": {
+      "main": [
+        [
+          {
+            "node": "Solo los de la automatización",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solo los de la automatización": {
+      "main": [
+        [
+          {
+            "node": "Borrar el mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Borrar el mensaje": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Avisar de que la limpieza falló",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate",
+    "timezone": "Europe/Madrid"
+  }
+}

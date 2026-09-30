@@ -17,6 +17,16 @@ sources: ["[Spec — Agenda y preparación de la llamada](../sdd/specs/agenda-y-
 >
 > **Instancia:** solo la de este proyecto. Ninguna otra, y nunca `n8n-templates`.
 
+> **Construido el 2026-09-30, con estos cambios sobre el diseño de abajo (`S-0045`):**
+> - la base de datos se usa por el nodo de **Supabase** con la llave de servidor, no con el rol
+>   `n8n_agenda`;
+> - las reservas se reconocen por el título **«Agendas Nexus Web»** en el calendario de Jose;
+> - las entradas «Preparar…» van a ese mismo calendario, privadas y sin ocupar hueco;
+> - los documentos van a la carpeta «Nexus · Preparación de llamadas»;
+> - la credencial de Perplexity es de tipo Bearer.
+>
+> Los flujos reales están en `01-TOOLS/N8N/workflows/`.
+
 ## Credenciales en n8n (por nombre)
 
 | Nombre en n8n | Tipo | Lo usan |
