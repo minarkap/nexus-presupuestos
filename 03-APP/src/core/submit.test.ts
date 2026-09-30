@@ -33,6 +33,9 @@ const deps = () => ({
   rateLimitPort: new FakeRateLimitPort(),
   fingerprint: null as string | null,
   internalMailbox: 'oportunidades@nexus-st.com',
+  // Sin página de reservas por defecto: es lo que hay hoy en producción. Las pruebas de la oferta
+  // de reserva la ponen explícitamente.
+  bookingUrl: null as string | null,
   now: () => new Date('2026-08-26T10:00:00.000Z'),
 })
 
@@ -483,5 +486,50 @@ describe('El catálogo que se usó se declara al equipo, nunca al lead (CA-06, C
     const interno = email.sent.find((m) => m.to.includes('oportunidades'))
     expect(interno?.body).toContain('NO SE PUDO CALCULAR')
     expect(interno?.body).toMatch(/a mano/)
+  })
+})
+
+/**
+ * La oferta de reserva en el correo (spec `agenda-y-preparacion-de-llamadas`). Quién la recibe lo
+ * decide `showCalendar` —la misma regla que pone el calendario en pantalla—, no una segunda copia.
+ */
+describe('La oferta de reserva en el correo al lead (CA-01…CA-04, CA-11)', () => {
+  const ENLACE = 'https://calendar.app.google/nexus-prueba'
+  const conEnlace = () => ({ ...deps(), bookingUrl: ENLACE })
+  const alLead = () => email.sent.find((m) => m.to === 'marta@acme.ad') as EmailMessage
+  const flojo: Answers = { ...answers, sponsor: 'no', budget: 'sin', timing: '<3m' }
+
+  it('CA-01 · el cualificado recibe el enlace de reserva en su correo', async () => {
+    await submitLead(answers, 'res-1', conEnlace(), cache)
+    expect(alLead().body).toContain(ENLACE)
+  })
+
+  it('CA-02 · el no cualificado no lo recibe, aunque el enlace exista', async () => {
+    const r = await submitLead(flojo, 'res-2', conEnlace(), cache)
+    expect(r).toHaveProperty('showCalendar', false)
+    expect(alLead().body).not.toContain(ENLACE)
+  })
+
+  it('CA-03 · el sin catalogar que supera el umbral lo recibe igual que un cualificado', async () => {
+    const r = await submitLead({ ...answers, challenge: 'estrategia_operaciones', need: null }, 'res-3', conEnlace(), cache)
+    expect(r).toHaveProperty('showCalendar', true)
+    expect(alLead().body).toContain(ENLACE)
+  })
+
+  it('CA-04 · sin enlace configurado, el cualificado no lee ninguna promesa: le escribiremos', async () => {
+    await submitLead(answers, 'res-4', deps(), cache)
+    expect(alLead().body).not.toContain('http')
+    expect(alLead().body).toMatch(/disponibilidad del equipo/i)
+  })
+
+  it('sin catálogo no hay oferta de reserva: el desenlace es el de «te llamamos»', async () => {
+    await submitLead(answers, 'res-5', { ...conEnlace(), catalog: null }, cache)
+    expect(alLead().body).not.toContain(ENLACE)
+  })
+
+  it('CA-11 · cambiar el umbral en su único punto cambia quién recibe el enlace, sin tocar nada más', async () => {
+    const umbralAlto: LoadedCatalog = { catalog: { ...SEED_CATALOG, threshold: 10 }, source: 'live' }
+    await submitLead(answers, 'res-6', { ...conEnlace(), catalog: umbralAlto }, cache)
+    expect(alLead().body).not.toContain(ENLACE)
   })
 })

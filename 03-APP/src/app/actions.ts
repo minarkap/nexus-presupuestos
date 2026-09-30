@@ -21,6 +21,10 @@ const cache = new DedupCache()
 // variable perdía todos los leads en silencio, que es el único fallo de este sistema que nadie ve.
 const INTERNAL_MAILBOX = process.env.NEXUS_INTERNAL_MAILBOX ?? 'jose.sanchis@executivelab.ai'
 
+// La MISMA variable que incrusta el calendario en `/presupuesto`: pantalla y correo leen un único
+// punto, así que no pueden decir cosas distintas. Vacía → `null` → nadie promete una reserva.
+const BOOKING_URL = process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() || null
+
 /**
  * La huella del origen, calculada AQUÍ y sólo aquí.
  *
@@ -75,6 +79,7 @@ export async function submitAction(answers: Answers, submissionId: string): Prom
       rateLimitPort: selectRateLimitPort(process.env),
       fingerprint: await huellaDelOrigen(),
       internalMailbox: INTERNAL_MAILBOX,
+      bookingUrl: BOOKING_URL,
       now: () => new Date(),
       onDispatch: (report) => {
         if (Object.values(report).includes('failed')) {
