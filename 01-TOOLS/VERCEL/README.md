@@ -18,6 +18,20 @@ bash test_connection.sh
 |--------|----------|
 | `test_connection.sh` | Valida el token y, si `VERCEL_PROJECT` está relleno, comprueba que el proyecto existe y que su carpeta raíz es `03-APP`. Sólo lee. |
 
+> **Dos tipos de token, una sola prueba.** El token personal pertenece a un usuario; el de equipo
+> (empieza por `vcp_`) pertenece al equipo y **no tiene usuario**: pedirle `/v2/user` devuelve
+> 404 «User not found» aunque funcione perfectamente. Por eso la prueba valida el token leyendo los
+> proyectos de su ámbito, no preguntando quién es. Hasta el 2026-09-30 lo hacía al revés y daba por
+> roto un token de equipo sano.
+>
+> Lo que responde Vercel, y lo que dice la prueba:
+>
+> | Respuesta | Significa |
+> |-----------|-----------|
+> | 403 con `invalidToken` | Token inválido, caducado o revocado. Hay que regenerarlo. |
+> | 403 sin `invalidToken` | El token vale, pero `VERCEL_TEAM_ID` es de otro equipo. |
+> | 404 en el proyecto | No existe con ese nombre en el ámbito, o falta `VERCEL_TEAM_ID` con un token personal. |
+
 ## Cómo queda conectado el proyecto
 
 El repositorio contiene el workspace entero, y la app es sólo una carpeta dentro. De ahí las dos
@@ -51,7 +65,25 @@ no viajan en el repositorio.
 | `NEXT_PUBLIC_SITE_URL` | sí | El sitio se anuncia como `https://nexus.ad`: `canonical` y `og:url` mienten. |
 | `NEXT_PUBLIC_CALENDAR_URL` | no | Nada roto: la pantalla se repliega a «te escribimos con la disponibilidad». |
 
-Las nueve primeras están cargadas en `production`, `preview` y `development`.
+Las nueve primeras están cargadas. Los **cuatro secretos** —`RESEND_API_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_CATALOG_READ_KEY` y `RATE_LIMIT_SALT`— son de tipo
+**`sensitive`** y sólo existen en `production` y `preview`. Las otras cinco son `plain` y están
+también en `development`.
+
+> **Por qué `sensitive` (2026-09-30).** El tipo `encrypted` está cifrado en reposo, pero cualquiera
+> con acceso al equipo puede leer el valor en el panel. `sensitive` no: una vez guardado, nadie lo
+> vuelve a ver, ni siquiera por la API. Dos consecuencias:
+> - **No se puede comprobar leyendo.** Para saber si un secreto es correcto se prueba en su origen
+>   (Resend, Supabase), no en Vercel.
+> - **Vercel no admite `sensitive` en `development`.** No hace falta, porque el desarrollo local lee
+>   `03-APP/.env.local`, no Vercel.
+>
+> Cambiar una variable de tipo sin borrarla se hace con `PATCH /v9/projects/<proyecto>/env/<id>`
+> pasando `type`, `value` y `target`. Así no queda ni un instante sin ella.
+>
+> Cualquier cambio de variables **sólo surte efecto en la siguiente publicación**: los despliegues
+> ya hechos conservan los valores con los que se construyeron.
+
 `NEXT_PUBLIC_CALENDAR_URL` **nunca se ha llegado a poner**, y no pasa nada: el resultado trae
 `showCalendar: true`, pero `ResultScreen` se repliega solo y muestra «Te escribimos con la
 disponibilidad del equipo» en vez del calendario. No hay botón muerto. Ponerla es opcional.
