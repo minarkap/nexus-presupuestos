@@ -65,3 +65,10 @@ ejecutarlo yo"*. No se ha escrito ni una línea de la app, ni spec, ni plan, ni 
 - **T19 hecha contra producción** (CA-02): precio cambiado en la base → el formulario real devolvió 30.000 – 35.000 €; restaurado → 28.000 – 35.000 €. Cero despliegues entre medias. Los dos envíos quedaron como leads en la tabla, marcados `Executive Lab (prueba T19)`.
 - Corregido el defecto del buzón interno: `oportunidades@nexus.ad` (dominio sin correo) → `jose.sanchis@executivelab.ai`.
 - Nuevos: `sdd/verifications/catalogo-en-supabase-2026-09-15.md`, `S-0038`, `S-0039`. Updated: plan del catálogo (estado final), acta del 14 (marcada como superada), `harness/user-profile.md` (buzón), `01-TOOLS/VERCEL/README.md` (variables del panel, aviso del buzón resuelto).
+
+## 2026-09-30 — la prueba de humo de Vercel daba por roto un token sano
+- El token de Vercel es de equipo (`vcp_…`): no tiene usuario, así que `/v2/user` responde 404 aunque el token lea el proyecto y sus despliegues sin problema. `test_connection.sh` validaba justo con `/v2/user` y marcaba el fallo. Era un falso negativo: el token nunca estuvo roto y no hay que renovarlo.
+- Arreglo: el token se valida leyendo proyectos, y el 403 distingue token inválido (`invalidToken`) de equipo equivocado. De paso, dos fallos latentes que el primer paso tapaba: `«$VERCEL_PROJECT»` sin llaves hacía que el bash de macOS leyera `»` como parte del nombre de la variable, y un `rootDirectory` nulo abortaba el script.
+- Probado en siete casos contra la API real (token bueno con y sin equipo, token falso, equipo equivocado, proyecto inexistente, sin proyecto, raíz nula).
+- `VERCEL_TEAM_ID` rellenado en el `.env` local (fuera del repositorio).
+- Updated: `01-TOOLS/VERCEL/{test_connection.sh,README.md,.env.example}`.

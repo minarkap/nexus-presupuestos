@@ -18,6 +18,20 @@ bash test_connection.sh
 |--------|----------|
 | `test_connection.sh` | Valida el token y, si `VERCEL_PROJECT` está relleno, comprueba que el proyecto existe y que su carpeta raíz es `03-APP`. Sólo lee. |
 
+> **Dos tipos de token, una sola prueba.** El token personal pertenece a un usuario; el de equipo
+> (empieza por `vcp_`) pertenece al equipo y **no tiene usuario**: pedirle `/v2/user` devuelve
+> 404 «User not found» aunque funcione perfectamente. Por eso la prueba valida el token leyendo los
+> proyectos de su ámbito, no preguntando quién es. Hasta el 2026-09-30 lo hacía al revés y daba por
+> roto un token de equipo sano.
+>
+> Lo que responde Vercel, y lo que dice la prueba:
+>
+> | Respuesta | Significa |
+> |-----------|-----------|
+> | 403 con `invalidToken` | Token inválido, caducado o revocado. Hay que regenerarlo. |
+> | 403 sin `invalidToken` | El token vale, pero `VERCEL_TEAM_ID` es de otro equipo. |
+> | 404 en el proyecto | No existe con ese nombre en el ámbito, o falta `VERCEL_TEAM_ID` con un token personal. |
+
 ## Cómo queda conectado el proyecto
 
 El repositorio contiene el workspace entero, y la app es sólo una carpeta dentro. De ahí las dos
