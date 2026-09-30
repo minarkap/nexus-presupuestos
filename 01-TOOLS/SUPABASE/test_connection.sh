@@ -100,3 +100,30 @@ if [ "$code2" = "200" ]; then
   fi
   echo "✓ La función registrar_intento está cerrada al público (HTTP $rpc_pub)."
 fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 4. Agenda y preparación de la llamada (agenda.sql). Solo si ya se aplicó: antes
+#    de B7 estas piezas no existen, y eso no es un fallo.
+# ─────────────────────────────────────────────────────────────────────────────
+col=$(curl -s -o /dev/null -w '%{http_code}' \
+  -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+  "${BASE}/rest/v1/${TABLA}?select=outcome_kind,booking_offered,privacy_version,research_allowed&limit=1")
+case "$col" in
+  200) echo "✓ Bloque A de agenda.sql aplicado: «${TABLA}» tiene las cuatro columnas nuevas." ;;
+  400) echo "· Bloque A de agenda.sql SIN aplicar. No publiques la web de la fase A hasta aplicarlo." ;;
+  *) echo "✗ Respuesta inesperada al comprobar las columnas nuevas: HTTP $col"; exit 1 ;;
+esac
+
+for rel in lead_research external_deletions leads_para_agenda; do
+  existe=$(curl -s -o /dev/null -w '%{http_code}' \
+    -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+    "${BASE}/rest/v1/${rel}?limit=1")
+  if [ "$existe" = "404" ]; then echo "· «${rel}» no existe todavía (bloque B de agenda.sql sin aplicar)."; continue; fi
+  pub=$(curl -s -w '\n%{http_code}' -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+    "${BASE}/rest/v1/${rel}?limit=1")
+  pub_code=$(echo "$pub" | tail -1); pub_body=$(echo "$pub" | sed '$d')
+  if [ "$pub_code" = "200" ] && [ "$pub_body" != "[]" ]; then
+    echo "✗ PELIGRO: «${rel}» DEVUELVE DATOS con la clave pública."; exit 1
+  fi
+  echo "✓ Con la clave pública, «${rel}» no responde (HTTP $pub_code)."
+done
