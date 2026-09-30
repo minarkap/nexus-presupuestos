@@ -102,4 +102,14 @@ describe('ResultScreen — con el texto REAL del núcleo, nada promete una reser
     const { container } = render(<ResultScreen outcome={real} calendarUrl="https://calendar.example/x" />)
     expect(container.querySelector('iframe')).not.toBeNull()
   })
+
+  it('sin enlace, el título de la tarjeta no invita a reservar lo que no se puede reservar', () => {
+    render(<ResultScreen outcome={real} />)
+    expect(screen.getByRole('heading', { level: 2 })).not.toHaveTextContent(/reserva/i)
+  })
+
+  it('con enlace, el título sí invita a reservar', () => {
+    render(<ResultScreen outcome={real} calendarUrl="https://calendar.example/x" />)
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(/reserva/i)
+  })
 })

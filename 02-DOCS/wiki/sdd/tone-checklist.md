@@ -90,7 +90,7 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
 
 ## Revisión pendiente — `agenda-y-preparacion-de-llamadas` (2026-09-30)
 
-> **Sin firmar.** Tres superficies cambian o nacen con esta spec (cuatro con S5, que cambia en el PR de la fase A). El acta del 2026-09-14 sigue valiendo
+> **Cerrada por delegación el 2026-09-30** (ver la nota del acta). Tres superficies cambian o nacen con esta spec (cuatro con S5, que cambia en el PR de la fase A). El acta del 2026-09-14 sigue valiendo
 > para todo lo demás; estas tres necesitan una firma nueva antes de publicar (principio 28, CA-12).
 > Las pruebas ya comprueban el léxico prohibido y que ningún texto dé una cita por hecha
 > (`tone.test.ts`). Lo que no pueden comprobar es si suena a Nexus Consulting.
@@ -101,6 +101,10 @@ prohibiciones de [Voz de Nexus por Escrito](../firma/Voz%20de%20Nexus%20por%20Es
   Puedes reservar ahora mismo un hueco con un socio para contrastarlo.»
 - Ahora: «Con lo que nos has contado, este es el orden de magnitud en el que se mueve un encargo así.
   El siguiente paso es contrastarlo con un socio.»
+- **Título de la tarjeta del calendario** (`src/components/ResultScreen.tsx`): «Reserva un hueco» solo
+  cuando hay página de reservas. Sin ella: «Una conversación con un socio». Antes decía «Reserva un
+  hueco» encima de «Te escribimos con la disponibilidad del equipo», y el título prometía lo que el
+  párrafo desmentía.
 
 **S10 — cierre del correo de propuesta** (`src/core/proposal.ts`):
 
@@ -129,10 +133,19 @@ deja de ser una horquilla.», falso siempre (`S-0040`).
 
 | Superficie | ¿Pasa? | Revisor | Fecha | Notas |
 |---|---|---|---|---|
-| S5 | ☐ | | | Solo en el PR de la fase A: «Quién los recibe» y «Transferencias» nombran la mensajería interna y la automatización, y el enlace de reserva también por correo (CA-24). Texto literal en `wiki/producto/Borrador aviso de privacidad - agenda.md` §2 |
-| S9 | ☐ | | | |
-| S10 | ☐ | | | |
-| S15 | ☐ | | | |
+| S5 | ☑ | Agente, por delegación de Jose | 2026-09-30 | Solo en el PR de la fase A: «Quién los recibe» y «Transferencias» nombran la mensajería interna y la automatización, y el enlace de reserva también por correo (CA-24). Texto literal en `wiki/producto/Borrador aviso de privacidad - agenda.md` §2. Tono de aviso legal, no comercial: frases completas, sin promesas, «tú» como en el resto del aviso |
+| S9 | ☑ | Agente, por delegación de Jose | 2026-09-30 | Sin promesa de resultado ni urgencia; «orientativo» sigue junto a la cifra (lo pone el aviso de la pantalla); tú/nosotros. Corregido al revisar: el título de la tarjeta sin enlace |
+| S10 | ☑ | Agente, por delegación de Jose | 2026-09-30 | Invita, no afirma: ninguna rama da la cita por hecha (lo vigila `tone.test.ts`). «30 minutos» es la duración de la llamada de alcance (C-06), no un plazo de entrega. Sin descuento ni precio cerrado. «En cuanto revisemos tu caso» no fija fecha |
+| S15 | ☑ | Agente, por delegación de Jose | 2026-09-30 | Mismo propósito y duración que S3 y S9 («ver si encajamos», «sin coste y sin presentación comercial»). La pregunta del correo de trabajo explica para qué se pide |
+
+**Aprobación de S5 (en el PR de la fase A), S9, S10 y S15:** Jose Sanchis, **por delegación expresa**, el 2026-09-30: «sobre el
+tono de los textos nuevos me voy a fiar de ti quiero que pongas textos que sean coherentes y que sean
+aceptables». **Revisor del texto:** el agente, contra las ocho comprobaciones de arriba.
+
+> **Lo que esta acta NO dice:** que una persona haya leído estos textos. El principio 28 pide una
+> revisión humana. Aquí se cumple por una delegación explícita de quien la tenía que hacer, y queda
+> escrito así, no como una firma sobre el texto. Si alguno chirría al leerlo publicado, es trabajo
+> pendiente, no una casilla marcada.
 
 ## Deuda de demostración a retirar antes de publicar
 
